@@ -1,197 +1,233 @@
 <template>
-  <div>
-    <!-- Barra de búsqueda y filtros -->
-    <v-container class="mt-6">
-      <v-row class="align-center mb-4" justify="center" no-gutters>
-        <v-col cols="12" md="4">
-          <v-text-field
-            v-model="search"
-            label="Ingresa departamentos o distritos"
-            variant="outlined"
-            density="comfortable"
-            clearable
-            prepend-inner-icon="mdi-magnify"
-          />
-        </v-col>
+  <div class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-white">
+    <div class="flex flex-col min-h-screen">
 
-        <v-col cols="12" md="8" class="d-flex flex-wrap justify-center">
-          <v-select
-            v-model="filters.tipo"
-            :items="['Comprar', 'Alquilar']"
-            label="Tipo"
-            variant="outlined"
-            density="comfortable"
-            class="mx-2 my-1"
-          />
-          <v-select
-            v-model="filters.propiedad"
-            :items="['Departamento', 'Casa', 'Habitación']"
-            label="Propiedad"
-            variant="outlined"
-            density="comfortable"
-            class="mx-2 my-1"
-          />
-          <v-select
-            v-model="filters.dormitorios"
-            :items="['1', '2', '3', '4+']"
-            label="Dormitorios"
-            variant="outlined"
-            density="comfortable"
-            class="mx-2 my-1"
-          />
-          <v-select
-            v-model="filters.precio"
-            :items="['< S/500', 'S/500 - S/1000', 'S/1000 - S/1500', 'S/1500+']"
-            label="Precio"
-            variant="outlined"
-            density="comfortable"
-            class="mx-2 my-1"
-          />
-          <v-btn class="mx-2 my-1" variant="outlined">Más filtros</v-btn>
-          <v-btn color="primary" class="mx-2 my-1">Crear alerta</v-btn>
-        </v-col>
-      </v-row>
-    </v-container>
+      <HeaderComponent />
 
-    <!-- Resultados -->
-    <v-container>
-      <p class="text-grey-darken-1 mb-4">
-        {{ departamentos.length }} Departamentos encontrados en Perú
-      </p>
-      <v-row>
-        <v-col
-          v-for="d in departamentos"
-          :key="d.id"
-          cols="12"
-        >
-<v-card class="d-flex flex-row elevation-2 mb-4" style="position: relative;">
-  <!-- Botón flotante arriba a la derecha -->
-  <v-btn
-    icon
-    class="map-btn"
-    @click="goToMap(d.lat, d.lng)"
-  >
-    <v-img
-      src="../public/ubicacion.png"
-      alt="Ver en mapa"
-      width="24"
-      height="24"
-      cover
-    />
-  </v-btn>
+      <main class="flex-grow">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2">
+              <div class="mb-8">
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg aria-hidden="true" class="h-5 w-5 text-gray-400 dark:text-gray-500" fill="currentColor"
+                      viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path clip-rule="evenodd"
+                        d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                        fill-rule="evenodd"></path>
+                    </svg>
+                  </div>
+                  <input
+                    class="w-full pl-10 pr-4 py-3 rounded-lg bg-white dark:bg-background-dark border border-gray-300 dark:border-gray-700 focus:ring-primary focus:border-primary transition"
+                    placeholder="Search for rentals near universities..." type="text" />
+                </div>
+                <div class="mt-4 flex flex-wrap gap-3">
+                  <button
+                    class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                    <span>University</span>
+                    <svg aria-hidden="true" class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path clip-rule="evenodd"
+                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                        fill-rule="evenodd"></path>
+                    </svg>
+                  </button>
+                  <button
+                    class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                    <span>Price Range</span>
+                    <svg aria-hidden="true" class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path clip-rule="evenodd"
+                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                        fill-rule="evenodd"></path>
+                    </svg>
+                  </button>
+                  <button
+                    class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                    <span>Bedrooms</span>
+                    <svg aria-hidden="true" class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path clip-rule="evenodd"
+                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                        fill-rule="evenodd"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Rentals near Stanford University</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                  
+                  <PropertyCard
+                    v-for="(property, index) in properties"
+                    :key="index"
+                    :title="property.title"
+                    :description="property.description"
+                    :distance="property.distance"
+                    :image="property.image"
+                    :isSelected="selectedIndex === index"   
+                    @card-clicked="selectedIndex = index"       
+                  />
 
-  <!-- Imagen -->
-  <v-img
-    :src="d.imagen"
-    width="300"
-    height="200"
-    cover
-  />
+                </div>
+                <div class="mt-8 flex justify-center">
+                  <nav class="flex items-center gap-2">
+                    <a class="flex items-center justify-center h-10 w-10 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      href="#">
+                      <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path clip-rule="evenodd"
+                          d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                          fill-rule="evenodd"></path>
+                      </svg>
+                    </a>
+                    <a class="flex items-center justify-center h-10 w-10 rounded-full bg-primary text-white font-bold text-sm"
+                      href="#">1</a>
+                    <a class="flex items-center justify-center h-10 w-10 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium text-sm transition-colors"
+                      href="#">2</a>
+                    <a class="flex items-center justify-center h-10 w-10 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium text-sm transition-colors"
+                      href="#">3</a>
+                    <span class="text-gray-500 dark:text-gray-400">...</span>
+                    <a class="flex items-center justify-center h-10 w-10 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium text-sm transition-colors"
+                      href="#">8</a>
+                    <a class="flex items-center justify-center h-10 w-10 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      href="#">
+                      <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path clip-rule="evenodd"
+                          d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                          fill-rule="evenodd"></path>
+                      </svg>
+                    </a>
+                  </nav>
+                </div>
+              </div>
+            </div>
 
-  <!-- Info -->
-  <div class="pa-4 flex-grow-1">
-    <h3 class="text-h6 font-weight-bold">S/ {{ d.precio }}</h3>
-    <p class="text-subtitle-2">{{ d.direccion }}</p>
-    <p class="text-body-2 text-grey-darken-1">
-      {{ d.descripcion }}
-    </p>
+            <PropertyDetails 
+              :title="properties[selectedIndex].title"
+              :direccion="properties[selectedIndex].direccion"
+              :precio="properties[selectedIndex].precio"
+              :distacia="properties[selectedIndex].distance"
+              :habitaciones="properties[selectedIndex].habitaciones"
+              :servicios="properties[selectedIndex].servicios"
+              :latitud ="properties[selectedIndex].latitud"
+              :longitud ="properties[selectedIndex].longitud"
+              />
+            
+          </div>
+        </div>
+      </main>
 
-    <!-- Tags -->
-    <div class="mt-2">
-      <v-chip
-        v-for="tag in d.tags"
-        :key="tag"
-        class="ma-1"
-        color="primary"
-        variant="outlined"
-        size="small"
-      >
-        {{ tag }}
-      </v-chip>
+      <FooterComponent />
+
     </div>
 
-    <!-- Acciones -->
-    <div class="mt-4 d-flex align-center">
-      <v-btn
-        icon="mdi-whatsapp"
-        color="success"
-        variant="flat"
-        class="mr-2"
-      />
-      <v-btn
-        color="primary"
-        variant="flat"
-      >
-        Contactar
-      </v-btn>
-    </div>
-  </div>
-</v-card>
-
-        </v-col>
-      </v-row>
-    </v-container>
   </div>
 </template>
-
 <script>
+import PropertyCard from "../components/PropertyCard.vue";
+import MapView from "../components/MapView.vue";
+import PropertyDetails from "../components/PropertyDetails.vue";
+import HeaderComponent from "../components/HeaderComponent.vue";
+import FooterComponent from "../components/FooterComponent.vue";
+
 export default {
-  name: "SearchDepa",
+  name: "SeacrhDepa",
+  components:{
+    PropertyCard,
+    MapView,
+    PropertyDetails,
+    HeaderComponent,
+    FooterComponent
+  },
   data() {
     return {
-      search: "",
-      filters: {
-        tipo: "Comprar",
-        propiedad: "Departamento",
-        dormitorios: null,
-        precio: null,
-      },
-      departamentos: [
+      selectedIndex: 0, 
+      properties: [
         {
-          id: 1,
-          precio: 273000,
-          direccion: "Jr. Santa Susana 163, Cercado",
-          descripcion: "Proyecto con bono verde. Entrega 2027.",
-          imagen: "https://img10.naventcdn.com/avisos/resize/111/01/47/46/55/51/1200x1200/1557112788.jpg",
-          tags: ["Parrilla", "Áreas verdes"],
-          lat: -12.0464,
-          lng: -77.0428
+          title: "Cozy Studio Apartment",
+          description: "A comfortable studio perfect for students.",
+          direccion: "1057 Campus Drive, Stanford, CA",
+          precio: 950,
+          habitaciones: 1,
+          distance: "0.5 miles to campus",
+          image: "https://img10.naventcdn.com/avisos/resize/111/01/47/07/99/85/1200x1200/1557832212.jpg",
+          servicios: ["Fully furnished", "Utilities included", "High-speed internet"],
+          latitud:-16.409047,
+          longitud:-71.537451
         },
         {
-          id: 2,
-          precio: 250653,
-          direccion: "Av. Simón Bolívar 959, Pueblo Libre",
-          descripcion: "Departamentos desde 38 m², en planos.",
-          imagen: "https://img10.naventcdn.com/avisos/resize/111/01/46/64/83/50/1200x1200/1536994532.jpg",
-          tags: ["Áreas verdes"],
-          lat: -12.0725,
-          lng: -77.05
+          title: "Spacious 2-Bedroom Condo",
+          description: "A spacious condo, ideal for sharing.",
+          direccion: "123 University Ave, Stanford, CA",
+          precio: 1500,
+          habitaciones: 2,
+          distance: "1.2 miles to campus",
+          image: "https://img10.naventcdn.com/avisos/resize/111/01/46/76/88/92/1200x1200/1539977692.jpg",
+          servicios: ["Fully furnished", "High-speed internet"],
+          latitud:-16.404047,
+          longitud:-71.527451
+        },
+        {
+          title: "Modern 1-Bedroom Flat",
+          description: "A modern flat, close to campus.",
+          direccion: "456 College St, Stanford, CA",
+          precio: 1200,
+          habitaciones: 1,
+          distance: "0.8 miles to campus",
+          image: "https://img10.naventcdn.com/avisos/resize/111/01/47/56/05/59/1200x1200/1559477041.jpg",
+          servicios: ["Utilities included", "Agua caliente"],
+          latitud:-16.410047,
+          longitud:-71.537451
         },{
-          id: 3,
-          precio: 3049,
-          direccion: "Av. los prados 67",
-          descripcion: "Departamentos desde 41 m², en planos.",
-          imagen: "https://img10.naventcdn.com/avisos/resize/111/01/47/44/22/45/1200x1200/1556496120.jpg",
-          tags: ["Áreas verdes"],
-          lat: -12.0725,
-          lng: -78.05
+          title: "Charming Garden Apartment",
+          description: "Quiet apartment with a beautiful garden view.",
+          direccion: "789 Elm St, Stanford, CA",
+          precio: 1100,
+          habitaciones: 1, 
+          distance: "1.5 miles to campus",
+          image: "https://img10.naventcdn.com/avisos/resize/111/01/47/44/63/44/1200x1200/1556599390.jpg",
+          servicios: ["Fully furnished", "Electricidad incluida"],
+          latitud:-16.411047,
+          longitud:-71.537451
         },
-      ],methods: {
-        goToMap(lat, lng) {
-            this.$router.push({
-            name: "MapPage", // asegúrate que en router/index.js tu ruta se llame así
-            query: { lat, lng }
-            });
-        }
-    }
+        {
+          title: "Bright Loft with High Ceilings",
+          description: "Open-plan loft with plenty of natural light.",
+          direccion: "321 Maple Ave, Stanford, CA",
+          precio: 1300,
+          habitaciones: 1,
+          distance: "2.0 miles to campus",
+          image: "https://img10.naventcdn.com/avisos/resize/111/01/47/56/01/67/1200x1200/1559458836.jpg",
+          servicios: ["High-speed internet", "Gas included"],
+          latitud:-16.412047,
+          longitud:-71.537451
+        },
+        {
+          title: "Shared House near Campus",
+          description: "Rent a room in a friendly shared house.",
+          direccion: "654 Oak St, Stanford, CA",
+          precio: 700,
+          habitaciones: 1,
+          distance: "0.3 miles to campus",
+          image: "https://img10.naventcdn.com/avisos/resize/111/01/46/76/75/77/1200x1200/1539966748.jpg",
+          servicios: ["Utilities included"],
+          latitud:-16.413047,
+          longitud:-71.537451
+        },
+      ]
     };
   },
 };
 </script>
-
 <style scoped>
-/* Ajusta los filtros para que se vean tipo chips */
-.v-select {
-  min-width: 150px;
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
 }
 </style>

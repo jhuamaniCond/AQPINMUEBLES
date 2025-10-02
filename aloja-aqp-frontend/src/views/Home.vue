@@ -1,266 +1,225 @@
 <template>
-  <div>
-    <!-- HERO con VIDEO de fondo -->
-    <section class="video-hero">
-      <video
-        autoplay
-        muted
-        loop
-        playsinline
-        class="video-background"
-        :style="{ opacity: videoOpacity }"
-      >
-        <source src="../public/arequipa.mp4" type="video/mp4" />
-        Tu navegador no soporta el video.
-      </video>
+  <div class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200">
+    <div class="flex flex-col min-h-screen">
+      <header class="absolute top-0 left-0 right-0 z-10">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between h-20">
+            <div class="flex items-center gap-8">
+              <a class="flex items-center gap-2 text-xl font-bold text-white" href="#">
+                <svg class="h-8 w-8 text-primary" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                  <path clip-rule="evenodd"
+                    d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z"
+                    fill="currentColor" fill-rule="evenodd"></path>
+                  <path clip-rule="evenodd"
+                    d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z"
+                    fill="currentColor" fill-rule="evenodd"></path>
+                </svg>
+                <span>AlojaAQP</span>
+              </a>
+              <nav class="hidden md:flex items-center gap-6">
+                <router-link to="/search" class="text-sm font-medium text-white/80 hover:text-white transition-colors">
+                  Explore
+                </router-link>
+                <a class="text-sm font-medium text-white/80 hover:text-white transition-colors" href="#">University</a>
+                <a class="text-sm font-medium text-white/80 hover:text-white transition-colors" href="#">For
+                  Landlords</a>
+              </nav>
+            </div>
+            <div class="flex items-center gap-4">
+              <button
+                class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                <span class="truncate">List your place</span>
+              </button>
+              <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuADjJKCAs20JoPIHSq5oRFuZRonfFDVZ-Ph55drMXrZHVsuGCAJQ_IiagW_9h6jLaBLzws1xCnkEL2aq3d4RFprYg_zFEByJSeUlrTkFMMUKWoUye_4fdbuMVmDMpcmVP4R6A0MPtxVnKu0DO8e6gDCbCS6_OO2ip7dcJhNxM-0WSNM8oXTlq86Lisn7l7_pqgQ3ahuikO7iW_KZ3XSvK_3rZ9XZk0igqI5cA5LNmCLmBwYUwy-LjyYUF8BdTQcPBqI6C7lE9nntbIF");'>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main class="flex-grow">
 
-      <!-- Overlay de texto -->
-      <div class="hero-overlay">
-        <h1 class="hero-title">Aloja AQP</h1>
-        <p class="hero-subtitle">
-          Encuentra tu alojamiento ideal cerca de la universidad en Arequipa
-        </p>
-        <router-link to="/map" class="btn-explore">
-          Buscar alojamiento
-        </router-link>
-      </div>
-    </section>
 
-    <!-- Alojamientos destacados -->
-    <v-container class="my-12">
-      <h2 class="section-title text-center mb-8">Alojamientos destacados</h2>
-      <v-row>
-        <v-col cols="12" md="4" v-for="casa in casas" :key="casa.id">
-          <v-card class="elevation-6 hover-card">
-            <v-img :src="casa.imagen" height="220px" cover />
-            <v-card-title>{{ casa.titulo }}</v-card-title>
-            <v-card-subtitle>{{ casa.descripcion }}</v-card-subtitle>
-            <v-card-actions>
-              <v-btn color="primary" variant="flat">Reservar</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
+        <section class="relative h-[60vh] md:h-[75vh] flex items-center justify-center text-white overflow-hidden">
+          <!-- Video de fondo -->
+          <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
+            <source src="../public/arequipa.mp4" type="video/mp4">
+          </video>
 
-    <!-- Beneficios -->
-    <v-container class="my-12 text-center">
-      <h2 class="section-title mb-8">¿Por qué elegir Aloja AQP?</h2>
-      <v-row>
-        <v-col cols="12" md="4">
-          <v-icon size="56" color="primary">mdi-school</v-icon>
-          <h3 class="benefit-title">Cerca de universidades</h3>
-          <p>Opciones a pocos minutos de las principales facultades.</p>
-        </v-col>
-        <v-col cols="12" md="4">
-          <v-icon size="56" color="primary">mdi-cash-multiple</v-icon>
-          <h3 class="benefit-title">Precios accesibles</h3>
-          <p>Opciones adaptadas al presupuesto estudiantil.</p>
-        </v-col>
-        <v-col cols="12" md="4">
-          <v-icon size="56" color="primary">mdi-shield-check</v-icon>
-          <h3 class="benefit-title">Seguridad y confianza</h3>
-          <p>Alojamientos verificados para vivir tranquilo.</p>
-        </v-col>
-      </v-row>
-    </v-container>
+          <!-- Sombra en la parte superior para mejor contraste con el header -->
+          <div class="overlay-top"></div>
 
-    <!-- Testimonios -->
-    <v-container class="my-12">
-  <h2 class="section-title text-center mb-8">Lo que dicen los estudiantes</h2>
-  <v-row>
-    <v-col cols="12" md="4" v-for="t in testimonios" :key="t.id">
-      <v-card class="pa-6 elevation-3 text-center">
-        <!-- Imagen redondeada -->
-        <v-avatar size="80" class="mb-4">
-          <v-img :src="t.imagen" alt="Foto de {{ t.nombre }}"></v-img>
-        </v-avatar>
 
-        <!-- Texto del testimonio -->
-        <p class="mb-4">"{{ t.texto }}"</p>
-        <strong>- {{ t.nombre }}</strong>
-      </v-card>
-    </v-col>
-  </v-row>
-</v-container>
-    <!-- CTA -->
-    <v-container class="cta-section text-center py-12">
-      <div class="cta-content">
-        <h2 class="cta-title">¿Listo para encontrar tu próximo hogar en Arequipa?</h2>
-        <router-link to="/map" class="btn-explore">Explorar alojamientos</router-link>
-      </div>
-    </v-container>
+          <!-- Contenido encima -->
+          <div class="relative z-10 text-center px-4">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4">Find your student home in Arequipa</h1>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto mb-8">
+              The easiest way to find and book your accommodation near the best universities.
+            </p>
+            <a href="#explore"
+              class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-lg transition-colors text-lg">
+              Empieza a explorar
+            </a>
+          </div>
+        </section>
+
+
+
+
+        <section class="py-16 sm:py-24" >
+          <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+              <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">How AlojaAQP Works</h2>
+              <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">We simplify your search for the
+                perfect student apartment in three easy steps.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+              <div class="flex flex-col items-center">
+                <div class="flex items-center justify-center size-16 rounded-full bg-primary/10 mb-4">
+                  <span class="material-symbols-outlined text-3xl text-primary">search</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Search with ease</h3>
+                <p class="text-slate-600 dark:text-slate-400">Use our interactive map and filters to find housing near
+                  your university.</p>
+              </div>
+              <div class="flex flex-col items-center">
+                <div class="flex items-center justify-center size-16 rounded-full bg-primary/10 mb-4">
+                  <span class="material-symbols-outlined text-3xl text-primary">schedule</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Save time</h3>
+                <p class="text-slate-600 dark:text-slate-400">See walking and bus travel times to your campus instantly.
+                </p>
+              </div>
+              <div class="flex flex-col items-center">
+                <div class="flex items-center justify-center size-16 rounded-full bg-primary/10 mb-4">
+                  <span class="material-symbols-outlined text-3xl text-primary">task_alt</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Book securely</h3>
+                <p class="text-slate-600 dark:text-slate-400">Book your ideal place through our safe and reliable
+                  platform.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="py-16 sm:py-24" id="explore">
+          <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+              <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Find Housing by University</h2>
+              <p class="text-lg text-slate-600 dark:text-slate-400 mt-2">Select your university to see available
+                listings nearby.</p>
+            </div>
+            <div class="flex flex-col items-center gap-8">
+              <div class="flex justify-center gap-8 md:gap-16">
+                <a class="group flex flex-col items-center text-center w-40" href="#">
+                  <div class="w-28 h-28 flex items-center justify-center">
+                    <img alt="University Logo 1"
+                      class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
+                      src="../public/Escudo_UNSA.png" />
+                  </div>
+                  <span
+                    class="mt-4 font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">Universidad
+                    Nacional de San Agustín</span>
+                </a>
+                <a class="group flex flex-col items-center text-center w-40" href="#">
+                  <div class="w-28 h-28 flex items-center justify-center">
+                    <img alt="University Logo 2"
+                      class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
+                      src="../public/Escudo_UCSM.png" />
+                  </div>
+                  <span
+                    class="mt-4 font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">Universidad
+                    Católica de Santa María</span>
+                </a>
+                <a class="group flex flex-col items-center text-center w-40" href="#">
+                  <div class="w-28 h-28 flex items-center justify-center">
+                    <img alt="University Logo 3"
+                      class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
+                      src="../public/Escudo_UTP.png" />
+                  </div>
+                  <span
+                    class="mt-4 font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">Universidad
+                    Tecnológica del Perú</span>
+                </a>
+              </div>
+              <div class="flex justify-center gap-8 md:gap-16">
+                <a class="group flex flex-col items-center text-center w-40" href="#">
+                  <div class="w-28 h-28 flex items-center justify-center">
+                    <img alt="University Logo 4"
+                      class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
+                      src="../public/Escudo_Continental.jpg" />
+                  </div>
+                  <span
+                    class="mt-4 font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">Universidad
+                    Continental</span>
+                </a>
+                <a class="group flex flex-col items-center text-center w-40" href="#">
+                  <div class="w-28 h-28 flex items-center justify-center">
+                    <img alt="University Logo 5"
+                      class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
+                      src="../public/Escudo_USMP.png" />
+                  </div>
+                  <span
+                    class="mt-4 font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">Universidad
+                    de San Martín de Porres</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <section class="bg-slate-100 dark:bg-slate-900/50 py-16 sm:py-24">
+          <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+              <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Ready to find your new
+                home?</h2>
+              <p class="text-lg text-slate-600 dark:text-slate-400 mb-8">Browse hundreds of verified listings. Your
+                Arequipa adventure awaits.</p>
+              <div class="relative max-w-xl mx-auto">
+                <span
+                  class="material-symbols-outlined absolute left-4 top-10 -translate-y-1/2 text-slate-400 dark:text-slate-500">search</span>
+                <input
+                  class="w-full h-14 pl-12 pr-32 bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500"
+                  placeholder="Search by university or area..." type="text" />
+                <button
+                  class="absolute right-4 top-12 -translate-y-1/2 bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <FooterComponent/>
+    </div>
+
   </div>
 </template>
 
 <script>
+import FooterComponent from "../components/FooterComponent.vue";
+
 export default {
-  name: "Home",
-  data() {
-    return {
-      casas: [
-        {
-          id: 1,
-          titulo: "Habitación compartida en Vallecito",
-          descripcion: "Cerca de la UNSA, ideal para estudiantes.",
-          imagen: "https://a0.muscache.com/im/pictures/94b0443d-6f04-41f4-9036-e50051b5aa2d.jpg",
-        },
-        {
-          id: 2,
-          titulo: "Mini departamento en Umacollo",
-          descripcion: "Espacio moderno con internet incluido.",
-          imagen: "https://img10.naventcdn.com/avisos/resize/111/01/47/57/95/13/1200x1200/1559974817.jpg",
-        },
-        {
-          id: 3,
-          titulo: "Casa de estudiantes en Yanahuara",
-          descripcion: "Ambiente cómodo y seguro para universitarios.",
-          imagen: "https://img10.naventcdn.com/avisos/resize/111/01/46/45/69/56/1200x1200/1532474731.jpg",
-        },
-      ],
-      testimonios: [
-  { 
-    id: 1, 
-    nombre: "María, UNSA", 
-    texto: "Encontré un cuarto cerca de mi facultad a un precio justo.", 
-    imagen: "https://randomuser.me/api/portraits/women/44.jpg" 
-  },
-  { 
-    id: 2, 
-    nombre: "Carlos, UCSM", 
-    texto: "El proceso fue rápido y me siento seguro en mi nuevo depa.", 
-    imagen: "https://randomuser.me/api/portraits/men/32.jpg" 
-  },
-  { 
-    id: 3, 
-    nombre: "Ana, UTP", 
-    texto: "Excelente plataforma, encontré roomies y ahora compartimos gastos.", 
-    imagen: "https://randomuser.me/api/portraits/women/68.jpg" 
-  },
-],
-      videoOpacity: 1, // opacidad del video
-    };
-  },
-  mounted() {
-    window.addEventListener("scroll", this.handleScroll);
-  },
-  beforeUnmount() {
-    window.removeEventListener("scroll", this.handleScroll);
-  },
-  methods: {
-    handleScroll() {
-      const scrollTop = window.scrollY;
-      let opacity = 1 - scrollTop / 400; // baja progresivamente hasta 400px
-      if (opacity < 0.03) opacity = 0.03; // mínimo 0.03
-      this.videoOpacity = opacity;
-    },
-  },
+  name: "SeacrhDepa",
+  components:{
+    FooterComponent
+  }
 };
 </script>
 
 <style scoped>
-/* HERO VIDEO */
-.video-hero {
-  position: relative;
-  height: 100vh;
+.overlay-top {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  overflow: hidden;
-}
-
-.video-background {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-  transition: opacity 0.3s linear;
-}
-
-.hero-overlay {
-  position: relative;
-  z-index: 2;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.4);
-  color: white;
-  padding: 0 20px;
-}
-
-/* Texto */
-.hero-title {
-  font-size: 3.5rem;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-.hero-subtitle {
-  font-size: 1.5rem;
-  margin-bottom: 25px;
-}
-
-/* Botón */
-.btn-explore {
-  padding: 14px 36px;
-  background: linear-gradient(90deg, #4a00e0, #8e2de2);
-  border-radius: 30px;
-  color: white;
-  font-weight: bold;
-  text-decoration: none;
-  transition: 0.3s ease;
-}
-.btn-explore:hover {
-  background: linear-gradient(90deg, #6a11cb, #2575fc);
-  transform: translateY(-3px);
-}
-
-/* SECCIONES */
-.section-title {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #333;
-  position: relative;
-}
-.section-title::after {
-  content: "";
-  display: block;
-  width: 60px;
-  height: 4px;
-  background: #4a00e0;
-  margin: 10px auto 0;
-  border-radius: 2px;
-}
-
-/* Cards */
-.hover-card {
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.hover-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-}
-
-/* CTA */
-.cta-section {
-  background: linear-gradient(90deg, #1a2980, #26d0ce);
-  color: white;
-  border-radius: 12px;
-  margin-bottom: 40px;
-}
-.cta-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-.cta-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin: 0;
+  height: 120px;
+  /* ajusta el alto de la sombra */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.0) 100%);
+  z-index: 0;
+  pointer-events: none;
+  /* evita que bloquee clics */
 }
 </style>
