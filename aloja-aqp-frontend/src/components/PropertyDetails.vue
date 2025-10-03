@@ -3,7 +3,8 @@
         <div class="sticky top-24">
             <div class="relative">
                 <div class="w-full aspect-[4/3] bg-gray-200 dark:bg-gray-800 rounded-xl overflow-hidden h-80">
-                    <MapView :latitud="latitud" :longitud="longitud" />
+                    <MapView :latitudCasa="latitudCasa" :longitudCasa="longitudCasa" :latitudUni="latitudUni" :longitudUni="longitudUni" :UniImgUrl="UniImgUrl"
+                    @ruta-calculada="onRutaCalculada"/>
                 </div>
                 <div class="absolute bottom-4 right-4 flex flex-col gap-2">
                     <button
@@ -68,23 +69,37 @@
 import MapView from "../components/MapView.vue";
 
 export default {
-  name: "PropertyDetails",
-  props: {
-    title: String,
-    direccion: String,
-    precio: Number,
-    distacia: Number,
-    habitaciones: Number,
-    servicios: {
-      type: Array,
-      default: () => []
+    name: "PropertyDetails",
+    props: {
+        title: String,
+        direccion: String,
+        precio: Number,
+        habitaciones: Number,
+        servicios: {
+            type: Array,
+            default: () => []
+        },
+        latitudCasa: Number,
+        longitudCasa: Number,
+        latitudUni: Number,
+        longitudUni: Number,
+        UniImgUrl: String,
     },
-    latitud:Number,
-    longitud:Number
-
-  },
-  components:{
-    MapView
-  }
+    components: {
+        MapView
+    },
+    data() {
+        return {
+            distacia:null
+        };
+    },
+    methods: {
+        onRutaCalculada({ distancia, duracion }) {
+            // Convertir distancia a kilómetros y duración a minutos
+            const distanciaKm = (distancia / 1000).toFixed(2);
+            const duracionMin = Math.ceil(duracion / 60);
+            this.distacia = `${distanciaKm} km (${duracionMin} min)`;
+        }
+    }
 };
 </script>

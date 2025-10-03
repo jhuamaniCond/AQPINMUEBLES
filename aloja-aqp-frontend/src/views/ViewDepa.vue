@@ -148,11 +148,28 @@
                                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2d_f_g-h_j_k-l_m_n-p_q_r-s_t_u-v_w_x-y_z_a-b_c_d_e_f-g_h_j_k-l_m_n_p-q_r_s_t-u_v_w_x_y_z_a_b-c_d_e_f-g_h_j_k-l_m_n_p_q_r_s" />
                                     </div>
                                 </div>
+                                
                                 <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
                                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Location</h2>
+                                    <div class="mt-4 flex flex-wrap gap-4">
+                                        <FilterButtonMultipleOptions
+                                            :opciones="universities.map(u => u.name)"
+                                            @optionFiltroSelected="handleUniversitySelected"
+                                        />
+
+                                        <FilterButtonMultipleOptions
+                                            v-if="selectedUniversity"
+                                            :opciones="selectedUniversity.sedes.map(s => s.name)"
+                                            @optionFiltroSelected="handleSedeSelected"
+                                        />
+                                    </div>
+                                    
                                     <div
                                         class="mt-4 aspect-video bg-gray-200 dark:bg-gray-800 rounded-xl overflow-hidden">
-                                        <MapView />
+                                        
+                                        
+                                        <MapView :latitudCasa="dataHouse.lat" :longitudCasa="dataHouse.lng" :latitudUni="selectedSede.lat" :longitudUni="selectedSede.lng" :UniImgUrl="selectedUniversity.imageUrl"/>
+
                                     </div>
                                 </div>
                                 <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
@@ -243,11 +260,88 @@
 
 <script>
 import MapView from "../components/MapView.vue";
+import FilterButtonMultipleOptions from "../components/FilterButtonMultipleOptions.vue";
 
 export default {
     name: "ViewDepa",
     components:{
-    MapView
-  }
+    MapView,
+    FilterButtonMultipleOptions,
+    },
+    data(){
+        return {
+            dataHouse: {
+                lat: -16.409047,
+                lng: -71.537451,
+            },
+            universities: [
+                {
+                name: "Universidad Nacional de San Agustin", 
+                imageUrl: "../public/Escudo_UNSA.png",
+                sedes: [
+                    { name: "Ingenieria", lat: -16.404684, lng: -71.524577},
+                    { name: "Biomedicas", lat: -16.412480, lng: -71.534752},
+                    { name: "Sociales", lat: -16.405969, lng: -71.520543 },]
+                },
+                {
+                name: "Universidad Catolica de Santa Maria",
+                imageUrl: "../public/Escudo_UCSM.png",
+                sedes: [
+                    { name: "Campus Central Umacollo", lat: -16.406310, lng: -71.547563 },
+                ]
+                },
+                {
+                name: "Universidad Tecnologica del Peru",
+                imageUrl: "../public/Escudo_UTP.png",
+                sedes: [
+                    { name: "Sede av. Tacna y arica", lat: -16.408627, lng: -71.541031 }, 
+                    { name: "Sede av. Parra", lat: -16.408469, lng: -71.542242 }, 
+                    { name: "Nueva Sede", lat: -16.409622, lng: -71.543182 }, 
+
+                ]
+                },
+                {
+                name: "Universidad Continental",
+                imageUrl: "../public/Escudo_Continental.jpg",
+                sedes: [
+                    { name: "Campus Principal", lat: -16.412307, lng: -71.524355 }, , 
+                ]
+                },
+                {
+                name: "Universidad de San Martin de Porres",
+                imageUrl: "../public/Escudo_USMP.png",
+                sedes: [
+                    { name: "Campus Principal Arequipa", lat: -16.424397, lng: -71.521655 }, , 
+                ]
+                },
+            ],
+            selectedUniversity: null,
+            selectedSede: null,
+        }
+    },
+    created() {
+        this.selectedUniversity = this.universities[0];
+        this.selectedSede = this.selectedUniversity.sedes[0];
+    },methods: {
+        handleUniversitySelected(universityName) {
+        this.selectedUniversity = this.universities.find(
+            (u) => u.name === universityName
+        );
+        console.log("Universidad seleccionada:", this.selectedUniversity);
+        this.selectedSede = this.selectedUniversity.sedes[0]; // reset al cambiar de universidad
+        },
+        handleSedeSelected(sedeName) {
+        this.selectedSede = this.selectedUniversity.sedes.find(
+            (s) => s.name === sedeName
+        );
+        console.log("Sede seleccionada:", this.selectedSede);
+        },
+        handlePriceSelecterd(range) {
+        console.log("Rango de precios seleccionado:", range);
+        },
+        handleBedroomsSelected(range) {
+        console.log("Rango de habitaciones seleccionado:", range);
+        },
+    }
 };
 </script>
