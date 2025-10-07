@@ -1,8 +1,8 @@
 <template>
-    <div class="hidden lg:block">
+    
         <div class="sticky top-24">
             <div class="relative">
-                <div class="w-full aspect-[4/3] bg-gray-200 dark:bg-gray-800 rounded-xl overflow-hidden h-80">
+                <div class="w-full aspect-[4/3] bg-gray-200 dark:bg-gray-800 rounded-xl overflow-hidden ">
                     <MapView :latitudCasa="latitudCasa" :longitudCasa="longitudCasa" :latitudUni="latitudUni" :longitudUni="longitudUni" :UniImgUrl="UniImgUrl"
                     @ruta-calculada="onRutaCalculada"/>
                 </div>
@@ -61,7 +61,6 @@
                 </router-link>
             </div>
         </div>
-    </div>
 </template>
 
 

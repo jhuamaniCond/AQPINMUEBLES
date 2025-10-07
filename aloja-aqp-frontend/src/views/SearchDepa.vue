@@ -25,50 +25,25 @@
 
 
                 <div class="mt-4 flex flex-wrap gap-4">
-                  <FilterButtonMultipleOptions
-                    titulo="Selecciona la Universidad"
-                    :opciones="universities.map(u => u.name)"
-                    @optionFiltroSelected="handleUniversitySelected"
-                  />
+                  <FilterButtonMultipleOptions titulo="Selecciona la Universidad"
+                    :opciones="universities.map(u => u.name)" @optionFiltroSelected="handleUniversitySelected" />
 
-                  <FilterButtonMultipleOptions
-                    titulo="Selecciona la Sede"
-                    v-if="selectedUniversity"
-                    :opciones="selectedUniversity.sedes.map(s => s.name)"
-                    @optionFiltroSelected="handleSedeSelected"
-                  />
+                  <FilterButtonMultipleOptions titulo="Selecciona la Sede" v-if="selectedUniversity"
+                    :opciones="selectedUniversity.sedes.map(s => s.name)" @optionFiltroSelected="handleSedeSelected" />
 
-                  <FilterButtonRange 
-                    title="Precio"
-                    :min ="0"
-                    :max="3000"
-                    :start ="500"
-                    :end="2000"
-                    tipoDato="$"
-                    @rangeSelected="handlePriceSelecterd"
-                  />
-                  
-                  <FilterButtonRange 
-                    title="Habitaciones"
-                    :min ="1"
-                    :max="5"
-                    :start ="1"
-                    :end="2"
-                    @rangeSelected="handleBedroomsSelected"
-                  />
+                  <FilterButtonRange title="Precio" :min="0" :max="3000" :start="500" :end="2000" tipoDato="$"
+                    @rangeSelected="handlePriceSelecterd" />
+
+                  <FilterButtonRange title="Habitaciones" :min="1" :max="5" :start="1" :end="2"
+                    @rangeSelected="handleBedroomsSelected" />
 
                 </div>
 
-
-
-
-
-
               </div>
               <div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Alojamiento cerca de 
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Alojamiento cerca de
                   <span class="text-primary">
-                  {{ selectedUniversity.name }}
+                    {{ selectedUniversity.name }}
                   </span>
 
                 </h2>
@@ -76,7 +51,7 @@
 
                   <PropertyCard v-for="(property, index) in properties" :key="index" :title="property.title"
                     :description="property.description" :distance="property.distance" :image="property.image"
-                    :isSelected="selectedIndex === index" @card-clicked="selectedIndex = index" />
+                    :isSelected="selectedIndex === index" @card-clicked="handleCardClicked(index)" />
 
                 </div>
                 <div class="mt-8 flex justify-center">
@@ -113,12 +88,48 @@
               </div>
             </div>
 
-            <PropertyDetails :title="properties[selectedIndex].title" :direccion="properties[selectedIndex].direccion"
-              :precio="properties[selectedIndex].precio"
-              :habitaciones="properties[selectedIndex].habitaciones" :servicios="properties[selectedIndex].servicios"
-              :latitudCasa="properties[selectedIndex].latitud" :longitudCasa="properties[selectedIndex].longitud" 
-              :latitudUni="selectedSede.lat" :longitudUni="selectedSede.lng" :UniImgUrl= "selectedUniversity.imageUrl"
-              />
+            <div v-if="!isCelular" class="hidden lg:block">
+              <PropertyDetails :title="properties[selectedIndex].title" :direccion="properties[selectedIndex].direccion"
+              :precio="properties[selectedIndex].precio" :habitaciones="properties[selectedIndex].habitaciones"
+              :servicios="properties[selectedIndex].servicios" :latitudCasa="properties[selectedIndex].latitud"
+              :longitudCasa="properties[selectedIndex].longitud" :latitudUni="selectedSede.lat"
+              :longitudUni="selectedSede.lng" :UniImgUrl="selectedUniversity.imageUrl" />
+            </div>
+            
+
+            <transition name="fade">
+              <div
+                v-if="showModal && isCelular"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm "
+              >
+                <div
+                  class="relative w-11/12 max-h-[90vh] bg-white rounded-2xl shadow-2xl p-4 overflow-hidden"
+                >
+                  <!-- Botón cerrar -->
+                  <button
+                    class="absolute top-3 right-3 bg-white/80 hover:bg-white text-gray-700 hover:text-black font-bold rounded-full w-8 h-8 flex items-center justify-center shadow-md z-10"
+                    @click="showModal = false"
+                  >
+                    ✕
+                  </button>
+
+                  <!-- Contenido -->
+                  <PropertyDetails
+                    v-if="properties.length && selectedIndex !== null && selectedSede"
+                    :title="properties[selectedIndex].title"
+                    :direccion="properties[selectedIndex].direccion"
+                    :precio="properties[selectedIndex].precio"
+                    :habitaciones="properties[selectedIndex].habitaciones"
+                    :servicios="properties[selectedIndex].servicios"
+                    :latitudCasa="properties[selectedIndex].latitud"
+                    :longitudCasa="properties[selectedIndex].longitud"
+                    :latitudUni="selectedSede.lat"
+                    :longitudUni="selectedSede.lng"
+                    :UniImgUrl="selectedUniversity.imageUrl"
+                  />
+                </div>
+              </div>
+            </transition>
 
           </div>
         </div>
@@ -153,6 +164,9 @@ export default {
   data() {
     return {
       selectedIndex: 0,
+      showModal: false, 
+      isCelular: false,
+
       properties: [
         {
           title: "Acogedor Estudio Amoblado",
@@ -230,12 +244,13 @@ export default {
 
       universities: [
         {
-          name: "Universidad Nacional de San Agustin", 
+          name: "Universidad Nacional de San Agustin",
           imageUrl: "../public/Escudo_UNSA.png",
           sedes: [
-            { name: "Ingenieria", lat: -16.404684, lng: -71.524577},
-            { name: "Biomedicas", lat: -16.412480, lng: -71.534752},
-            { name: "Sociales", lat: -16.405969, lng: -71.520543 },]
+            { name: "Ingenieria", lat: -16.404684, lng: -71.524577 },
+            { name: "Biomedicas", lat: -16.412480, lng: -71.534752 },
+            { name: "Sociales", lat: -16.405969, lng: -71.520543 },
+          ]
         },
         {
           name: "Universidad Catolica de Santa Maria",
@@ -248,24 +263,23 @@ export default {
           name: "Universidad Tecnologica del Peru",
           imageUrl: "../public/Escudo_UTP.png",
           sedes: [
-            { name: "Sede av. Tacna y arica", lat: -16.408627, lng: -71.541031 }, 
-            { name: "Sede av. Parra", lat: -16.408469, lng: -71.542242 }, 
-            { name: "Nueva Sede", lat: -16.409622, lng: -71.543182 }, 
-
+            { name: "Sede av. Tacna y arica", lat: -16.408627, lng: -71.541031 },
+            { name: "Sede av. Parra", lat: -16.408469, lng: -71.542242 },
+            { name: "Nueva Sede", lat: -16.409622, lng: -71.543182 },
           ]
         },
         {
           name: "Universidad Continental",
           imageUrl: "../public/Escudo_Continental.jpg",
           sedes: [
-            { name: "Campus Principal", lat: -16.412307, lng: -71.524355 }, , 
+            { name: "Campus Principal", lat: -16.412307, lng: -71.524355 },
           ]
         },
         {
           name: "Universidad de San Martin de Porres",
           imageUrl: "../public/Escudo_USMP.png",
           sedes: [
-            { name: "Campus Principal Arequipa", lat: -16.424397, lng: -71.521655 }, , 
+            { name: "Campus Principal Arequipa", lat: -16.424397, lng: -71.521655 },
           ]
         },
       ],
@@ -277,19 +291,29 @@ export default {
     this.selectedUniversity = this.universities[0];
     this.selectedSede = this.selectedUniversity.sedes[0];
   },
+  mounted() {
+    this.isCelular = window.innerWidth < 1024;
+    this._resizeHandler = () => {
+      this.isCelular = window.innerWidth < 1024;
+    };
+    window.addEventListener("resize", this._resizeHandler);
+
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this._resizeHandler);
+  },
+
   methods: {
     handleUniversitySelected(universityName) {
       this.selectedUniversity = this.universities.find(
         (u) => u.name === universityName
       );
-      console.log("Universidad seleccionada:", this.selectedUniversity);
-      this.selectedSede = this.selectedUniversity.sedes[0]; // reset al cambiar de universidad
+      this.selectedSede = this.selectedUniversity.sedes[0];
     },
     handleSedeSelected(sedeName) {
       this.selectedSede = this.selectedUniversity.sedes.find(
         (s) => s.name === sedeName
       );
-      console.log("Sede seleccionada:", this.selectedSede);
     },
     handlePriceSelecterd(range) {
       console.log("Rango de precios seleccionado:", range);
@@ -297,9 +321,17 @@ export default {
     handleBedroomsSelected(range) {
       console.log("Rango de habitaciones seleccionado:", range);
     },
-  }
+
+    handleCardClicked(index) {
+      this.selectedIndex = index;
+      if (this.isCelular) {
+        this.showModal = true;
+      }
+    },
+  },
 };
 </script>
+
 <style scoped>
 .material-symbols-outlined {
   font-variation-settings:
