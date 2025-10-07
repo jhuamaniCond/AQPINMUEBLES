@@ -28,27 +28,27 @@
                 <p class="text-gray-600 dark:text-gray-400 mt-1">{{ direccion }}</p>
                 <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <div class="flex items-center justify-between text-lg">
-                        <span class="font-semibold text-gray-800 dark:text-gray-200">Price:</span>
+                        <span class="font-semibold text-gray-800 dark:text-gray-200">Precio:</span>
                         <span class="text-primary font-bold">${{ precio }}<span
-                                class="text-sm font-medium text-gray-500 dark:text-gray-400">/month</span></span>
+                                class="text-sm font-medium text-gray-500 dark:text-gray-400">/mes</span></span>
                     </div>
                     <div class="mt-3 flex items-center justify-between text-sm">
                         <span class="font-medium text-gray-600 dark:text-gray-300 flex items-center gap-2">
                             <span class="material-symbols-outlined text-base">directions_walk</span>
-                            <span>Distance to University:</span>
+                            <span>Distancia a la universidad:</span>
                         </span>
                         <span class="font-semibold text-gray-800 dark:text-white">{{ distacia }}</span>
                     </div>
                     <div class="mt-2 flex items-center justify-between text-sm">
                         <span class="font-medium text-gray-600 dark:text-gray-300 flex items-center gap-2">
                             <span class="material-symbols-outlined text-base">bed</span>
-                            <span>Rooms available:</span>
+                            <span>Habitaciones disponibles:</span>
                         </span>
                         <span class="font-semibold text-gray-800 dark:text-white">{{ habitaciones }}</span>
                     </div>
                 </div>
                 <div class="mt-4">
-                    <h4 class="font-semibold text-gray-800 dark:text-white mb-2">Key Highlights:</h4>
+                    <h4 class="font-semibold text-gray-800 dark:text-white mb-2">Aspectos Destacados:</h4>
                     <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-400 list-disc list-inside">
                         <li v-for="(servicio, index) in servicios" :key="index">
                             {{ servicio }}
@@ -57,7 +57,7 @@
                 </div>
                 <router-link to="/view"
                     class="mt-6 block w-full bg-primary text-white text-center py-3 rounded-lg text-sm font-bold hover:bg-primary/90 transition-colors">
-                    View Full Listing
+                    Ver Información Completa
                 </router-link>
             </div>
         </div>

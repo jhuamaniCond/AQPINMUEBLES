@@ -19,11 +19,11 @@
               </a>
               <nav class="hidden md:flex items-center gap-6">
                 <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
-                  href="#">Explore</a>
+                  href="#">Explorar</a>
                 <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
-                  href="#">List your place</a>
+                  href="#">Publica tu departamento</a>
                 <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
-                  href="#">Help</a>
+                  href="#">Ayuda</a>
               </nav>
             </div>
             <div class="flex items-center gap-4">

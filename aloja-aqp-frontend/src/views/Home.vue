@@ -18,17 +18,17 @@
               </a>
               <nav class="hidden md:flex items-center gap-6">
                 <router-link to="/search" class="text-sm font-medium text-white/80 hover:text-white transition-colors">
-                  Explore
+                  Explorar
                 </router-link>
-                <a class="text-sm font-medium text-white/80 hover:text-white transition-colors" href="#">University</a>
-                <a class="text-sm font-medium text-white/80 hover:text-white transition-colors" href="#">For
-                  Landlords</a>
+                <a class="text-sm font-medium text-white/80 hover:text-white transition-colors" href="#">Universidades</a>
+                <a class="text-sm font-medium text-white/80 hover:text-white transition-colors" href="#">Para
+                  Propietarios</a>
               </nav>
             </div>
             <div class="flex items-center gap-4">
               <button
                 class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors">
-                <span class="truncate">List your place</span>
+                <span class="truncate">Publica tu alojamiento</span>
               </button>
               <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
                 style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuADjJKCAs20JoPIHSq5oRFuZRonfFDVZ-Ph55drMXrZHVsuGCAJQ_IiagW_9h6jLaBLzws1xCnkEL2aq3d4RFprYg_zFEByJSeUlrTkFMMUKWoUye_4fdbuMVmDMpcmVP4R6A0MPtxVnKu0DO8e6gDCbCS6_OO2ip7dcJhNxM-0WSNM8oXTlq86Lisn7l7_pqgQ3ahuikO7iW_KZ3XSvK_3rZ9XZk0igqI5cA5LNmCLmBwYUwy-LjyYUF8BdTQcPBqI6C7lE9nntbIF");'>
@@ -49,12 +49,11 @@
           <!-- Sombra en la parte superior para mejor contraste con el header -->
           <div class="overlay-top"></div>
 
-
           <!-- Contenido encima -->
           <div class="relative z-10 text-center px-4">
-            <h1 class="text-4xl md:text-6xl font-bold mb-4">Find your student home in Arequipa</h1>
+            <h1 class="text-4xl md:text-6xl font-bold mb-4">Encuentra tu alojamiento estudiantil en Arequipa</h1>
             <p class="text-lg md:text-xl max-w-3xl mx-auto mb-8">
-              The easiest way to find and book your accommodation near the best universities.
+              La forma más fácil de encontrar y reservar tu alojamiento cerca de las mejores universidades.
             </p>
             <a href="#explore"
               class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-lg transition-colors text-lg">
@@ -63,40 +62,35 @@
           </div>
         </section>
 
-
-
-
-        <section class="py-16 sm:py-24" >
+        <section class="py-16 sm:py-24">
           <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-              <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">How AlojaAQP Works</h2>
-              <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">We simplify your search for the
-                perfect student apartment in three easy steps.</p>
+              <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Cómo funciona AlojaAQP</h2>
+              <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">Simplificamos tu búsqueda del
+                alojamiento perfecto en tres pasos sencillos.</p>
             </div>
             <div class="grid md:grid-cols-3 gap-8 text-center">
               <div class="flex flex-col items-center">
                 <div class="flex items-center justify-center size-16 rounded-full bg-primary/10 mb-4">
                   <span class="material-symbols-outlined text-3xl text-primary">search</span>
                 </div>
-                <h3 class="text-xl font-semibold mb-2">Search with ease</h3>
-                <p class="text-slate-600 dark:text-slate-400">Use our interactive map and filters to find housing near
-                  your university.</p>
+                <h3 class="text-xl font-semibold mb-2">Busca fácilmente</h3>
+                <p class="text-slate-600 dark:text-slate-400">Usa nuestro mapa interactivo y filtros para encontrar alojamiento cerca
+                  de tu universidad.</p>
               </div>
               <div class="flex flex-col items-center">
                 <div class="flex items-center justify-center size-16 rounded-full bg-primary/10 mb-4">
                   <span class="material-symbols-outlined text-3xl text-primary">schedule</span>
                 </div>
-                <h3 class="text-xl font-semibold mb-2">Save time</h3>
-                <p class="text-slate-600 dark:text-slate-400">See walking and bus travel times to your campus instantly.
-                </p>
+                <h3 class="text-xl font-semibold mb-2">Ahorra tiempo</h3>
+                <p class="text-slate-600 dark:text-slate-400">Consulta al instante los tiempos a pie o en bus hasta tu campus.</p>
               </div>
               <div class="flex flex-col items-center">
                 <div class="flex items-center justify-center size-16 rounded-full bg-primary/10 mb-4">
                   <span class="material-symbols-outlined text-3xl text-primary">task_alt</span>
                 </div>
-                <h3 class="text-xl font-semibold mb-2">Book securely</h3>
-                <p class="text-slate-600 dark:text-slate-400">Book your ideal place through our safe and reliable
-                  platform.</p>
+                <h3 class="text-xl font-semibold mb-2">Reserva con seguridad</h3>
+                <p class="text-slate-600 dark:text-slate-400">Reserva tu alojamiento ideal a través de nuestra plataforma segura y confiable.</p>
               </div>
             </div>
           </div>
@@ -105,15 +99,14 @@
         <section class="py-16 sm:py-24" id="explore">
           <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-              <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Find Housing by University</h2>
-              <p class="text-lg text-slate-600 dark:text-slate-400 mt-2">Select your university to see available
-                listings nearby.</p>
+              <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Encuentra alojamiento por universidad</h2>
+              <p class="text-lg text-slate-600 dark:text-slate-400 mt-2">Selecciona tu universidad para ver los alojamientos disponibles cerca.</p>
             </div>
             <div class="flex flex-col items-center gap-8">
               <div class="flex justify-center gap-8 md:gap-16">
                 <a class="group flex flex-col items-center text-center w-40" href="#">
                   <div class="w-28 h-28 flex items-center justify-center">
-                    <img alt="University Logo 1"
+                    <img alt="Logo Universidad 1"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
                       src="../public/Escudo_UNSA.png" />
                   </div>
@@ -123,7 +116,7 @@
                 </a>
                 <a class="group flex flex-col items-center text-center w-40" href="#">
                   <div class="w-28 h-28 flex items-center justify-center">
-                    <img alt="University Logo 2"
+                    <img alt="Logo Universidad 2"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
                       src="../public/Escudo_UCSM.png" />
                   </div>
@@ -133,7 +126,7 @@
                 </a>
                 <a class="group flex flex-col items-center text-center w-40" href="#">
                   <div class="w-28 h-28 flex items-center justify-center">
-                    <img alt="University Logo 3"
+                    <img alt="Logo Universidad 3"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
                       src="../public/Escudo_UTP.png" />
                   </div>
@@ -145,7 +138,7 @@
               <div class="flex justify-center gap-8 md:gap-16">
                 <a class="group flex flex-col items-center text-center w-40" href="#">
                   <div class="w-28 h-28 flex items-center justify-center">
-                    <img alt="University Logo 4"
+                    <img alt="Logo Universidad 4"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
                       src="../public/Escudo_Continental.jpg" />
                   </div>
@@ -155,7 +148,7 @@
                 </a>
                 <a class="group flex flex-col items-center text-center w-40" href="#">
                   <div class="w-28 h-28 flex items-center justify-center">
-                    <img alt="University Logo 5"
+                    <img alt="Logo Universidad 5"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
                       src="../public/Escudo_USMP.png" />
                   </div>
@@ -168,23 +161,20 @@
           </div>
         </section>
 
-
         <section class="bg-slate-100 dark:bg-slate-900/50 py-16 sm:py-24">
           <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="max-w-4xl mx-auto text-center">
-              <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Ready to find your new
-                home?</h2>
-              <p class="text-lg text-slate-600 dark:text-slate-400 mb-8">Browse hundreds of verified listings. Your
-                Arequipa adventure awaits.</p>
+              <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">¿Listo para encontrar tu nuevo hogar?</h2>
+              <p class="text-lg text-slate-600 dark:text-slate-400 mb-8">Explora cientos de anuncios verificados. Tu aventura en Arequipa te espera.</p>
               <div class="relative max-w-xl mx-auto">
                 <span
                   class="material-symbols-outlined absolute left-4 top-10 -translate-y-1/2 text-slate-400 dark:text-slate-500">search</span>
                 <input
                   class="w-full h-14 pl-12 pr-32 bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500"
-                  placeholder="Search by university or area..." type="text" />
+                  placeholder="Busca por universidad o zona..." type="text" />
                 <button
                   class="absolute right-4 top-12 -translate-y-1/2 bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors">
-                  Search
+                  Buscar
                 </button>
               </div>
             </div>
@@ -197,6 +187,7 @@
 
   </div>
 </template>
+
 
 <script>
 import FooterComponent from "../components/FooterComponent.vue";

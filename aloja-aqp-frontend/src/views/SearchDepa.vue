@@ -20,24 +20,26 @@
                   </div>
                   <input
                     class="w-full pl-10 pr-4 py-3 rounded-lg bg-white dark:bg-background-dark border border-gray-300 dark:border-gray-700 focus:ring-primary focus:border-primary transition"
-                    placeholder="Search for rentals near universities..." type="text" />
+                    placeholder="Busca alojamientos cerca de universidades ..." type="text" />
                 </div>
 
 
                 <div class="mt-4 flex flex-wrap gap-4">
                   <FilterButtonMultipleOptions
+                    titulo="Selecciona la Universidad"
                     :opciones="universities.map(u => u.name)"
                     @optionFiltroSelected="handleUniversitySelected"
                   />
 
                   <FilterButtonMultipleOptions
+                    titulo="Selecciona la Sede"
                     v-if="selectedUniversity"
                     :opciones="selectedUniversity.sedes.map(s => s.name)"
                     @optionFiltroSelected="handleSedeSelected"
                   />
 
                   <FilterButtonRange 
-                    title="Price"
+                    title="Precio"
                     :min ="0"
                     :max="3000"
                     :start ="500"
@@ -47,7 +49,7 @@
                   />
                   
                   <FilterButtonRange 
-                    title="Bedrooms"
+                    title="Habitaciones"
                     :min ="1"
                     :max="5"
                     :start ="1"
@@ -64,7 +66,12 @@
 
               </div>
               <div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Rentals near Stanford University</h2>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Alojamiento cerca de 
+                  <span class="text-primary">
+                  {{ selectedUniversity.name }}
+                  </span>
+
+                </h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
 
                   <PropertyCard v-for="(property, index) in properties" :key="index" :title="property.title"
@@ -148,77 +155,79 @@ export default {
       selectedIndex: 0,
       properties: [
         {
-          title: "Cozy Studio Apartment",
-          description: "A comfortable studio perfect for students.",
-          direccion: "1057 Campus Drive, Stanford, CA",
+          title: "Acogedor Estudio Amoblado",
+          description: "Un estudio cómodo, perfecto para estudiantes.",
+          direccion: "Av. Lambramani 1057, Arequipa, Perú",
           precio: 950,
           habitaciones: 1,
-          distance: "0.5 miles to campus",
+          distance: "0.5 km hasta la universidad",
           image: "https://img10.naventcdn.com/avisos/resize/111/01/47/07/99/85/1200x1200/1557832212.jpg",
-          servicios: ["Fully furnished", "Utilities included", "High-speed internet"],
+          servicios: ["Totalmente amoblado", "Servicios incluidos", "Internet de alta velocidad"],
           latitud: -16.409047,
           longitud: -71.537451
         },
         {
-          title: "Spacious 2-Bedroom Condo",
-          description: "A spacious condo, ideal for sharing.",
-          direccion: "123 University Ave, Stanford, CA",
+          title: "Amplio Departamento de 2 Habitaciones",
+          description: "Un departamento espacioso, ideal para compartir.",
+          direccion: "Av. Ejército 123, Cayma, Arequipa, Perú",
           precio: 1500,
           habitaciones: 2,
-          distance: "1.2 miles to campus",
+          distance: "1.2 km hasta la universidad",
           image: "https://img10.naventcdn.com/avisos/resize/111/01/46/76/88/92/1200x1200/1539977692.jpg",
-          servicios: ["Fully furnished", "High-speed internet"],
+          servicios: ["Totalmente amoblado", "Internet de alta velocidad"],
           latitud: -16.404047,
           longitud: -71.527451
         },
         {
-          title: "Modern 1-Bedroom Flat",
-          description: "A modern flat, close to campus.",
-          direccion: "456 College St, Stanford, CA",
+          title: "Moderno Departamento de 1 Habitación",
+          description: "Un departamento moderno, cerca de la universidad.",
+          direccion: "Calle San Francisco 456, Cercado, Arequipa, Perú",
           precio: 1200,
           habitaciones: 1,
-          distance: "0.8 miles to campus",
+          distance: "0.8 km hasta la universidad",
           image: "https://img10.naventcdn.com/avisos/resize/111/01/47/56/05/59/1200x1200/1559477041.jpg",
-          servicios: ["Utilities included", "Agua caliente"],
+          servicios: ["Servicios incluidos", "Agua caliente"],
           latitud: -16.410047,
           longitud: -71.537451
-        }, {
-          title: "Charming Garden Apartment",
-          description: "Quiet apartment with a beautiful garden view.",
-          direccion: "789 Elm St, Stanford, CA",
+        },
+        {
+          title: "Encantador Departamento con Jardín",
+          description: "Departamento tranquilo con una hermosa vista al jardín.",
+          direccion: "Urb. Los Pinos 789, Yanahuara, Arequipa, Perú",
           precio: 1100,
           habitaciones: 1,
-          distance: "1.5 miles to campus",
+          distance: "1.5 km hasta la universidad",
           image: "https://img10.naventcdn.com/avisos/resize/111/01/47/44/63/44/1200x1200/1556599390.jpg",
-          servicios: ["Fully furnished", "Electricidad incluida"],
+          servicios: ["Totalmente amoblado", "Electricidad incluida"],
           latitud: -16.411047,
           longitud: -71.537451
         },
         {
-          title: "Bright Loft with High Ceilings",
-          description: "Open-plan loft with plenty of natural light.",
-          direccion: "321 Maple Ave, Stanford, CA",
+          title: "Luminoso Loft con Techo Alto",
+          description: "Loft de planta abierta con abundante luz natural.",
+          direccion: "Av. Los Incas 321, Umacollo, Arequipa, Perú",
           precio: 1300,
           habitaciones: 1,
-          distance: "2.0 miles to campus",
+          distance: "2.0 km hasta la universidad",
           image: "https://img10.naventcdn.com/avisos/resize/111/01/47/56/01/67/1200x1200/1559458836.jpg",
-          servicios: ["High-speed internet", "Gas included"],
+          servicios: ["Internet de alta velocidad", "Gas incluido"],
           latitud: -16.412047,
           longitud: -71.537451
         },
         {
-          title: "Shared House near Campus",
-          description: "Rent a room in a friendly shared house.",
-          direccion: "654 Oak St, Stanford, CA",
+          title: "Casa Compartida cerca de la Universidad",
+          description: "Alquila una habitación en una casa compartida y amigable.",
+          direccion: "Calle Paucarpata 654, Cercado, Arequipa, Perú",
           precio: 700,
           habitaciones: 1,
-          distance: "0.3 miles to campus",
+          distance: "0.3 km hasta la universidad",
           image: "https://img10.naventcdn.com/avisos/resize/111/01/46/76/75/77/1200x1200/1539966748.jpg",
-          servicios: ["Utilities included"],
+          servicios: ["Servicios incluidos"],
           latitud: -16.413047,
           longitud: -71.537451
         },
       ],
+
       universities: [
         {
           name: "Universidad Nacional de San Agustin", 

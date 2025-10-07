@@ -29,7 +29,7 @@
       class="absolute top-full mt-2 w-64 bg-white dark:bg-background-dark rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4 z-[2000]"
     >
       <h4 class="font-semibold text-gray-800 dark:text-white mb-2">
-        Select University
+        {{ titulo }}
       </h4>
       <ul>
         <li
@@ -54,6 +54,10 @@
 export default {
   name: "FilterButtonMultipleOptions",
   props: {
+    titulo: {
+      type: String,
+      default: "Seleccione una opción",
+    },
     opciones: {
       type: Array,
       default: () => [
