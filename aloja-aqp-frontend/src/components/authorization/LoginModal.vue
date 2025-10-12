@@ -57,17 +57,32 @@
 
       <p class="text-center text-sm mt-8 text-gray-500">
         ¿No tienes una cuenta?
-        <a href="#" class="font-medium text-primary hover:underline">Regístrate</a>
+        <button
+            @click="goToRegister"
+            class="font-medium text-primary hover:underline"
+        >
+            Regístrate
+        </button>
       </p>
+
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch, defineProps, defineEmits } from "vue";
+import { useRouter } from "vue-router";
 
 const props = defineProps({ show: Boolean });
 const emit = defineEmits(["close", "login-success"]);
+
+//Register
+const router = useRouter();
+
+const goToRegister = () => {
+  emit("close"); // Cierra el modal
+  router.push("/register-student"); // Redirige a la vista de registro
+};
 
 const email = ref("");
 const password = ref("");
