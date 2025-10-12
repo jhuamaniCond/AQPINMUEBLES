@@ -230,16 +230,15 @@
 
 
 <script setup>
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, onMounted } from "vue";
 import FooterComponent from "../components/FooterComponent.vue";
-//Modal del login
 import LoginModal from "../components/authorization/LoginModal.vue";
 
 const isDark = ref(false);
-//Control para mostrar/ocultar modal
 const showLogin = ref(false);
-const user = ref(null); //datos del usuario logeado
+const user = ref(null);
 
+// --- Cargar tema oscuro ---
 onBeforeMount(() => {
   const savedTheme = localStorage.getItem("theme");
   if (
@@ -250,20 +249,21 @@ onBeforeMount(() => {
     document.documentElement.classList.add("dark");
   }
 
-  //Ver si hay usuario guardado
+  // --- Ver si hay usuario guardado ---
   const storedUser = localStorage.getItem("user_info");
   if (storedUser) {
     user.value = JSON.parse(storedUser);
   }
 });
 
-//Para el inicio de sesion
+// --- Cuando el login sea exitoso ---
 const onLoginSuccess = (userData) => {
   user.value = userData;
+  localStorage.setItem("user_info", JSON.stringify(userData));
   showLogin.value = false;
 };
 
-// Cerrar sesión
+// --- Cerrar sesión ---
 const logout = () => {
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
@@ -272,7 +272,15 @@ const logout = () => {
   alert("👋 Sesión cerrada");
 };
 
+// --- Escuchar cambios globales (por ejemplo, si el login se hizo desde otro componente) ---
+onMounted(() => {
+  window.addEventListener("storage", () => {
+    const storedUser = localStorage.getItem("user_info");
+    user.value = storedUser ? JSON.parse(storedUser) : null;
+  });
+});
 </script>
+
 
 <style scoped>
 .overlay-top {
