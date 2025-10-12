@@ -264,13 +264,39 @@ const onLoginSuccess = (userData) => {
 };
 
 // --- Cerrar sesión ---
-const logout = () => {
-  localStorage.removeItem("access_token");
-  localStorage.removeItem("refresh_token");
-  localStorage.removeItem("user_info");
-  user.value = null;
-  alert("👋 Sesión cerrada");
+const logout = async () => {
+  try {
+    const refreshToken = localStorage.getItem("refresh_token");
+    const accessToken = localStorage.getItem("access_token");
+
+    if (refreshToken && accessToken) {
+      const res = await fetch("http://127.0.0.1:8000/api/auth/logout/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ refresh: refreshToken }), //CORREGIDO
+      });
+
+      if (res.ok) {
+        console.log("✅ Logout exitoso en el backend");
+      } else {
+        console.warn("⚠️ El backend respondió:", res.status, res.statusText);
+      }
+    }
+  } catch (error) {
+    console.error("❌ Error al cerrar sesión:", error);
+  } finally {
+    // Limpieza local (se ejecuta siempre)
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user_info");
+    user.value = null;
+    alert("👋 Sesión cerrada");
+  }
 };
+
 
 // --- Escuchar cambios globales (por ejemplo, si el login se hizo desde otro componente) ---
 onMounted(() => {
