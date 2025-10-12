@@ -103,7 +103,7 @@
                 class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm "
               >
                 <div
-                  class="relative w-11/12 max-h-[90vh] bg-white rounded-2xl shadow-2xl p-4 overflow-hidden"
+                  class="relative bg-background-light dark:!bg-background-dark w-11/12 max-h-[90vh] bg-white rounded-2xl shadow-2xl p-4 overflow-hidden"
                 >
                   <!-- Botón cerrar -->
                   <button

@@ -207,7 +207,7 @@
                         <div class="hidden lg:block relative">
                             <div class="sticky top-24">
                                 <div
-                                    class="bg-white dark:bg-background-dark rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 p-6">
+                                    class="bg-white dark:!bg-background-dark rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 p-6">
                                     <h3 class="text-xl font-bold text-gray-900 dark:text-white">Contactar Propietario
                                     </h3>
                                     <div class="mt-4 flex items-center gap-4">

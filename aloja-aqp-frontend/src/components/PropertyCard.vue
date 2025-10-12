@@ -4,7 +4,7 @@
     :class="[
       isSelected
         ? 'bg-blue-50 dark:bg-primary/20 ring-2 ring-primary rounded-xl shadow-lg overflow-hidden transition-shadow duration-300'
-        : 'bg-white dark:bg-background-dark rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300'
+        : 'bg-white dark:!bg-background-dark rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300'
     ]"
     @click="$emit('card-clicked')"
   >

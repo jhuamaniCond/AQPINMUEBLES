@@ -23,7 +23,7 @@
                     </button>
                 </div>
             </div>
-            <div class="mt-6 bg-white dark:bg-background-dark p-6 rounded-xl shadow-md">
+            <div class="mt-6 bg-white dark:!bg-background-dark p-6 rounded-xl shadow-md">
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ title }}</h3>
                 <p class="text-gray-600 dark:text-gray-400 mt-1">{{ direccion }}</p>
                 <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
