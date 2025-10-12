@@ -31,7 +31,7 @@
     <!-- Modal -->
     <div
       v-if="isOpen"
-      class="absolute top-full mt-2 w-64 bg-white dark:bg-background-dark rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4 z-10"
+      class="absolute top-full mt-2 w-64 bg-white dark:!bg-background-dark rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4 z-10"
     >
       <h4 class="font-semibold text-gray-800 dark:text-white mb-4">
         {{ title }} Range

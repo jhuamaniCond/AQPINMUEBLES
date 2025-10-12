@@ -26,10 +26,14 @@
 
                 <div class="mt-4 flex flex-wrap gap-4">
                   <FilterButtonMultipleOptions titulo="Selecciona la Universidad"
-                    :opciones="universities.map(u => u.name)" @optionFiltroSelected="handleUniversitySelected" />
+                    :opciones="universities.map(u => u.name)" @optionFiltroSelected="handleUniversitySelected" 
+                    :defaultOption="this.selectedUniversity.name"
+                    />
 
                   <FilterButtonMultipleOptions titulo="Selecciona la Sede" v-if="selectedUniversity"
-                    :opciones="selectedUniversity.sedes.map(s => s.name)" @optionFiltroSelected="handleSedeSelected" />
+                    :opciones="selectedUniversity.sedes.map(s => s.name)" @optionFiltroSelected="handleSedeSelected" 
+                    :defaultOption="this.selectedSede.name"
+                    />
 
                   <FilterButtonRange title="Precio" :min="0" :max="3000" :start="500" :end="2000" tipoDato="$"
                     @rangeSelected="handlePriceSelecterd" />
@@ -149,6 +153,7 @@ import HeaderComponent from "../components/HeaderComponent.vue";
 import FooterComponent from "../components/FooterComponent.vue";
 import FilterButtonMultipleOptions from "../components/FilterButtonMultipleOptions.vue";
 import FilterButtonRange from "../components/FilterButtonRange.vue";
+
 
 export default {
   name: "SeacrhDepa",
@@ -288,8 +293,31 @@ export default {
     };
   },
   created() {
-    this.selectedUniversity = this.universities[0];
-    this.selectedSede = this.selectedUniversity.sedes[0];
+    // ⚡ Aquí accedemos a la ruta usando this.$route
+    const uniParam = this.$route.query.uni;
+
+    console.log("Parámetro recibido:->", uniParam);
+
+    if (uniParam) {
+      // Buscamos el índice que coincida con el nombre
+      const index = this.universities.findIndex(
+        u => u.name.toLowerCase().trim() === uniParam.toLowerCase().trim()
+      );
+
+      if (index !== -1) {
+        this.selectedUniversity = this.universities[index];
+        this.selectedSede = this.selectedUniversity.sedes[0];
+        console.log(`Universidad seleccionada: ${this.selectedUniversity.name}`);
+      } else {
+        // Si no coincide, selecciona la primera por defecto
+        this.selectedUniversity = this.universities[0];
+        this.selectedSede = this.selectedUniversity.sedes[0];
+      }
+    } else {
+      // Si no hay parámetro ?uni=, selecciona la primera
+      this.selectedUniversity = this.universities[0];
+      this.selectedSede = this.selectedUniversity.sedes[0];
+    }
   },
   mounted() {
     this.isCelular = window.innerWidth < 1024;

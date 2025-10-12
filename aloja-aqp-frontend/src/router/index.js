@@ -12,6 +12,15 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    // Si el navegador guarda la posición (por ejemplo, al usar "back"), la usa
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      // De lo contrario, siempre sube al tope de la página
+      return { top: 0 }
+    }
+  },
 })
 
 export default router

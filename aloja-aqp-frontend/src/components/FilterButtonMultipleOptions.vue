@@ -26,7 +26,7 @@
     <!-- Ventana modal -->
     <div
       v-if="isOpen"
-      class="absolute top-full mt-2 w-64 bg-white dark:bg-background-dark rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4 z-[2000]"
+      class="absolute top-full mt-2 w-64 bg-white dark:!bg-background-dark rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4 z-[2000]"
     >
       <h4 class="font-semibold text-gray-800 dark:text-white mb-2">
         {{ titulo }}
@@ -67,6 +67,10 @@ export default {
         "UC Berkeley",
       ],
     },
+    defaultOption: {
+        type: String,
+        default: "Opcion 1",
+    },
   },
   data() {
     return {
@@ -75,7 +79,7 @@ export default {
     };
   },
   mounted() {
-    this.selectedOption = this.opciones[0]; // valor inicial
+    this.selectedOption = this.defaultOption; // valor inicial
   },watch: {
     opciones(newVal, oldVal) {
       if (

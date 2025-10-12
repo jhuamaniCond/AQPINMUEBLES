@@ -104,7 +104,7 @@
             </div>
             <div class="flex flex-col items-center gap-8">
               <div class="flex justify-center gap-8 md:gap-16">
-                <a class="group flex flex-col items-center text-center w-40" href="#">
+                <router-link class="group flex flex-col items-center text-center w-40" :to="{ path: '/search', query: { uni: 'Universidad Nacional de San Agustin' }}">
                   <div class="w-28 h-28 flex items-center justify-center">
                     <img alt="Logo Universidad 1"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
@@ -113,8 +113,8 @@
                   <span
                     class="mt-4 font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">Universidad
                     Nacional de San Agustín</span>
-                </a>
-                <a class="group flex flex-col items-center text-center w-40" href="#">
+                </router-link>
+                <router-link class="group flex flex-col items-center text-center w-40" :to="{ path: '/search', query: { uni: 'Universidad Catolica de Santa Maria' }}">
                   <div class="w-28 h-28 flex items-center justify-center">
                     <img alt="Logo Universidad 2"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
@@ -123,8 +123,8 @@
                   <span
                     class="mt-4 font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">Universidad
                     Católica de Santa María</span>
-                </a>
-                <a class="group flex flex-col items-center text-center w-40" href="#">
+                </router-link>
+                <router-link class="group flex flex-col items-center text-center w-40" :to="{ path: '/search', query: { uni: 'Universidad Tecnologica del Peru' }}">
                   <div class="w-28 h-28 flex items-center justify-center">
                     <img alt="Logo Universidad 3"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
@@ -133,10 +133,10 @@
                   <span
                     class="mt-4 font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">Universidad
                     Tecnológica del Perú</span>
-                </a>
+                </router-link>
               </div>
               <div class="flex justify-center gap-8 md:gap-16">
-                <a class="group flex flex-col items-center text-center w-40" href="#">
+                <router-link class="group flex flex-col items-center text-center w-40" :to="{ path: '/search', query: { uni: 'Universidad Continental' }}">
                   <div class="w-28 h-28 flex items-center justify-center">
                     <img alt="Logo Universidad 4"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
@@ -145,8 +145,8 @@
                   <span
                     class="mt-4 font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">Universidad
                     Continental</span>
-                </a>
-                <a class="group flex flex-col items-center text-center w-40" href="#">
+                </router-link>
+                <router-link class="group flex flex-col items-center text-center w-40" :to="{ path: '/search', query: { uni: 'Universidad de San Martin de Porres' }}">
                   <div class="w-28 h-28 flex items-center justify-center">
                     <img alt="Logo Universidad 5"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
@@ -155,7 +155,7 @@
                   <span
                     class="mt-4 font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">Universidad
                     de San Martín de Porres</span>
-                </a>
+                </router-link>
               </div>
             </div>
           </div>
