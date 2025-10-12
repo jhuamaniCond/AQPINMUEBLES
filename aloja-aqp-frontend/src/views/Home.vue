@@ -31,10 +31,26 @@
                 <span class="truncate">Publica tu alojamiento</span>
               </button>
 
-              <!-- nuevo botón de inicio de sesión -->
+              <!-- Si el usuario está logeado -->
+              <div v-if="user" class="flex items-center gap-3">
+                <div
+                  class="bg-center bg-no-repeat bg-cover rounded-full size-10"
+                  :style="{ backgroundImage: `url(${user.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'})` }"
+                ></div>
+                <span class="font-medium text-white truncate max-w-[120px]">
+                  {{ user.full_name }}
+                </span>
+                <button @click="logout" class="text-sm text-red-300 hover:text-red-400 ml-2">
+                  Cerrar sesión
+                </button>
+              </div>
+
+              <!-- Si no hay usuario -->
               <button
+                v-else
                 @click="showLogin = true"
-                class="text-white font-medium hover:text-primary transition-colors">
+                class="text-white border border-primary hover:bg-primary hover:border-primary font-semibold py-2 px-4 rounded-lg transition-colors"
+              >
                 Iniciar sesión
               </button>
 
@@ -203,7 +219,11 @@
       <FooterComponent/>
     </div>
   
-    <LoginModal :show="showLogin" @close="showLogin = false" />
+    <LoginModal 
+      :show="showLogin" 
+      @close="showLogin = false" 
+      @login-success="onLoginSuccess" 
+    />
 
   </div>
 </template>
@@ -218,6 +238,7 @@ import LoginModal from "../components/authorization/LoginModal.vue";
 const isDark = ref(false);
 //Control para mostrar/ocultar modal
 const showLogin = ref(false);
+const user = ref(null); //datos del usuario logeado
 
 onBeforeMount(() => {
   const savedTheme = localStorage.getItem("theme");
@@ -228,7 +249,29 @@ onBeforeMount(() => {
     isDark.value = true;
     document.documentElement.classList.add("dark");
   }
+
+  //Ver si hay usuario guardado
+  const storedUser = localStorage.getItem("user_info");
+  if (storedUser) {
+    user.value = JSON.parse(storedUser);
+  }
 });
+
+//Para el inicio de sesion
+const onLoginSuccess = (userData) => {
+  user.value = userData;
+  showLogin.value = false;
+};
+
+// Cerrar sesión
+const logout = () => {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+  localStorage.removeItem("user_info");
+  user.value = null;
+  alert("👋 Sesión cerrada");
+};
+
 </script>
 
 <style scoped>

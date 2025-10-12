@@ -133,8 +133,12 @@ const loginUser = async () => {
     if (response.ok) {
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh);
+      localStorage.setItem("user_info", JSON.stringify(data.user)); //---
       alert("✅ Inicio de sesión exitoso");
+      //Emitir el usuario logeado al padre
+      emit("login-success", data.user);
       emit("close");
+      
     } else {
       alert("❌ Credenciales incorrectas");
     }
