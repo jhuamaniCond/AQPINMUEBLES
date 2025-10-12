@@ -30,6 +30,14 @@
                 class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors">
                 <span class="truncate">Publica tu alojamiento</span>
               </button>
+
+              <!-- nuevo botón de inicio de sesión -->
+              <button
+                @click="showLogin = true"
+                class="text-white font-medium hover:text-primary transition-colors">
+                Iniciar sesión
+              </button>
+
               <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
                 style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuADjJKCAs20JoPIHSq5oRFuZRonfFDVZ-Ph55drMXrZHVsuGCAJQ_IiagW_9h6jLaBLzws1xCnkEL2aq3d4RFprYg_zFEByJSeUlrTkFMMUKWoUye_4fdbuMVmDMpcmVP4R6A0MPtxVnKu0DO8e6gDCbCS6_OO2ip7dcJhNxM-0WSNM8oXTlq86Lisn7l7_pqgQ3ahuikO7iW_KZ3XSvK_3rZ9XZk0igqI5cA5LNmCLmBwYUwy-LjyYUF8BdTQcPBqI6C7lE9nntbIF");'>
               </div>
@@ -194,6 +202,8 @@
 
       <FooterComponent/>
     </div>
+  
+    <LoginModal :show="showLogin" @close="showLogin = false" />
 
   </div>
 </template>
@@ -202,8 +212,12 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
 import FooterComponent from "../components/FooterComponent.vue";
+//Modal del login
+import LoginModal from "../components/authorization/LoginModal.vue";
 
 const isDark = ref(false);
+//Control para mostrar/ocultar modal
+const showLogin = ref(false);
 
 onBeforeMount(() => {
   const savedTheme = localStorage.getItem("theme");
