@@ -161,7 +161,17 @@
           </div>
         </section>
 
-        <section class="bg-slate-100 dark:bg-slate-900/50 py-16 sm:py-24">
+        <section class="bg-slate-100 dark:bg-slate-900/50 py-16 sm:py-24 relative overflow-hidden">
+          <div class="absolute right-15 top-0 bottom-0 z-0 flex justify-end">
+            <img
+              alt="Arequipa Cathedral"
+              :class="[
+                'w-full h-full object-contain object-bottom opacity-10 dark:opacity-5 pointer-events-none transition-all duration-500',
+                isDark ? 'invert brightness-200 contrast-100' : ''
+              ]"
+              src="../public/catedral.png"
+            />
+          </div>
           <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="max-w-4xl mx-auto text-center">
               <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">¿Listo para encontrar tu nuevo hogar?</h2>
@@ -189,15 +199,22 @@
 </template>
 
 
-<script>
+<script setup>
+import { ref, onBeforeMount } from "vue";
 import FooterComponent from "../components/FooterComponent.vue";
 
-export default {
-  name: "SeacrhDepa",
-  components:{
-    FooterComponent
+const isDark = ref(false);
+
+onBeforeMount(() => {
+  const savedTheme = localStorage.getItem("theme");
+  if (
+    savedTheme === "dark" ||
+    (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)
+  ) {
+    isDark.value = true;
+    document.documentElement.classList.add("dark");
   }
-};
+});
 </script>
 
 <style scoped>
