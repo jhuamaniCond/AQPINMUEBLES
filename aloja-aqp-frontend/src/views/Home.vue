@@ -27,9 +27,14 @@
             </div>
             <div class="flex items-center gap-4">
               <button
-                class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors">
-                <span class="truncate">Publica tu alojamiento</span>
+                @click="handlePublishClick"
+                class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors rounded-lg shadow-md hover:shadow-lg">
+                <span class="truncate">
+                  {{ isOwner ? "Publica aquí" : "Publica tu alojamiento" }}
+                </span>
               </button>
+
+
 
               <!-- Si el usuario está logeado -->
               <div v-if="user" class="flex items-center gap-3">
@@ -230,15 +235,34 @@
 
 
 <script setup>
-import { ref, onBeforeMount, onMounted } from "vue";
+import { ref, computed, onBeforeMount, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import FooterComponent from "../components/FooterComponent.vue";
 import LoginModal from "../components/authorization/LoginModal.vue";
 
+const router = useRouter();
 const isDark = ref(false);
 const showLogin = ref(false);
 const user = ref(null);
 
-// --- Cargar tema oscuro ---
+// Computed para saber si el usuario es owner
+const isOwner = computed(() => {
+  return user.value?.roles?.includes("owner");
+});
+
+// --- Publicar propiedad ---
+const handlePublishClick = () => {
+  if (!user.value) {
+    // no está logeado → abrir modal de login
+    showLogin.value = true;
+  } else if (isOwner.value) {
+    alert("✅ Ya tienes perfil de propietario. Pronto podrás publicar tus propiedades aquí.");
+  } else {
+    router.push("/register-owner");
+  }
+};
+
+// --- Cargar tema oscuro y usuario guardado ---
 onBeforeMount(() => {
   const savedTheme = localStorage.getItem("theme");
   if (
@@ -249,21 +273,38 @@ onBeforeMount(() => {
     document.documentElement.classList.add("dark");
   }
 
-  // --- Ver si hay usuario guardado ---
   const storedUser = localStorage.getItem("user_info");
-  if (storedUser) {
-    user.value = JSON.parse(storedUser);
-  }
+  if (storedUser) user.value = JSON.parse(storedUser);
 });
 
-// --- Cuando el login sea exitoso ---
+// --- Publicar propiedad ---
+const publishProperty = () => {
+  const token = localStorage.getItem("access_token");
+
+  if (!token) {
+    // Si no está logueado → abrir modal de login
+    showLogin.value = true;
+    return;
+  }
+
+  // Si ya tiene rol de propietario
+  if (user.value && user.value.roles?.includes("owner")) {
+    alert("✅ Ya eres propietario. Puedes publicar tus anuncios desde tu perfil.");
+    return;
+  }
+
+  // Si está logueado pero no es propietario → ir al formulario
+  router.push("/register-owner");
+};
+
+// --- Login exitoso ---
 const onLoginSuccess = (userData) => {
   user.value = userData;
   localStorage.setItem("user_info", JSON.stringify(userData));
   showLogin.value = false;
 };
 
-// --- Cerrar sesión ---
+// --- Logout ---
 const logout = async () => {
   try {
     const refreshToken = localStorage.getItem("refresh_token");
@@ -274,21 +315,17 @@ const logout = async () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({ refresh: refreshToken }), //CORREGIDO
+        body: JSON.stringify({ refresh: refreshToken }),
       });
 
-      if (res.ok) {
-        console.log("✅ Logout exitoso en el backend");
-      } else {
-        console.warn("⚠️ El backend respondió:", res.status, res.statusText);
-      }
+      if (res.ok) console.log("✅ Logout exitoso en el backend");
+      else console.warn("⚠️ El backend respondió:", res.status, res.statusText);
     }
   } catch (error) {
     console.error("❌ Error al cerrar sesión:", error);
   } finally {
-    // Limpieza local (se ejecuta siempre)
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("user_info");
@@ -297,14 +334,14 @@ const logout = async () => {
   }
 };
 
-
-// --- Escuchar cambios globales (por ejemplo, si el login se hizo desde otro componente) ---
+// --- Escucha de cambios globales ---
 onMounted(() => {
   window.addEventListener("storage", () => {
     const storedUser = localStorage.getItem("user_info");
     user.value = storedUser ? JSON.parse(storedUser) : null;
   });
 });
+
 </script>
 
 
