@@ -228,7 +228,7 @@
 
 
 
-    <LoginModal :show="showLogin" @close="showLogin = false" @login-success="onLoginSuccess" />
+    <LoginModal :show="showLogin" @close="closeLoginModal" @login-success="onLoginSuccess" />
 
   </div>
 </template>
@@ -305,7 +305,9 @@ const onLoginSuccess = () => {
   showLogin.value = false;
 };
 
-
+const closeLoginModal = () => {
+  showLogin.value = false;
+};
 
 </script>
 
