@@ -1,7 +1,7 @@
 <template>
   <div class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200">
     <div class="flex flex-col min-h-screen">
-      <header class="absolute top-0 left-0 right-0 z-10">
+      <header class="absolute top-0 left-0 right-0 z-50">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex items-center justify-between h-20">
             <div class="flex items-center gap-8">
@@ -20,14 +20,14 @@
                 <router-link to="/search" class="text-sm font-medium text-white/80 hover:text-white transition-colors">
                   Explorar
                 </router-link>
-                <a class="text-sm font-medium text-white/80 hover:text-white transition-colors" href="#">Universidades</a>
+                <a class="text-sm font-medium text-white/80 hover:text-white transition-colors"
+                  href="#">Universidades</a>
                 <a class="text-sm font-medium text-white/80 hover:text-white transition-colors" href="#">Para
                   Propietarios</a>
               </nav>
             </div>
             <div class="flex items-center gap-4">
-              <button
-                @click="handlePublishClick"
+              <button @click="handlePublishClick"
                 class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors rounded-lg shadow-md hover:shadow-lg">
                 <span class="truncate">
                   {{ isOwner ? "Publica aquí" : "Publica tu alojamiento" }}
@@ -37,31 +37,23 @@
 
 
               <!-- Si el usuario está logeado -->
-              <div v-if="user" class="flex items-center gap-3">
-                <div
-                  class="bg-center bg-no-repeat bg-cover rounded-full size-10"
-                  :style="{ backgroundImage: `url(${user.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'})` }"
-                ></div>
-                <span class="font-medium text-white truncate max-w-[120px]">
-                  {{ user.full_name }}
-                </span>
-                <button @click="logout" class="text-sm text-red-300 hover:text-red-400 ml-2">
-                  Cerrar sesión
-                </button>
+              <div v-if="auth.user" class="flex items-center gap-3">
+                <NotificacionButton />
+
+                <ProfileButton />
+
               </div>
 
               <!-- Si no hay usuario -->
-              <button
-                v-else
-                @click="showLogin = true"
-                class="text-white border border-primary hover:bg-primary hover:border-primary font-semibold py-2 px-4 rounded-lg transition-colors"
-              >
-                Iniciar sesión
-              </button>
+              <div v-else className="flex items-center gap-4">
 
-              <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuADjJKCAs20JoPIHSq5oRFuZRonfFDVZ-Ph55drMXrZHVsuGCAJQ_IiagW_9h6jLaBLzws1xCnkEL2aq3d4RFprYg_zFEByJSeUlrTkFMMUKWoUye_4fdbuMVmDMpcmVP4R6A0MPtxVnKu0DO8e6gDCbCS6_OO2ip7dcJhNxM-0WSNM8oXTlq86Lisn7l7_pqgQ3ahuikO7iW_KZ3XSvK_3rZ9XZk0igqI5cA5LNmCLmBwYUwy-LjyYUF8BdTQcPBqI6C7lE9nntbIF");'>
+                <button @click="showLogin = true"
+                  class="text-white border border-primary hover:bg-primary hover:border-primary font-semibold py-2 px-4 rounded-lg transition-colors">
+                  Iniciar sesión
+                </button>
+
               </div>
+
             </div>
           </div>
         </div>
@@ -104,7 +96,8 @@
                   <span class="material-symbols-outlined text-3xl text-primary">search</span>
                 </div>
                 <h3 class="text-xl font-semibold mb-2">Busca fácilmente</h3>
-                <p class="text-slate-600 dark:text-slate-400">Usa nuestro mapa interactivo y filtros para encontrar alojamiento cerca
+                <p class="text-slate-600 dark:text-slate-400">Usa nuestro mapa interactivo y filtros para encontrar
+                  alojamiento cerca
                   de tu universidad.</p>
               </div>
               <div class="flex flex-col items-center">
@@ -112,14 +105,16 @@
                   <span class="material-symbols-outlined text-3xl text-primary">schedule</span>
                 </div>
                 <h3 class="text-xl font-semibold mb-2">Ahorra tiempo</h3>
-                <p class="text-slate-600 dark:text-slate-400">Consulta al instante los tiempos a pie o en bus hasta tu campus.</p>
+                <p class="text-slate-600 dark:text-slate-400">Consulta al instante los tiempos a pie o en bus hasta tu
+                  campus.</p>
               </div>
               <div class="flex flex-col items-center">
                 <div class="flex items-center justify-center size-16 rounded-full bg-primary/10 mb-4">
                   <span class="material-symbols-outlined text-3xl text-primary">task_alt</span>
                 </div>
                 <h3 class="text-xl font-semibold mb-2">Reserva con seguridad</h3>
-                <p class="text-slate-600 dark:text-slate-400">Reserva tu alojamiento ideal a través de nuestra plataforma segura y confiable.</p>
+                <p class="text-slate-600 dark:text-slate-400">Reserva tu alojamiento ideal a través de nuestra
+                  plataforma segura y confiable.</p>
               </div>
             </div>
           </div>
@@ -128,12 +123,15 @@
         <section class="py-16 sm:py-24" id="explore">
           <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-              <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Encuentra alojamiento por universidad</h2>
-              <p class="text-lg text-slate-600 dark:text-slate-400 mt-2">Selecciona tu universidad para ver los alojamientos disponibles cerca.</p>
+              <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Encuentra alojamiento por
+                universidad</h2>
+              <p class="text-lg text-slate-600 dark:text-slate-400 mt-2">Selecciona tu universidad para ver los
+                alojamientos disponibles cerca.</p>
             </div>
             <div class="flex flex-col items-center gap-8">
               <div class="flex justify-center gap-8 md:gap-16">
-                <router-link class="group flex flex-col items-center text-center w-40" :to="{ path: '/search', query: { uni: 'Universidad Nacional de San Agustin' }}">
+                <router-link class="group flex flex-col items-center text-center w-40"
+                  :to="{ path: '/search', query: { uni: 'Universidad Nacional de San Agustin' } }">
                   <div class="w-28 h-28 flex items-center justify-center">
                     <img alt="Logo Universidad 1"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
@@ -143,7 +141,8 @@
                     class="mt-4 font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">Universidad
                     Nacional de San Agustín</span>
                 </router-link>
-                <router-link class="group flex flex-col items-center text-center w-40" :to="{ path: '/search', query: { uni: 'Universidad Catolica de Santa Maria' }}">
+                <router-link class="group flex flex-col items-center text-center w-40"
+                  :to="{ path: '/search', query: { uni: 'Universidad Catolica de Santa Maria' } }">
                   <div class="w-28 h-28 flex items-center justify-center">
                     <img alt="Logo Universidad 2"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
@@ -153,7 +152,8 @@
                     class="mt-4 font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">Universidad
                     Católica de Santa María</span>
                 </router-link>
-                <router-link class="group flex flex-col items-center text-center w-40" :to="{ path: '/search', query: { uni: 'Universidad Tecnologica del Peru' }}">
+                <router-link class="group flex flex-col items-center text-center w-40"
+                  :to="{ path: '/search', query: { uni: 'Universidad Tecnologica del Peru' } }">
                   <div class="w-28 h-28 flex items-center justify-center">
                     <img alt="Logo Universidad 3"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
@@ -165,7 +165,8 @@
                 </router-link>
               </div>
               <div class="flex justify-center gap-8 md:gap-16">
-                <router-link class="group flex flex-col items-center text-center w-40" :to="{ path: '/search', query: { uni: 'Universidad Continental' }}">
+                <router-link class="group flex flex-col items-center text-center w-40"
+                  :to="{ path: '/search', query: { uni: 'Universidad Continental' } }">
                   <div class="w-28 h-28 flex items-center justify-center">
                     <img alt="Logo Universidad 4"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
@@ -175,7 +176,8 @@
                     class="mt-4 font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">Universidad
                     Continental</span>
                 </router-link>
-                <router-link class="group flex flex-col items-center text-center w-40" :to="{ path: '/search', query: { uni: 'Universidad de San Martin de Porres' }}">
+                <router-link class="group flex flex-col items-center text-center w-40"
+                  :to="{ path: '/search', query: { uni: 'Universidad de San Martin de Porres' } }">
                   <div class="w-28 h-28 flex items-center justify-center">
                     <img alt="Logo Universidad 5"
                       class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
@@ -192,19 +194,17 @@
 
         <section class="bg-slate-100 dark:bg-slate-900/50 py-16 sm:py-24 relative overflow-hidden">
           <div class="absolute right-15 top-0 bottom-0 z-0 flex justify-end">
-            <img
-              alt="Arequipa Cathedral"
-              :class="[
-                'w-full h-full object-contain object-bottom opacity-10 dark:opacity-5 pointer-events-none transition-all duration-500',
-                isDark ? 'invert brightness-200 contrast-100' : ''
-              ]"
-              src="../public/catedral.png"
-            />
+            <img alt="Arequipa Cathedral" :class="[
+              'w-full h-full object-contain object-bottom opacity-10 dark:opacity-5 pointer-events-none transition-all duration-500',
+              isDark ? 'invert brightness-200 contrast-100' : ''
+            ]" src="../public/catedral.png" />
           </div>
           <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="max-w-4xl mx-auto text-center">
-              <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">¿Listo para encontrar tu nuevo hogar?</h2>
-              <p class="text-lg text-slate-600 dark:text-slate-400 mb-8">Explora cientos de anuncios verificados. Tu aventura en Arequipa te espera.</p>
+              <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">¿Listo para encontrar tu
+                nuevo hogar?</h2>
+              <p class="text-lg text-slate-600 dark:text-slate-400 mb-8">Explora cientos de anuncios verificados. Tu
+                aventura en Arequipa te espera.</p>
               <div class="relative max-w-xl mx-auto">
                 <span
                   class="material-symbols-outlined absolute left-4 top-10 -translate-y-1/2 text-slate-400 dark:text-slate-500">search</span>
@@ -221,38 +221,42 @@
         </section>
       </main>
 
-      <FooterComponent/>
+      <FooterComponent />
+
+
     </div>
-  
-    <LoginModal 
-      :show="showLogin" 
-      @close="showLogin = false" 
-      @login-success="onLoginSuccess" 
-    />
+
+
+
+    <LoginModal :show="showLogin" @close="showLogin = false" @login-success="onLoginSuccess" />
 
   </div>
 </template>
 
 
 <script setup>
-import { ref, computed, onBeforeMount, onMounted } from "vue";
+import { ref, computed, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "../stores/auth";
 import FooterComponent from "../components/FooterComponent.vue";
 import LoginModal from "../components/authorization/LoginModal.vue";
+import NotificacionButton from "../components/NotificacionButton.vue";
+import ProfileButton from "../components/ProfileButton.vue";
 
 const router = useRouter();
 const isDark = ref(false);
 const showLogin = ref(false);
-const user = ref(null);
+
+const auth = useAuthStore();
 
 // Computed para saber si el usuario es owner
 const isOwner = computed(() => {
-  return user.value?.roles?.includes("owner");
+  return auth.user?.roles?.includes("owner");
 });
 
 // --- Publicar propiedad ---
 const handlePublishClick = () => {
-  if (!user.value) {
+  if (auth.user) {
     // no está logeado → abrir modal de login
     showLogin.value = true;
   } else if (isOwner.value) {
@@ -273,8 +277,7 @@ onBeforeMount(() => {
     document.documentElement.classList.add("dark");
   }
 
-  const storedUser = localStorage.getItem("user_info");
-  if (storedUser) user.value = JSON.parse(storedUser);
+  auth.loadUser();
 });
 
 // --- Publicar propiedad ---
@@ -288,7 +291,7 @@ const publishProperty = () => {
   }
 
   // Si ya tiene rol de propietario
-  if (user.value && user.value.roles?.includes("owner")) {
+  if (auth.user && auth.user?.roles?.includes("owner")) {
     alert("✅ Ya eres propietario. Puedes publicar tus anuncios desde tu perfil.");
     return;
   }
@@ -298,49 +301,11 @@ const publishProperty = () => {
 };
 
 // --- Login exitoso ---
-const onLoginSuccess = (userData) => {
-  user.value = userData;
-  localStorage.setItem("user_info", JSON.stringify(userData));
+const onLoginSuccess = () => {
   showLogin.value = false;
 };
 
-// --- Logout ---
-const logout = async () => {
-  try {
-    const refreshToken = localStorage.getItem("refresh_token");
-    const accessToken = localStorage.getItem("access_token");
 
-    if (refreshToken && accessToken) {
-      const res = await fetch("http://127.0.0.1:8000/api/auth/logout/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ refresh: refreshToken }),
-      });
-
-      if (res.ok) console.log("✅ Logout exitoso en el backend");
-      else console.warn("⚠️ El backend respondió:", res.status, res.statusText);
-    }
-  } catch (error) {
-    console.error("❌ Error al cerrar sesión:", error);
-  } finally {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user_info");
-    user.value = null;
-    alert("👋 Sesión cerrada");
-  }
-};
-
-// --- Escucha de cambios globales ---
-onMounted(() => {
-  window.addEventListener("storage", () => {
-    const storedUser = localStorage.getItem("user_info");
-    user.value = storedUser ? JSON.parse(storedUser) : null;
-  });
-});
 
 </script>
 

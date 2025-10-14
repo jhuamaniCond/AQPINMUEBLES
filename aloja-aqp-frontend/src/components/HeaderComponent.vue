@@ -44,36 +44,49 @@
             </span>
           </button>
 
-          <button
+          <!-- Si el usuario está logeado -->
+          <div v-if="auth.user" class="flex items-center gap-3">
+            <NotificacionButton />
+            <ProfileButton />
+          </div>
+
+          <!-- Si no está logeado -->
+          <button v-else @click="showLogin = true"
             class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/90 transition-colors">
-            Sign up
+            Iniciar sesión
           </button>
 
-          <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDAlo91pnfJSsmHzc7pE-x3DyhQpI5SdlPENuRZV09BVDE07nVggll8-ZPJv_zOvrbGND65gR_1J1PkODUb__E4-qoBIEklzVkCJdqbKXmo7K3YMwkG4waSkHJsJr-czKTozUCQvl8Kt43MwPX2yN3M-BOBZr3_kL8M3-RuXO58o5SMBBG1kDO35zhXduURZU2Jm6HkHDCEHapiNvC5Y-iyVdtU9D4zhkzgwkwa-4aV3gzkJU038j6day4QXDxGw1qavnntTNVitAE");'>
-          </div>
+
         </div>
       </div>
     </div>
   </header>
+  <LoginModal :show="showLogin" @close="showLogin = false" @login-success="onLoginSuccess" />
 </template>
 
 <script setup>
-import { ref, onBeforeMount  } from "vue";
+import { ref, onBeforeMount } from "vue";
+import NotificacionButton from "./NotificacionButton.vue";
+import { useAuthStore } from "../stores/auth";
+import LoginModal from "../components/authorization/LoginModal.vue";
+import ProfileButton from "../components/ProfileButton.vue";
 
+const auth = useAuthStore();
 const isDark = ref(false);
 const buttonDarkhasInteracted = ref(false);
+const showLogin = ref(false);
 
-  onBeforeMount(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark" || (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
-      isDark.value = true;
-      document.documentElement.classList.add("dark");
-    }
-  });
+
+onBeforeMount(() => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark" || (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+    isDark.value = true;
+    document.documentElement.classList.add("dark");
+  }
+});
 
 function toggleDarkMode() {
-  buttonDarkhasInteracted.value = true; 
+  buttonDarkhasInteracted.value = true;
   isDark.value = !isDark.value;
 
   if (isDark.value) {
@@ -84,4 +97,8 @@ function toggleDarkMode() {
     localStorage.setItem("theme", "light");
   }
 }
+
+const onLoginSuccess = () => {
+  showLogin.value = false;
+};
 </script>

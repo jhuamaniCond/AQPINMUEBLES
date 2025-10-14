@@ -72,12 +72,15 @@
 <script setup>
 import { ref, onMounted, watch, defineProps, defineEmits } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "../../stores/auth";
+
 
 const props = defineProps({ show: Boolean });
 const emit = defineEmits(["close", "login-success"]);
 
 //Register
 const router = useRouter();
+const auth = useAuthStore();
 
 const goToRegister = () => {
   emit("close"); // Cierra el modal
@@ -88,64 +91,36 @@ const email = ref("");
 const password = ref("");
 const googleButton = ref(null);
 
-// --- Login normal ---
+// --- LOGIN NORMAL ---
 const loginUser = async () => {
-  try {
-    const response = await fetch("http://127.0.0.1:8000/api/auth/login/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email.value, password: password.value }),
-    });
-    const data = await response.json();
+  console.log("Intentando login con:", email.value, password.value);
+  const result = await auth.login(email.value, password.value);
 
-    if (response.ok) {
-      localStorage.setItem("access_token", data.access);
-      localStorage.setItem("refresh_token", data.refresh);
-      localStorage.setItem("user_info", JSON.stringify(data.user));
-      emit("login-success", data.user);
-      alert("✅ Inicio de sesión exitoso");
-      emit("close");
-      window.dispatchEvent(new Event("storage"));
-    } else {
-      alert("❌ Credenciales incorrectas");
-    }
-  } catch (error) {
-    console.error("Error al iniciar sesión:", error);
+  if (result.success) {
+    alert("✅ Inicio de sesión exitoso");
+    emit("login-success", auth.user);
+    emit("close");
+  } else {
+    alert("❌ " + result.message);
   }
 };
 
-// --- Google Login ---
+// --- GOOGLE LOGIN ---
 function handleCredentialResponse(response) {
-  console.log("💡 ID Token recibido de Google:", response.credential);
-
   if (!response.credential) {
     alert("Error: no se recibió ID Token de Google");
     return;
   }
 
-  fetch("http://127.0.0.1:8000/api/auth/google-login/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id_token: response.credential }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.access) {
-        localStorage.setItem("access_token", data.access);
-        localStorage.setItem("refresh_token", data.refresh);
-        localStorage.setItem("user_info", JSON.stringify(data.user));
-        emit("login-success", data.user);
-        alert("✅ Login exitoso con Google");
-        emit("close");
-        window.dispatchEvent(new Event("storage"));
-      } else {
-        alert("❌ Error en el login con Google");
-      }
-    })
-    .catch((err) => {
-      console.error("❌ Error al comunicarse con el backend:", err);
-      alert("Error al comunicarse con el backend");
-    });
+  auth.googleLogin(response.credential).then((result) => {
+    if (result.success) {
+      alert("✅ Login exitoso con Google");
+      emit("login-success", auth.user);
+      emit("close");
+    } else {
+      alert("❌ " + result.message);
+    }
+  });
 }
 
 // --- Inicializar Google cuando esté listo ---
