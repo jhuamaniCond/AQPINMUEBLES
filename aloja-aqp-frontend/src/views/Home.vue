@@ -256,7 +256,7 @@ const isOwner = computed(() => {
 
 // --- Publicar propiedad ---
 const handlePublishClick = () => {
-  if (auth.user) {
+  if (!auth.user) {
     // no está logeado → abrir modal de login
     showLogin.value = true;
   } else if (isOwner.value) {

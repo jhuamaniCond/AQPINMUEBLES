@@ -97,7 +97,43 @@ export const useAuthStore = defineStore('auth', {
         alert('👋 Sesión cerrada desde el auth')
       }
     },
+    // --- REGISTRAR PROPIETARIO ---
+    async registerOwner(ownerData) {
+      const token = localStorage.getItem("access_token");
 
+      if (!token) {
+        alert("⚠️ Debes iniciar sesión antes de registrar tu perfil de propietario.");
+        return { success: false, redirect: true };
+      }
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/auth/register-owner/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(ownerData),
+        });
+
+        const data = await res.json();
+        console.log("💡 Respuesta del backend:", data);
+
+        if (res.ok) {
+          alert("✅ Perfil de propietario creado exitosamente.");
+          localStorage.setItem("user_info", JSON.stringify(data.user));
+          return { success: true };
+        } else {
+          const msg = data.message || data.error || JSON.stringify(data);
+          alert(`❌ Error al registrar propietario: ${msg}`);
+          return { success: false };
+        }
+      } catch (err) {
+        console.error("❌ Error al comunicarse con el servidor:", err);
+        alert("Error de conexión con el servidor.");
+        return { success: false };
+      }
+    },
     // 🔹 Carga usuario almacenado al iniciar la app
     loadUser() {
       const storedUser = localStorage.getItem('user_info')

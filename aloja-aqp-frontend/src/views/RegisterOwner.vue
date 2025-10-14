@@ -104,8 +104,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "../stores/auth";
 
 const router = useRouter();
+const auth = useAuthStore();
 
 const first_name = ref("");
 const last_name = ref("");
@@ -117,55 +119,30 @@ const contact_address = ref("");
 onMounted(() => {
   document.documentElement.classList.remove("dark");
 
-  const storedUser = localStorage.getItem("user_info");
-  if (storedUser) {
-    const userData = JSON.parse(storedUser);
-    first_name.value = userData.first_name || "";
-    last_name.value = userData.last_name || "";
+  if (auth.user) {
+
+    first_name.value = auth.user.first_name || "";
+    last_name.value = auth.user.last_name || "";
   }
 });
 
 const registerOwner = async () => {
-  const token = localStorage.getItem("access_token");
-  if (!token) {
-    alert("⚠️ Debes iniciar sesión antes de registrar tu perfil de propietario.");
-    router.push("/");
-    return;
-  }
-
   const payload = {
     first_name: first_name.value,
     last_name: last_name.value,
     phone_number: phone_number.value,
     dni: dni.value,
     contact_address: contact_address.value,
-  };
-
-  try {
-    const res = await fetch("http://127.0.0.1:8000/api/auth/register-owner/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-    console.log("💡 Respuesta del backend:", data);
-
-    if (res.ok) {
-      alert("✅ Perfil de propietario creado exitosamente.");
-      router.push("/");
-    } else {
-      const msg = data.message || data.error || JSON.stringify(data);
-      alert(`❌ Error al registrar propietario: ${msg}`);
-    }
-  } catch (err) {
-    console.error("❌ Error al comunicarse con el servidor:", err);
-    alert("Error de conexión con el servidor.");
   }
-};
+
+  const result = await auth.registerOwner(payload)
+
+  if (result.success) {
+    router.push("/")
+  } else if (result.redirect) {
+    router.push("/") // si no hay token
+  }
+}
 
 const goHome = () => router.push("/");
 </script>
