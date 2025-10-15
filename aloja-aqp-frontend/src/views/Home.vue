@@ -260,7 +260,7 @@ const handlePublishClick = () => {
     // no está logeado → abrir modal de login
     showLogin.value = true;
   } else if (isOwner.value) {
-    alert("✅ Ya tienes perfil de propietario. Pronto podrás publicar tus propiedades aquí.");
+    router.push("/mis-propiedades");
   } else {
     router.push("/register-owner");
   }

@@ -43,7 +43,12 @@
               <span class="material-symbols-outlined text-base text-gray-700 hidden dark:inline">dark_mode</span>
             </span>
           </button>
-
+          <button @click="handlePublishClick"
+            class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors rounded-lg shadow-md hover:shadow-lg">
+            <span class="truncate">
+              {{ isOwner ? "Publica aquí" : "Publica tu alojamiento" }}
+            </span>
+          </button>
           <!-- Si el usuario está logeado -->
           <div v-if="auth.user" class="flex items-center gap-3">
             <NotificacionButton />
@@ -65,17 +70,22 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount ,computed} from "vue";
 import NotificacionButton from "./NotificacionButton.vue";
 import { useAuthStore } from "../stores/auth";
 import LoginModal from "../components/authorization/LoginModal.vue";
 import ProfileButton from "../components/ProfileButton.vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const auth = useAuthStore();
 const isDark = ref(false);
 const buttonDarkhasInteracted = ref(false);
 const showLogin = ref(false);
 
+const isOwner = computed(() => {
+  return auth.user?.roles?.includes("owner");
+});
 
 onBeforeMount(() => {
   const savedTheme = localStorage.getItem("theme");
@@ -84,6 +94,18 @@ onBeforeMount(() => {
     document.documentElement.classList.add("dark");
   }
 });
+
+const handlePublishClick = () => {
+  if (!auth.user) {
+    // no está logeado → abrir modal de login
+    showLogin.value = true;
+  } else if (isOwner.value) {
+    router.push("/mis-propiedades");
+  } else {
+    router.push("/register-owner");
+  }
+};
+
 
 function toggleDarkMode() {
   buttonDarkhasInteracted.value = true;
