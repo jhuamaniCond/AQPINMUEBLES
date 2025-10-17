@@ -11,31 +11,59 @@
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            primary: {
-              DEFAULT: '#13a4ec', // color principal (modo claro)
-              dark: '#4cc9ff',    // versión más clara para modo oscuro
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        'background-light': '#F8F9FA',
+                        'background-dark': '#111827',
+                        'surface-light': '#FFFFFF',
+                        'surface-dark': '#1F2937',
+                        'text-light': '#1F2937',
+                        'text-dark': '#F9FAFB',
+                        'muted-light': '#6B7280',
+                        'muted-dark': '#9CA3AF',
+                        'border-light': '#E5E7EB',
+                        'border-dark': '#374151',
+                        'accent-1': '#FACC15',
+                        'accent-2': '#10B981',
+                    },
+                    fontFamily: {
+                        display: ['Roboto', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        DEFAULT: '0.5rem',
+                        'lg': '0.75rem',
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                    },
+                    animation: {
+                        'pulse-grow': 'pulse-grow 2s infinite',
+                        'fade-in': 'fade-in 1s ease-out forwards',
+                        'slide-in-up': 'slide-in-up 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        'pulse-grow': {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.05)' },
+                        },
+                        'fade-in': {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        'slide-in-up': {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                    },
+                },
             },
-            "background-light": "#f6f7f8",
-            "background-dark": "#101c22",
-          },
-          fontFamily: {
-            "display": ["Work Sans"]
-          },
-          borderRadius: {
-            "DEFAULT": "0.25rem",
-            "lg": "0.5rem",
-            "xl": "0.75rem",
-            "full": "9999px"
-          },
-        },
-      },
-    }
+        };
     </script>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>

@@ -20,11 +20,7 @@
                     </router-link to="/">
                 </div>
                 <nav class="flex flex-col gap-2">
-                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-800 dark:text-gray-200 hover:bg-primary/20 dark:hover:bg-primary/30"
-                        href="#">
-                        <span class="material-symbols-outlined">dashboard</span>
-                        <p class="text-sm font-medium">Dashboard</p>
-                    </a>
+                    
                     <router-link class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-800 dark:text-gray-200 hover:bg-primary/20 dark:hover:bg-primary/30"
                         to="/mis-propiedades"
                         exact-active-class="bg-primary/20 dark:bg-primary/30 text-primary"
@@ -39,11 +35,13 @@
                         <span class="material-symbols-outlined">add_circle_outline</span>
                         <p class="text-sm font-medium">Add Property</p>
                     </router-link>
-                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-800 dark:text-gray-200 hover:bg-primary/20 dark:hover:bg-primary/30"
-                        href="#">
+                    <router-link class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-800 dark:text-gray-200 hover:bg-primary/20 dark:hover:bg-primary/30"
+                        to="/mis-propiedades/analytics"
+                        exact-active-class="bg-primary/20 dark:bg-primary/30 text-primary"
+                        >
                         <span class="material-symbols-outlined">analytics</span>
                         <p class="text-sm font-medium">Analytics</p>
-                    </a>
+                    </router-link>
                     <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-800 dark:text-gray-200 hover:bg-primary/20 dark:hover:bg-primary/30"
                         href="#">
                         <span class="material-symbols-outlined">settings</span>

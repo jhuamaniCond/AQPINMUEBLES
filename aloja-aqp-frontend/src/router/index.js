@@ -19,6 +19,7 @@ import Settings from '../views/Profile/Settings.vue'
 import SavedProperties from '../views/Profile/SavedProperties.vue'
 import VerificarPerfil from '../views/Profile/VerifyProfile.vue'
 import Mensajes from '../views/Profile/Mensajes.vue'
+import Analytics from '../views/MisPropiedades/Analytics.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -31,6 +32,7 @@ const routes = [
     component: MisPropiedades,
     children: [
       { path: "", name: "VerPropiedades", component: VerPropiedades },
+      { path: "analytics", name: "Analytics", component: Analytics },
       {
         path: "agregar",
         component: AgregarPropiedad,
