@@ -9,7 +9,7 @@
                 <p class="text-lg text-muted-light dark:text-muted-dark mt-1">Celebrate your progress and unlock new
                     achievements!</p>
             </div>
-            <div class="bg-white dark:bg-surface-dark p-6 rounded-lg shadow animate-slide-in-up">
+            <div class="bg-white dark:!bg-surface-dark p-6 rounded-lg shadow animate-slide-in-up">
                 <h3 class="text-xl font-medium text-text-light dark:text-text-dark flex items-center gap-2">
                     <span class="material-symbols-outlined text-primary">trending_up</span>
                     Overall Success Level
@@ -25,7 +25,7 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-white dark:bg-surface-dark p-6 rounded-lg shadow animate-slide-in-up delay-100">
+            <div class="bg-white dark:!bg-surface-dark p-6 rounded-lg shadow animate-slide-in-up delay-100">
                 <h3 class="text-xl font-medium text-text-light dark:text-text-dark flex items-center gap-2">
                     <span class="material-symbols-outlined text-accent-1">workspace_premium</span>
                     Recent Achievement
@@ -39,7 +39,7 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-white dark:bg-surface-dark p-6 rounded-lg shadow animate-slide-in-up delay-200">
+            <div class="bg-white dark:!bg-surface-dark p-6 rounded-lg shadow animate-slide-in-up delay-200">
                 <h3 class="text-xl font-medium text-text-light dark:text-text-dark flex items-center gap-2">
                     <span class="material-symbols-outlined text-primary">visibility</span>
                     Total Publication Views
@@ -50,7 +50,7 @@
                     +25% vs last month
                 </p>
             </div>
-            <div class="md:col-span-2 bg-white dark:bg-surface-dark p-6 rounded-lg shadow animate-fade-in">
+            <div class="md:col-span-2 bg-white dark:!bg-surface-dark p-6 rounded-lg shadow animate-fade-in">
                 <h3 class="text-xl font-medium text-text-light dark:text-text-dark mb-4 flex items-center gap-2">
                     <span class="material-symbols-outlined text-primary">insights</span>
                     Dynamic Performance Flow
@@ -70,7 +70,7 @@
                             <label class="text-sm font-medium text-text-light dark:text-text-dark sr-only"
                                 for="timeframe">Timeframe:</label>
                             <select
-                                class="p-2 border border-border-light dark:border-border-dark rounded-lg text-text-light dark:text-text-dark bg-background-light dark:bg-background-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                                class="p-2 border border-border-light dark:border-border-dark rounded-lg text-text-light dark:text-text-dark bg-background-light dark:!bg-background-dark focus:outline-none focus:ring-2 focus:ring-primary text-sm"
                                 id="timeframe">
                                 <option value="month">Last Month</option>
                                 <option value="quarter">Last Quarter</option>
@@ -137,7 +137,7 @@
                 </div>
             </div>
             <div
-                class="md:col-span-1 bg-white dark:bg-surface-dark p-6 rounded-lg shadow animate-slide-in-up delay-300">
+                class="md:col-span-1 bg-white dark:!bg-surface-dark p-6 rounded-lg shadow animate-slide-in-up delay-300">
                 <h3 class="text-xl font-medium text-text-light dark:text-text-dark mb-4 flex items-center gap-2">
                     <span class="material-symbols-outlined text-primary">trending_up</span>
                     Views Per Publication
@@ -185,7 +185,7 @@
                 </div>
             </div>
             <div
-                class="col-span-1 md:col-span-3 bg-white dark:bg-surface-dark p-6 rounded-lg shadow animate-slide-in-up delay-400">
+                class="col-span-1 md:col-span-3 bg-white dark:!bg-surface-dark p-6 rounded-lg shadow animate-slide-in-up delay-400">
                 <h3 class="text-xl font-medium text-text-light dark:text-text-dark mb-4 flex items-center gap-2">
                     <span class="material-symbols-outlined text-accent-1">emoji_events</span>
                     Upcoming Challenges &amp; Rewards
