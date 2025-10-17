@@ -7,6 +7,11 @@ import RegisterOwner from '../views/RegisterOwner.vue'
 import MisPropiedades from '../views/MisPropiedades/MisPropiedades.vue'
 import AgregarPropiedad from '../views/MisPropiedades/AgregarPropiedad.vue'
 import VerPropiedades from '../views/MisPropiedades/VerPropiedades.vue'
+import Paso1 from '../views/MisPropiedades/AgregarPropiedad/Paso1.vue'
+import Paso2 from '../views/MisPropiedades/AgregarPropiedad/Paso2.vue'
+import Paso3 from '../views/MisPropiedades/AgregarPropiedad/Paso3.vue'
+import Paso4 from '../views/MisPropiedades/AgregarPropiedad/Paso4.vue'
+import Paso5 from '../views/MisPropiedades/AgregarPropiedad/Paso5.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -19,7 +24,18 @@ const routes = [
     component: MisPropiedades,
     children: [
       { path: "", name: "VerPropiedades", component: VerPropiedades },
-      { path: "agregar", name: "AgregarPropiedad", component: AgregarPropiedad },
+      {
+        path: "agregar",
+        component: AgregarPropiedad,
+        children: [
+          { path: "", redirect: { name: "Paso1" } }, 
+          { path: "paso1", name: "Paso1", component: Paso1 },
+          { path: "paso2", name: "Paso2", component: Paso2 },
+          { path: "paso3", name: "Paso3", component: Paso3 },
+          { path: "paso4", name: "Paso4", component: Paso4 },
+          { path: "paso5", name: "Paso5", component: Paso5 },
+        ],
+      },
     ],
   },
 ]
