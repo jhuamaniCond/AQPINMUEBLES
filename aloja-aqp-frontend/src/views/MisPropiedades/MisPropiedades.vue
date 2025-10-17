@@ -1,8 +1,8 @@
 <template>
-    <div class="bg-background-light dark:bg-background-dark font-display">
+    <div class="bg-background-light dark:!bg-background-dark font-display">
         <div class="flex min-h-screen">
             <!-- SideNavBar -->
-            <aside class="w-64 bg-white dark:bg-gray-800 shadow-md flex flex-col p-4">
+            <aside class="w-64 bg-white dark:!bg-gray-800 shadow-md flex flex-col p-4">
                 <div class="flex items-center gap-3 mb-8">
                     <router-link to="/" class="flex items-center gap-2 text-gray-900 dark:text-white" href="#">
                         <svg class="h-8 w-8 text-primary" fill="none" viewBox="0 0 48 48"
@@ -41,11 +41,6 @@
                     </router-link>
                     <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-800 dark:text-gray-200 hover:bg-primary/20 dark:hover:bg-primary/30"
                         href="#">
-                        <span class="material-symbols-outlined">mail_outline</span>
-                        <p class="text-sm font-medium">Messages</p>
-                    </a>
-                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-800 dark:text-gray-200 hover:bg-primary/20 dark:hover:bg-primary/30"
-                        href="#">
                         <span class="material-symbols-outlined">analytics</span>
                         <p class="text-sm font-medium">Analytics</p>
                     </a>
@@ -59,7 +54,7 @@
             <div class="flex-1 flex flex-col">
                 <!-- TopNavBar -->
                 <header
-                    class="flex items-center justify-between whitespace-nowrap border-b border-gray-200 dark:border-gray-700 px-10 py-3 bg-white dark:bg-gray-800">
+                    class="flex items-center justify-between whitespace-nowrap border-b border-gray-200 dark:!border-gray-700 px-10 py-3 bg-white dark:!bg-gray-800">
                     <label class="flex flex-col min-w-40 !h-10 max-w-sm w-full">
                         <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
                             <div

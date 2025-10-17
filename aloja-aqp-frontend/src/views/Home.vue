@@ -18,7 +18,7 @@
               </a>
               <nav class="hidden md:flex items-center gap-6">
                 <router-link to="/search" class="text-sm font-medium text-white/80 hover:text-white transition-colors">
-                  Explorar
+                  Explorar Alojamientos
                 </router-link>
                 <a class="text-sm font-medium text-white/80 hover:text-white transition-colors"
                   href="#">Universidades</a>
@@ -193,7 +193,7 @@
         </section>
 
         <section class="bg-slate-100 dark:bg-slate-900/50 py-16 sm:py-24 relative overflow-hidden">
-          <div class="absolute right-15 top-0 bottom-0 z-0 flex justify-end">
+          <div class="absolute right-10 top-0 bottom-0 z-0 flex justify-end">
             <img alt="Arequipa Cathedral" :class="[
               'w-full h-full object-contain object-bottom opacity-10 dark:opacity-5 pointer-events-none transition-all duration-500',
               isDark ? 'invert brightness-200 contrast-100' : ''
@@ -207,12 +207,12 @@
                 aventura en Arequipa te espera.</p>
               <div class="relative max-w-xl mx-auto">
                 <span
-                  class="material-symbols-outlined absolute left-4 top-10 -translate-y-1/2 text-slate-400 dark:text-slate-500">search</span>
+                  class="material-symbols-outlined absolute left-4 top-7 -translate-y-1/2 text-slate-400 dark:text-slate-500">search</span>
                 <input
                   class="w-full h-14 pl-12 pr-32 bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500"
                   placeholder="Busca por universidad o zona..." type="text" />
                 <button
-                  class="absolute right-4 top-12 -translate-y-1/2 bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                  class="absolute right-4 top-7 -translate-y-1/2 bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors">
                   Buscar
                 </button>
               </div>

@@ -30,7 +30,7 @@
         </div>
       </div>
 
-      <div class="divide-y divide-slate-200 dark:divide-slate-700">
+      <div class="divide-y divide-slate-200 dark:divide-slate-700 whitespace-normal">
         <a class="block p-4 hover:bg-slate-50 dark:hover:bg-slate-800" href="#">
           <div class="flex items-start gap-4">
             <span class="material-symbols-outlined text-primary mt-1 text-xl">info</span>

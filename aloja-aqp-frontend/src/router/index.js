@@ -12,6 +12,13 @@ import Paso2 from '../views/MisPropiedades/AgregarPropiedad/Paso2.vue'
 import Paso3 from '../views/MisPropiedades/AgregarPropiedad/Paso3.vue'
 import Paso4 from '../views/MisPropiedades/AgregarPropiedad/Paso4.vue'
 import Paso5 from '../views/MisPropiedades/AgregarPropiedad/Paso5.vue'
+import Profile from '../views/Profile/Profile.vue'
+import ViewProfile from '../views/Profile/ViewProfile.vue'
+import EditProfile from '../views/Profile/EditProfile.vue'
+import Settings from '../views/Profile/Settings.vue'
+import SavedProperties from '../views/Profile/SavedProperties.vue'
+import VerificarPerfil from '../views/Profile/VerifyProfile.vue'
+import Mensajes from '../views/Profile/Mensajes.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -37,6 +44,18 @@ const routes = [
         ],
       },
     ],
+  },
+  { path: '/perfil',
+     component: Profile ,
+     children: [
+      { path: "", redirect: { name: "VerPerfil" } },
+      { path: "ver-perfil", name: "VerPerfil", component: ViewProfile },
+      { path: "editar-perfil", name: "EditarPerfil", component: EditProfile },
+      { path: "configuracion", name: "Configuracion", component: Settings },
+      { path: "propiedades-guardadas", name: "PropiedadesGuardadas", component: SavedProperties },
+      { path: "verificar-perfil", name: "VerificarPerfil", component: VerificarPerfil },
+      { path: "mensajes", name: "Mensajes", component: Mensajes },
+     ]
   },
 ]
 

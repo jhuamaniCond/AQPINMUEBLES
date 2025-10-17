@@ -7,10 +7,6 @@ import router from './router'
 // 📦 Pinia
 import { createPinia } from 'pinia'
 
-// 🎨 Estilos globales
-import './assets/styles.css'
-
-// 💎 Vuetify
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col gap-3 pb-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+    <div class="flex flex-col gap-3 pb-3 bg-white dark:!bg-gray-800 rounded-xl shadow-sm overflow-hidden">
         <div class="w-full bg-center bg-no-repeat aspect-video bg-cover" data-alt="Imagen de la propiedad"
             :style="{ backgroundImage: `url(${props.imagen})` }"></div>
 

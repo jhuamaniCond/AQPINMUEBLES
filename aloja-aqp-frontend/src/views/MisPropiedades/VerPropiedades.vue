@@ -14,7 +14,7 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup >
 import MyPropertyCard from '../../components/MisPropiedades/MyPropertyCard.vue';
 const propiedades = [
   {

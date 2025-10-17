@@ -14,21 +14,20 @@
     <transition name="fade">
       <div
         v-if="profileOpen"
-        class="absolute right-0 mt-2 w-56 bg-white dark:bg-background-dark rounded-lg shadow-lg overflow-hidden z-20"
+        class="absolute right-0 mt-2 w-56 bg-white dark:!bg-background-dark rounded-lg shadow-lg overflow-hidden z-20"
       >
         <div class="p-4 border-b border-slate-200 dark:border-slate-700">
-          <p class="font-semibold text-slate-900 dark:text-white">{{ auth.user.first_name }} {{ auth.user.last_name }}</p>
+          <p class="font-semibold text-slate-900 dark:text-white whitespace-normal">{{ auth.user.first_name }} {{ auth.user.last_name }}</p>
           <p class="text-sm text-slate-500 dark:text-slate-400">{{ auth.user.email }}</p>
         </div>
 
         <nav class="py-2">
-          <a
+          <router-link to="/perfil"
             class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-            href="#"
           >
             <span class="material-symbols-outlined text-base">person</span>
             <span>Profile Settings</span>
-          </a>
+          </router-link >
           <a
             class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
             href="#"

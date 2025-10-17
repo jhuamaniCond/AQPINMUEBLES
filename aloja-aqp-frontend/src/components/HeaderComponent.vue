@@ -19,10 +19,8 @@
           </a>
 
           <nav class="hidden md:flex items-center gap-6">
-            <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
-              href="#">Explore</a>
-            <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
-              href="#">List your place</a>
+            <router-link to="/search" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
+              >Explorar Alojamientos</router-link to="/perfil">
             <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
               href="#">Help</a>
           </nav>
@@ -30,19 +28,7 @@
 
         <!-- Toggle y usuario -->
         <div class="flex items-center gap-4">
-          <!-- BOTÓN DARK MODE -->
-          <button @click="toggleDarkMode"
-            class="relative inline-flex items-center h-8 rounded-full w-14 transition-colors"
-            :class="isDark ? 'bg-gray-700' : 'bg-gray-200'">
-            <span class="sr-only">Toggle dark mode</span>
-            <span class="absolute inline-flex items-center justify-center w-6 h-6 bg-white rounded-full" :class="[
-              isDark ? 'translate-x-4' : 'translate-x-0',
-              buttonDarkhasInteracted ? 'transition-transform duration-300 ease-in-out' : ''
-            ]">
-              <span class="material-symbols-outlined text-base text-gray-700 dark:hidden">light_mode</span>
-              <span class="material-symbols-outlined text-base text-gray-700 hidden dark:inline">dark_mode</span>
-            </span>
-          </button>
+          
           <button @click="handlePublishClick"
             class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors rounded-lg shadow-md hover:shadow-lg">
             <span class="truncate">
@@ -105,20 +91,6 @@ const handlePublishClick = () => {
     router.push("/register-owner");
   }
 };
-
-
-function toggleDarkMode() {
-  buttonDarkhasInteracted.value = true;
-  isDark.value = !isDark.value;
-
-  if (isDark.value) {
-    document.documentElement.classList.add("dark");
-    localStorage.setItem("theme", "dark");
-  } else {
-    document.documentElement.classList.remove("dark");
-    localStorage.setItem("theme", "light");
-  }
-}
 
 const onLoginSuccess = () => {
   showLogin.value = false;
