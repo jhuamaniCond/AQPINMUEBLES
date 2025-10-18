@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { onMounted, watch,ref } from "vue";
+import { onMounted, watch, ref, nextTick } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine";
@@ -21,13 +21,13 @@ export default {
   emits: ["ruta-calculada"],
   setup(props, { emit }) {
     const map = ref(null);
-    let markerLayer = null; 
+    let markerLayer = null;
     let houseMarker = null;
     let uniMarker = null;
     let routeLine = null;
-    
+
     const houseIcon = L.icon({
-      iconUrl: houseIconUrl,   
+      iconUrl: houseIconUrl,
       iconSize: [40, 40],      // tamaño del ícono
       iconAnchor: [20, 40],    // punto de anclaje (mitad abajo)
       popupAnchor: [0, -40],   // dónde aparece el popup
@@ -100,66 +100,6 @@ export default {
       );
     };
 
-
-    const drawRecorridoCaminando = async () => {
-      try {
-        // Coordenadas inicio y fin
-        const start = `${props.longitudCasa},${props.latitudCasa}`;
-        const end = `${props.longitudUni},${props.latitudUni}`;
-
-        // Perfil de enrutamiento (puedes cambiar a "driving-car", "cycling-regular", etc.)
-        const profile = "foot-walking";
-
-        // Tu API Key de OpenRouteService
-        const apiKey = "APIKEY_AQUI";
-
-        // URL (con proxy CORS si trabajas en local)
-        const url = `https://cors-anywhere.herokuapp.com/https://api.openrouteservice.org/v2/directions/${profile}?api_key=${apiKey}&start=${start}&end=${end}`;
-
-        // Llamada a ORS
-        const res = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Accept": "application/geo+json, application/json", // ORS exige esto
-            "Content-Type": "application/json; charset=utf-8"
-          }
-        });
-
-        // Manejo de errores
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(`ORS error ${res.status}: ${errorText}`);
-        }
-
-        // Parsear respuesta
-        const data = await res.json();
-
-        // Extraer coordenadas (ORS devuelve [lon, lat], se invierte a [lat, lon])
-        const coords = data.features[0].geometry.coordinates.map(c => [c[1], c[0]]);
-
-        // Si ya hay una ruta dibujada, la eliminamos
-        if (routeLine) {
-          map.value.removeLayer(routeLine);
-        }
-
-        // Dibujar la nueva polyline en el mapa
-        routeLine = L.polyline(coords, {
-          color: "#2563eb", // azul
-          weight: 5,
-          opacity: 0.8
-        }).addTo(map.value);
-
-        // Mostrar distancia y duración en consola
-        const summary = data.features[0].properties.summary;
-        console.log("Distancia (m):", summary.distance);
-        console.log("Duración (s):", summary.duration);
-
-      } catch (err) {
-        console.error("Error calculando ruta:", err);
-      }
-    };
-
-
     const createUniIcon = (url) => {
       const resolvedUrl = new URL(url, import.meta.url).href;
       return L.divIcon({
@@ -175,7 +115,10 @@ export default {
       });
     };
 
-    onMounted(() => {
+    onMounted(async () => {
+
+      await nextTick();
+
       map.value = L.map("map").setView([props.latitudCasa, props.longitudCasa], 13);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -187,20 +130,33 @@ export default {
       houseMarker = L.marker([props.latitudCasa, props.longitudCasa], { icon: houseIcon }).addTo(markerLayer);
 
       uniMarker = L.marker(
-                  [props.latitudUni, props.longitudUni], 
-                  { icon: createUniIcon(props.UniImgUrl) }
-                ).addTo(markerLayer);
-      
-      drawRecorrido();
+        [props.latitudUni, props.longitudUni],
+        { icon: createUniIcon(props.UniImgUrl) }
+      ).addTo(markerLayer);
 
-      fitToMarkers();
+      
+
+      //para que el mapa no este bug
+      const ensureSize = () => {
+        if (map.value && map.value._container.offsetHeight > 0) {
+          map.value.invalidateSize();
+          drawRecorrido();
+
+          fitToMarkers();
+        } else {
+          requestAnimationFrame(ensureSize);
+        }
+      };
+      ensureSize();
+
+
     });
 
     watch(
       () => [props.latitudCasa, props.longitudCasa],
       ([newLat, newLng]) => {
         if (map.value && houseMarker) {
-          
+
           houseMarker.setLatLng([newLat, newLng]);
           drawRecorrido();
           fitToMarkers();
@@ -208,11 +164,11 @@ export default {
       }
     );
 
-     watch(
+    watch(
       () => [props.latitudUni, props.longitudUni],
       ([newLat, newLng]) => {
         if (map.value && uniMarker) {
-          
+
           uniMarker.setLatLng([newLat, newLng]);
           drawRecorrido();
           fitToMarkers();
@@ -237,21 +193,23 @@ export default {
 </script>
 <style>
 .uni-marker {
-  background-color: white; /* azul Tailwind (blue-600) */
-  border-radius: 50%;        /* redondeado completo */
+  background-color: white;
+  /* azul Tailwind (blue-600) */
+  border-radius: 50%;
+  /* redondeado completo */
   display: flex;
   align-items: center;
   justify-content: center;
   width: 50px;
   height: 50px;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .uni-marker img {
-  width: 70%;   /* que no ocupe todo el círculo */
+  width: 70%;
+  /* que no ocupe todo el círculo */
   height: 70%;
   object-fit: contain;
 }
-
 </style>
