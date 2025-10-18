@@ -134,6 +134,65 @@ export const useAuthStore = defineStore('auth', {
         return { success: false };
       }
     },
+     // --- REGISTRO DE ESTUDIANTE ---
+    async registerStudent(payload) {
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/auth/register-student/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        console.log("💡 Respuesta del backend:", data);
+
+        if (res.ok) {
+          return { success: true, message: "Registro exitoso. Ahora puedes iniciar sesión." };
+        } else {
+          return { success: false, message: data[0] || "Verifica los datos." };
+        }
+      } catch (err) {
+        console.error("❌ Error en registro:", err);
+        return { success: false, message: "Error al comunicarse con el servidor" };
+      }
+    },
+    async updateUserInfo(payload) {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        alert("⚠️ No estás autenticado. Inicia sesión nuevamente.");
+        return { success: false };
+      }
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/auth/update-profile/", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        console.log("💡 Respuesta del backend (update):", data);
+
+        if (res.ok) {
+          // 🔹 Actualiza datos locales
+          this.user = data;
+          localStorage.setItem("user_info", JSON.stringify(data));
+          alert("✅ Datos actualizados correctamente.");
+          return { success: true, user: data };
+        } else {
+          const msg = data.detail || data.error || "Error al actualizar.";
+          alert(`❌ ${msg}`);
+          return { success: false };
+        }
+      } catch (err) {
+        console.error("❌ Error al actualizar usuario:", err);
+        alert("Error de conexión con el servidor.");
+        return { success: false };
+      }
+    },
     // 🔹 Carga usuario almacenado al iniciar la app
     loadUser() {
       const storedUser = localStorage.getItem('user_info')

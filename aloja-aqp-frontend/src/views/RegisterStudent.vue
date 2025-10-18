@@ -77,6 +77,7 @@
             v-model="password"
             type="password"
             placeholder="Contraseña"
+            :minlength="6"
             class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/50 h-12 px-4 text-gray-800 transition-all"
             required
           />
@@ -85,6 +86,7 @@
             v-model="confirmPassword"
             type="password"
             placeholder="Confirmar contraseña"
+            :minlength="6"
             class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/50 h-12 px-4 text-gray-800 transition-all"
             required
           />
@@ -147,9 +149,11 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useAuthStore } from '../stores/auth'
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+const auth = useAuthStore()
 
 // Asegurar fondo claro al entrar
 onMounted(() => {
@@ -185,25 +189,12 @@ const registerStudent = async () => {
     campuses: [selectedCampus.value],
   };
 
-  try {
-    const res = await fetch("http://127.0.0.1:8000/api/auth/register-student/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-    console.log("💡 Respuesta del backend:", data);
-
-    if (res.ok) {
-      alert("✅ Registro exitoso. Ahora puedes iniciar sesión.");
-      router.push("/");
-    } else {
-      alert(`❌ Error al registrar: ${data.message || "Verifica los datos"}`);
-    }
-  } catch (err) {
-    console.error("❌ Error en registro:", err);
-    alert("Error al comunicarse con el servidor");
+  const res = await auth.registerStudent(payload);
+  if (res.success) {
+    alert(res.message);
+    router.push('/');
+  } else {
+    alert(`❌ ${res.message}`);
   }
 };
 
