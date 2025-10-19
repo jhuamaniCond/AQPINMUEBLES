@@ -99,11 +99,6 @@ const genders = [
     { value: 'O', label: 'Other' },
 ]
 
-
-
-
-
-
 function editProfile() {
     router.push('/perfil/editar-perfil');
 }

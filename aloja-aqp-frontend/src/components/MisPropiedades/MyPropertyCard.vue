@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col gap-3 pb-3 bg-white dark:!bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+    <div class="flex flex-col gap-3 pb-3 bg-white dark:!bg-gray-800 rounded-xl shadow-sm overflow-hidden max-w-sm">
         <div class="w-full bg-center bg-no-repeat aspect-video bg-cover" data-alt="Imagen de la propiedad"
             :style="{ backgroundImage: `url(${props.imagen})` }"></div>
 
@@ -31,8 +31,7 @@
 
                     <button aria-label="Delete property"
                         class="flex size-10 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-red-100 text-red-700 text-xl hover:bg-red-200 dark:hover:bg-red-900 transition-colors duration-200 ease-in-out"
-                        @click="$emit('eliminar', props.id)"
-                        >
+                        @click="$emit('eliminar', props.id)">
                         <span class="material-symbols-outlined">delete</span>
                     </button>
                 </div>
@@ -72,9 +71,10 @@ const props = defineProps({
 const estadoClase = computed(() => {
     const estado = props.estado.toLowerCase();
 
-    if (estado === "available") return "bg-green-100 text-green-800";
-    if (estado === "pending") return "bg-orange-100 text-orange-800";
-    if (estado === "rented") return "bg-red-100 text-red-800";
+    if (estado === "published") return "bg-green-100 text-green-800";  // ✅ Publicado
+    if (estado === "draft") return "bg-yellow-100 text-yellow-800";    // 📝 Borrador
+    if (estado === "hidden") return "bg-gray-200 text-gray-800";       // 👁️‍🗨️ Oculto
+    if (estado === "deleted") return "bg-red-100 text-red-800";        // ❌ Eliminado
     return "bg-gray-100 text-gray-800";
 });
 </script>

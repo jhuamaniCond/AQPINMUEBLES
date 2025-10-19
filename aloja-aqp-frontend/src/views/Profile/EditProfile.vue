@@ -49,7 +49,7 @@
                                     for="first-name">First Name</label>
                                 <input v-model="form.first_name"
                                     class="w-full px-4 py-2 text-black dark:!text-white bg-transparent border border-black/20 dark:border-white/20 focus:border-primary focus:ring-primary rounded-lg transition-all"
-                                    id="first-name" type="text"/>
+                                    id="first-name" type="text" />
                             </div>
                             <div class="flex flex-col">
                                 <label class="font-medium text-black/60 dark:!text-white/60 text-sm mb-1"
@@ -79,7 +79,7 @@
                         <div class="flex flex-col pt-4 md:pt-0">
                             <label class="font-medium text-black/60 dark:!text-white/60 text-sm mb-1"
                                 for="carrera">Carrera</label>
-                            <input v-model="form.carrera"
+                            <input v-model="form.career"
                                 class="w-full px-4 py-2 text-black dark:!text-white bg-transparent border border-black/20 dark:border-white/20 focus:border-primary focus:ring-primary rounded-lg transition-all"
                                 id="carrera" type="text" />
                         </div>
@@ -88,8 +88,7 @@
                                 for="bio">Bio</label>
                             <textarea v-model="form.bio"
                                 class="w-full px-4 py-2 text-black dark:!text-white bg-transparent border border-black/20 dark:border-white/20 focus:border-primary focus:ring-primary rounded-lg transition-all"
-                                id="bio"
-                                rows="4"></textarea>
+                                id="bio" rows="4"></textarea>
                         </div>
                     </div>
                 </div>
@@ -99,7 +98,7 @@
                     <div class="divide-y divide-black/10 dark:divide-white/10">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-4 items-center">
                             <p class="font-medium text-black/60 dark:!text-white/60">Phone</p>
-                            <input v-model="form.phone"
+                            <input v-model="form.phone_number"
                                 class="md:col-span-2 w-full px-4 py-2 text-black dark:!text-white bg-transparent border border-black/20 dark:border-white/20 focus:border-primary focus:ring-primary rounded-lg transition-all"
                                 type="text" />
                         </div>
@@ -124,43 +123,85 @@
 import SelectDropDown from "../../components/Profile/SelectDropDown.vue";
 import { useAuthStore } from "../../stores/auth";
 import { useRouter } from 'vue-router'
-import {  reactive } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
+import { webPageData } from '/src/stores/webPageData.js';
+
 
 const router = useRouter()
 const auth = useAuthStore();
-console.log("User Data:", JSON.stringify(auth.user));
+const storeWebPageData = webPageData();
 
-const genders =[
-    { value: 'F', label: 'Female' },
-    { value: 'M', label: '  Male' },
-    { value: 'O', label: 'Other' },
+const genders = [
+    { id: 'F', name: 'Female' },
+    { id: 'M', name: '  Male' },
+    { id: 'O', name: 'Other' },
 ]
-const campuses = [
-  { value: 1, label: "Área de Ingenierías - UNSA" },
-  { value: 2, label: "Área Biomédicas - UNSA" },
-  { value: 3, label: "Área Sociales - UNSA" },
-];
+
+const campuses = ref([]);
+
+const fetchCampuses = async () => {
+    try {
+        campuses.value = await storeWebPageData.getUniversityCampus();
+
+        // Asignar el campus correspondiente del usuario
+        const campusFound = campuses.value.find(
+            c => c.name === auth.user.student_profile.campuses?.[0]?.name
+        );
+        if (campusFound) {
+            form.campus = campusFound.id;
+        }
+    } catch (err) {
+        console.error("Error al obtener los campus:", err);
+    }
+};
+
+onMounted(() => {
+    fetchCampuses();
+});
+
 const form = reactive({
     first_name: auth.user.first_name,
     last_name: auth.user.last_name,
-    gender: (genders.find(g => g.value === auth.user.student_profile.gender)?.value) || 'O',
+    gender: (genders.find(g => g.id === auth.user.student_profile.gender)?.id) || 'F',
     age: auth.user.student_profile.age || '00',
-    campus: campuses.find(c => c.label === auth.user.student_profile.campuses?.[0]?.name)?.value || null,
-    carrera:  auth.user.student_profile.career ||'Ing. Nuclear',
+    campus: null,
+    career: auth.user.student_profile.career || 'Ing. Nuclear',
     bio: auth.user.student_profile.bio || 'Hola estoy usando AlojaAQP',
-    phone: auth.user.student_profile.phone_number,
+    phone_number: auth.user.student_profile.phone_number,
     email: auth.user.email,
 })
 
+const hasChanges = () => {
+    const original = {
+        first_name: auth.user.first_name,
+        last_name: auth.user.last_name,
+        gender: auth.user.student_profile.gender,
+        age: auth.user.student_profile.age,
+        campus: auth.user.student_profile.campuses?.[0]?.id || null,
+        career: auth.user.student_profile.career,
+        bio: auth.user.student_profile.bio,
+        phone_number: auth.user.student_profile.phone_number,
+        email: auth.user.email,
+    };
+
+    return Object.keys(form).some(key => {
+        return form[key] != original[key]; // != para cubrir string vs número
+    });
+};
 
 const updateUser = async () => {
-    console.log('🔄 Updating user with data:', form)
-  const result = await auth.updateUserInfo(form)
-  if (result.success) {
-    console.log('✅ Datos actualizados:', result.user)
-    router.push('/perfil/ver-perfil');
-  }
+    if (!hasChanges()) {
+        console.log('⚠️ No se detectaron cambios. No se enviará actualización.');
+        router.push('/perfil/ver-perfil');
+        return;
+    }
+
+    const result = await auth.updateUserInfo(form)
+    if (result.success) {
+        router.push('/perfil/ver-perfil');
+    }
 }
+
 
 
 </script>

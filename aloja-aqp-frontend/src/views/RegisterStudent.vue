@@ -151,12 +151,25 @@
 import { ref, onMounted } from "vue";
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from "vue-router";
+import { webPageData } from '/src/stores/webPageData.js';
 
 const router = useRouter();
 const auth = useAuthStore()
+const storeWebPageData = webPageData();
+
+const campuses = ref([]);
+
+const fetchCampuses = async () => {
+    try {
+        campuses.value = await storeWebPageData.getUniversityCampus();
+    } catch (err) {
+        console.error("Error al obtener los campus:", err);
+    }
+};
 
 // Asegurar fondo claro al entrar
 onMounted(() => {
+  fetchCampuses();
   document.documentElement.classList.remove("dark");
 });
 
@@ -168,12 +181,6 @@ const confirmPassword = ref("");
 const phone_number = ref("");
 const selectedCampus = ref("");
 const acceptedTerms = ref(false);
-
-const campuses = [
-  { id: 1, name: "Área de Ingenierías - UNSA" },
-  { id: 2, name: "Área Biomédicas - UNSA" },
-  { id: 3, name: "Área Sociales - UNSA" },
-];
 
 const registerStudent = async () => {
   if (!acceptedTerms.value) return alert("⚠️ Debes aceptar los términos.");

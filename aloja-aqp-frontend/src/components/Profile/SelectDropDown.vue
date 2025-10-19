@@ -34,7 +34,7 @@
                  hover:bg-gray-100 dark:hover:bg-gray-700
                  text-black dark:!text-white transition-colors"
         >
-          {{ option.label }}
+          {{ option.name }}
         </li>
       </ul>
     </transition>
@@ -46,7 +46,7 @@ import { ref, computed } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 
 const props = defineProps({
-  modelValue: String,
+  modelValue: [String, Number],
   options: {
     type: Array,
     required: true,
@@ -62,13 +62,13 @@ function toggle() {
 }
 
 function selectOption(option) {
-  emit('update:modelValue', option.value)
+  emit('update:modelValue', option.id)
   open.value = false
 }
 
 const selectedOptionLabel = computed(() => {
-  const found = props.options.find(opt => opt.value === props.modelValue)
-  return found ? found.label : 'Select a option'
+  const found = props.options.find(opt => opt.id === props.modelValue)
+  return found ? found.name : 'Select a option'
 })
 
 // Cierra si se hace clic afuera
