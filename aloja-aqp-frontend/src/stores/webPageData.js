@@ -37,14 +37,6 @@ export const webPageData = defineStore("webPageData", {
       return this.cache[resourceName];
     },
 
-    // Métodos específicos para mantener compatibilidad con tu código actual
-    async getMisPropiedades() {
-      return await this.getData("misPropiedades", "accommodations");
-    },
-
-    async updateMisPropiedades() {
-      await this.fetchData("misPropiedades", "accommodations");
-    },
     async getTiposDePropiedad() {
       return await this.getData("tiposDePropiedad", "accommodation-types");
     },

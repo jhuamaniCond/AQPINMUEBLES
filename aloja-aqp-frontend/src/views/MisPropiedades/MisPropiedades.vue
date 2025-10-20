@@ -30,7 +30,7 @@
                     </router-link>
                     <router-link class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-800 dark:text-gray-200 hover:bg-primary/20 dark:hover:bg-primary/30"
                         to="/mis-propiedades/agregar"
-                        exact-active-class="bg-primary/20 dark:bg-primary/30 text-primary"
+                        active-class="bg-primary/20 dark:bg-primary/30 text-primary"
                         >
                         <span class="material-symbols-outlined">add_circle_outline</span>
                         <p class="text-sm font-medium">Add Property</p>

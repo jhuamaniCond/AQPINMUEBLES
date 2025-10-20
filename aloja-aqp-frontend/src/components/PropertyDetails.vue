@@ -55,7 +55,7 @@
                         </li>
                     </ul>
                 </div>
-                <router-link to="/view"
+                <router-link :to="`/view/${id}`"
                     class="mt-6 block w-full bg-primary text-white text-center py-3 rounded-lg text-sm font-bold hover:bg-primary/90 transition-colors">
                     Ver Información Completa
                 </router-link>
@@ -70,6 +70,7 @@ import MapView from "../components/MapView.vue";
 export default {
     name: "PropertyDetails",
     props: {
+        id:Number,
         title: String,
         direccion: String,
         precio: Number,

@@ -7,11 +7,11 @@
             <main class="flex-grow">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <div class="mb-4">
-                        <router-link to="/search"
+                        <button @click="goBack"
                             class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">
                             <span class="material-symbols-outlined">arrow_back</span>
-                            <span>Volver a los resultados de busqueda</span>
-                        </router-link>
+                            <span>Volver</span>
+                        </button>
 
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -133,11 +133,11 @@
                                 <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
                                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Ubicacion</h2>
                                     <div class="mt-4 flex flex-wrap gap-4">
-                                        <FilterButtonMultipleOptions :opciones="universities.map(u => u.name)"
+                                        <FilterButtonMultipleOptions  :opciones="universities.map(u => u.name)" :defaultOption="selectedUniversity.name"
                                             @optionFiltroSelected="handleUniversitySelected" />
 
                                         <FilterButtonMultipleOptions v-if="selectedUniversity"
-                                            :opciones="selectedUniversity.sedes.map(s => s.name)"
+                                            :opciones="selectedUniversity.sedes.map(s => s.name)" :defaultOption="selectedSede.name"
                                             @optionFiltroSelected="handleSedeSelected" />
                                     </div>
 
@@ -145,7 +145,7 @@
                                         class="mt-4 aspect-video bg-gray-200 dark:bg-gray-800 rounded-xl overflow-hidden">
 
 
-                                        <MapView :latitudCasa="dataHouse.lat" :longitudCasa="dataHouse.lng"
+                                        <MapView v-if="selectedSede" :latitudCasa="dataHouse.lat" :longitudCasa="dataHouse.lng"
                                             :latitudUni="selectedSede.lat" :longitudUni="selectedSede.lng"
                                             :UniImgUrl="selectedUniversity.imageUrl" />
 
@@ -241,91 +241,107 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from "vue";
+import { useRoute,useRouter } from "vue-router";
 import MapView from "../components/MapView.vue";
 import FilterButtonMultipleOptions from "../components/FilterButtonMultipleOptions.vue";
 import HeaderComponent from "../components/HeaderComponent.vue";
-export default {
-    name: "ViewDepa",
-    components: {
-        MapView,
-        FilterButtonMultipleOptions,
-        HeaderComponent
-    },
-    data() {
-        return {
-            dataHouse: {
-                lat: -16.409047,
-                lng: -71.537451,
-            },
-            universities: [
-                {
-                    name: "Universidad Nacional de San Agustin",
-                    imageUrl: "../public/Escudo_UNSA.png",
-                    sedes: [
-                        { name: "Ingenieria", lat: -16.404684, lng: -71.524577 },
-                        { name: "Biomedicas", lat: -16.412480, lng: -71.534752 },
-                        { name: "Sociales", lat: -16.405969, lng: -71.520543 },]
-                },
-                {
-                    name: "Universidad Catolica de Santa Maria",
-                    imageUrl: "../public/Escudo_UCSM.png",
-                    sedes: [
-                        { name: "Campus Central Umacollo", lat: -16.406310, lng: -71.547563 },
-                    ]
-                },
-                {
-                    name: "Universidad Tecnologica del Peru",
-                    imageUrl: "../public/Escudo_UTP.png",
-                    sedes: [
-                        { name: "Sede av. Tacna y arica", lat: -16.408627, lng: -71.541031 },
-                        { name: "Sede av. Parra", lat: -16.408469, lng: -71.542242 },
-                        { name: "Nueva Sede", lat: -16.409622, lng: -71.543182 },
+import { useGestionPropiedades } from "/src/stores/useGestionPropiedades.js";
 
-                    ]
-                },
-                {
-                    name: "Universidad Continental",
-                    imageUrl: "../public/Escudo_Continental.jpg",
-                    sedes: [
-                        { name: "Campus Principal", lat: -16.412307, lng: -71.524355 }, ,
-                    ]
-                },
-                {
-                    name: "Universidad de San Martin de Porres",
-                    imageUrl: "../public/Escudo_USMP.png",
-                    sedes: [
-                        { name: "Campus Principal Arequipa", lat: -16.424397, lng: -71.521655 }, ,
-                    ]
-                },
-            ],
-            selectedUniversity: null,
-            selectedSede: null,
-        }
-    },
-    created() {
-        this.selectedUniversity = this.universities[0];
-        this.selectedSede = this.selectedUniversity.sedes[0];
-    }, methods: {
-        handleUniversitySelected(universityName) {
-            this.selectedUniversity = this.universities.find(
-                (u) => u.name === universityName
-            );
-            console.log("Universidad seleccionada:", this.selectedUniversity);
-            this.selectedSede = this.selectedUniversity.sedes[0]; // reset al cambiar de universidad
-        },
-        handleSedeSelected(sedeName) {
-            this.selectedSede = this.selectedUniversity.sedes.find(
-                (s) => s.name === sedeName
-            );
-            console.log("Sede seleccionada:", this.selectedSede);
-        },
-        handlePriceSelecterd(range) {
-            console.log("Rango de precios seleccionado:", range);
-        },
-        handleBedroomsSelected(range) {
-            console.log("Rango de habitaciones seleccionado:", range);
-        },
-    }
+
+// Accedemos al parámetro "id" desde la URL
+const route = useRoute();
+const router = useRouter();
+const id = computed(() => route.params.id);
+const storePropiedades = useGestionPropiedades();
+
+
+// Datos base
+const dataHouse = ref({
+  lat: -16.409047,
+  lng: -71.537451,
+});
+
+const universities = ref([
+  {
+    name: "Universidad Nacional de San Agustin",
+    imageUrl: "../public/Escudo_UNSA.png",
+    sedes: [
+      { name: "Ingenieria", lat: -16.404684, lng: -71.524577 },
+      { name: "Biomedicas", lat: -16.412480, lng: -71.534752 },
+      { name: "Sociales", lat: -16.405969, lng: -71.520543 },
+    ],
+  },
+  {
+    name: "Universidad Catolica de Santa Maria",
+    imageUrl: "../public/Escudo_UCSM.png",
+    sedes: [
+      { name: "Campus Central Umacollo", lat: -16.406310, lng: -71.547563 },
+    ],
+  },
+  {
+    name: "Universidad Tecnologica del Peru",
+    imageUrl: "../public/Escudo_UTP.png",
+    sedes: [
+      { name: "Sede av. Tacna y arica", lat: -16.408627, lng: -71.541031 },
+      { name: "Sede av. Parra", lat: -16.408469, lng: -71.542242 },
+      { name: "Nueva Sede", lat: -16.409622, lng: -71.543182 },
+    ],
+  },
+  {
+    name: "Universidad Continental",
+    imageUrl: "../public/Escudo_Continental.jpg",
+    sedes: [
+      { name: "Campus Principal", lat: -16.412307, lng: -71.524355 },
+    ],
+  },
+  {
+    name: "Universidad de San Martin de Porres",
+    imageUrl: "../public/Escudo_USMP.png",
+    sedes: [
+      { name: "Campus Principal Arequipa", lat: -16.424397, lng: -71.521655 },
+    ],
+  },
+]);
+
+// Variables reactivas
+const selectedUniversity = ref(universities.value[0]);
+const selectedSede = ref(selectedUniversity.value.sedes[0]);
+const propiedad = ref(null);
+
+const fetchMyPropertie = async (id) => {
+  try {
+    propiedad.value = await storePropiedades.getPropiedadActual(id)
+    console.log("propiedad actual :",JSON.stringify(propiedad.value))
+  } catch (err) {
+    console.error("Error al obtener propiedad id ",id," :", err);
+  }
 };
+
+// Inicialización
+onMounted(() => {
+  console.log("ID recibido desde la URL:", id.value);
+    fetchMyPropertie(id.value)
+});
+
+// Métodos
+const handleUniversitySelected = (universityName) => {
+  selectedUniversity.value = universities.value.find(
+    (u) => u.name === universityName
+  );
+  console.log("Universidad seleccionada:", selectedUniversity.value);
+  selectedSede.value = selectedUniversity.value.sedes[0];
+};
+
+const handleSedeSelected = (sedeName) => {
+  selectedSede.value = selectedUniversity.value.sedes.find(
+    (s) => s.name === sedeName
+  );
+  console.log("Sede seleccionada:", selectedSede.value);
+};
+
+const goBack = () => {
+  router.back()
+}
 </script>

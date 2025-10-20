@@ -24,7 +24,7 @@ import Analytics from '../views/MisPropiedades/Analytics.vue'
 const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/search', name: 'SearchDepa', component: SearchDepa },
-  { path: '/view', name: 'VerDepa', component: ViewDepa },
+  { path: '/view/:id', name: 'VerDepa', component: ViewDepa },
   { path: '/register-student', name: 'RegisterStudent', component: RegisterStudent },
   { path: '/register-owner', name: 'RegisterOwner', component: RegisterOwner },
   {

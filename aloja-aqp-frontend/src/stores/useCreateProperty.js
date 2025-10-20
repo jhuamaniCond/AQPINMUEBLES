@@ -29,7 +29,7 @@ export const useCreateProperty = defineStore("propiedad", {
         monthly_price: this.monthly_price,
         coexistence_rules: this.coexistence_rules || "",
       };
-      console.log("Creando alojamiento con datos:", JSON.stringify(data));
+
       const res = await axios.post(
         "http://127.0.0.1:8000/api/accommodations/",
         data,
@@ -37,6 +37,7 @@ export const useCreateProperty = defineStore("propiedad", {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      console.log(`✅ creado alojamiento:`, res.data);
       return res.data; // devuelve el alojamiento creado (con id)
     },
 
@@ -44,7 +45,7 @@ export const useCreateProperty = defineStore("propiedad", {
     async crearServicios(accommodationId, token) {
       // amenidades es un array de IDs o de objetos
       for (const servicioId of this.amenidades) {
-        await axios.post(
+        const res = await axios.post(
           "http://127.0.0.1:8000/api/accommodation-services/",
           {
             accommodation: accommodationId,
@@ -52,19 +53,42 @@ export const useCreateProperty = defineStore("propiedad", {
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        console.log(`✅ creado servicio:`, res.data);
       }
+
     },
 
     // 🔹 Paso 3: Subir fotos
     async subirFotos(accommodationId, token) {
       for (let i = 0; i < this.imagenes.length; i++) {
+        const img = this.imagenes[i];
         const formData = new FormData();
+
+        // Si es Base64, convertirla a File
+        let file;
+        if (typeof img === "string" && img.startsWith("data:image")) {
+          const arr = img.split(",");
+          const mime = arr[0].match(/:(.*?);/)[1];
+          const bstr = atob(arr[1]);
+          let n = bstr.length;
+          const u8arr = new Uint8Array(n);
+          while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+          }
+          file = new File([u8arr], `photo_${i}.${mime.split("/")[1]}`, {
+            type: mime,
+          });
+        } else {
+          // Si ya es un archivo tipo File
+          file = img;
+        }
+
         formData.append("accommodation", accommodationId);
-        formData.append("image", this.imagenes[i]); // debe ser File
+        formData.append("image", file);
         formData.append("order_num", i + 1);
         formData.append("is_main", i === 0);
 
-        await axios.post(
+        const res = await axios.post(
           "http://127.0.0.1:8000/api/accommodation-photos/",
           formData,
           {
@@ -74,20 +98,19 @@ export const useCreateProperty = defineStore("propiedad", {
             },
           }
         );
+        console.log(`✅ creado foto:`, res.data);
       }
     },
     // 🔹 Flujo completo (si lo quieres automatizar todo)
     async publicarPropiedad() {
       const token = localStorage.getItem("access_token");
       const alojamiento = await this.crearAlojamiento(token);
-      console.log("-Alojamiento creado:", alojamiento);
-      console.log("id recibido:", alojamiento.id);
       await this.crearServicios(alojamiento.id, token);
       await this.subirFotos(alojamiento.id, token);
       this.limpiarDatos();
-      return alojamiento;
+
     },
-    
+
     // Métodos para guardar datos paso a paso (como ya tenías)
     setDatosPaso1(data) {
       this.title = data.titulo;

@@ -66,7 +66,6 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const auth = useAuthStore();
 const isDark = ref(false);
-const buttonDarkhasInteracted = ref(false);
 const showLogin = ref(false);
 
 const isOwner = computed(() => {

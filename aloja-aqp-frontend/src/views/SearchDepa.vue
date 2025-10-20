@@ -93,7 +93,9 @@
             </div>
 
             <div v-if="!isCelular" class="hidden lg:block">
-              <PropertyDetails :title="properties[selectedIndex].title" :direccion="properties[selectedIndex].direccion"
+              <PropertyDetails 
+              :id="properties[selectedIndex].id"
+              :title="properties[selectedIndex].title" :direccion="properties[selectedIndex].direccion"
               :precio="properties[selectedIndex].precio" :habitaciones="properties[selectedIndex].habitaciones"
               :servicios="properties[selectedIndex].servicios" :latitudCasa="properties[selectedIndex].latitud"
               :longitudCasa="properties[selectedIndex].longitud" :latitudUni="selectedSede.lat"
@@ -120,6 +122,7 @@
                   <!-- Contenido -->
                   <PropertyDetails
                     v-if="properties.length && selectedIndex !== null && selectedSede"
+                    :id="properties[selectedIndex].id"
                     :title="properties[selectedIndex].title"
                     :direccion="properties[selectedIndex].direccion"
                     :precio="properties[selectedIndex].precio"
@@ -174,6 +177,7 @@ export default {
 
       properties: [
         {
+          id:1,
           title: "Acogedor Estudio Amoblado",
           description: "Un estudio cómodo, perfecto para estudiantes.",
           direccion: "Av. Lambramani 1057, Arequipa, Perú",
@@ -186,6 +190,7 @@ export default {
           longitud: -71.537451
         },
         {
+          id:2,
           title: "Amplio Departamento de 2 Habitaciones",
           description: "Un departamento espacioso, ideal para compartir.",
           direccion: "Av. Ejército 123, Cayma, Arequipa, Perú",
@@ -198,6 +203,7 @@ export default {
           longitud: -71.527451
         },
         {
+          id:3,
           title: "Moderno Departamento de 1 Habitación",
           description: "Un departamento moderno, cerca de la universidad.",
           direccion: "Calle San Francisco 456, Cercado, Arequipa, Perú",
@@ -210,6 +216,7 @@ export default {
           longitud: -71.537451
         },
         {
+          id:4,
           title: "Encantador Departamento con Jardín",
           description: "Departamento tranquilo con una hermosa vista al jardín.",
           direccion: "Urb. Los Pinos 789, Yanahuara, Arequipa, Perú",
@@ -222,6 +229,7 @@ export default {
           longitud: -71.537451
         },
         {
+          id:5,
           title: "Luminoso Loft con Techo Alto",
           description: "Loft de planta abierta con abundante luz natural.",
           direccion: "Av. Los Incas 321, Umacollo, Arequipa, Perú",
@@ -234,6 +242,7 @@ export default {
           longitud: -71.537451
         },
         {
+          id:6,
           title: "Casa Compartida cerca de la Universidad",
           description: "Alquila una habitación en una casa compartida y amigable.",
           direccion: "Calle Paucarpata 654, Cercado, Arequipa, Perú",
