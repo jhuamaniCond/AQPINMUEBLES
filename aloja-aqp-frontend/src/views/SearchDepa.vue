@@ -25,18 +25,18 @@
 
 
                 <div class="mt-4 flex flex-wrap gap-4">
-                  <FilterButtonMultipleOptions titulo="Selecciona la Universidad"
-                    :opciones="universities.map(u => u.name)" @optionFiltroSelected="handleUniversitySelected" 
-                    :defaultOption="this.selectedUniversity.name"
+                  <FilterButtonMultipleOptions titulo="Selecciona la Universidad" v-if="selectedUniversity"
+                    :opciones="universities?.map(u => u.name) || []" @optionFiltroSelected="handleUniversitySelected" 
+                    :defaultOption="selectedUniversity?.name || '' "
                     />
 
                   <FilterButtonMultipleOptions titulo="Selecciona la Sede" v-if="selectedUniversity"
-                    :opciones="selectedUniversity.sedes.map(s => s.name)" @optionFiltroSelected="handleSedeSelected" 
-                    :defaultOption="this.selectedSede.name"
+                    :opciones="selectedUniversity?.sedes?.map(s => s.name) || []" @optionFiltroSelected="handleSedeSelected" 
+                    :defaultOption="selectedSede?.name || ''"
                     />
 
                   <FilterButtonRange title="Precio" :min="0" :max="3000" :start="500" :end="2000" tipoDato="$"
-                    @rangeSelected="handlePriceSelecterd" />
+                    @rangeSelected="handlePriceSelecter" />
 
                   <FilterButtonRange title="Habitaciones" :min="1" :max="5" :start="1" :end="2"
                     @rangeSelected="handleBedroomsSelected" />
@@ -47,7 +47,7 @@
               <div>
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Alojamiento cerca de
                   <span class="text-primary">
-                    {{ selectedUniversity.name }}
+                    {{ selectedUniversity?.name || ''}}
                   </span>
 
                 </h2>
@@ -93,13 +93,13 @@
             </div>
 
             <div v-if="!isCelular" class="hidden lg:block">
-              <PropertyDetails 
+              <PropertyDetails v-if="properties?.length && selectedSede && selectedUniversity"
               :id="properties[selectedIndex].id"
               :title="properties[selectedIndex].title" :direccion="properties[selectedIndex].direccion"
               :precio="properties[selectedIndex].precio" :habitaciones="properties[selectedIndex].habitaciones"
               :servicios="properties[selectedIndex].servicios" :latitudCasa="properties[selectedIndex].latitud"
               :longitudCasa="properties[selectedIndex].longitud" :latitudUni="selectedSede.lat"
-              :longitudUni="selectedSede.lng" :UniImgUrl="selectedUniversity.imageUrl" />
+              :longitudUni="selectedSede.lng" :UniImgUrl="selectedUniversity?.imageUrl || ''" />
             </div>
             
 
@@ -121,7 +121,7 @@
 
                   <!-- Contenido -->
                   <PropertyDetails
-                    v-if="properties.length && selectedIndex !== null && selectedSede"
+                    v-if="properties?.length && selectedSede && selectedUniversity"
                     :id="properties[selectedIndex].id"
                     :title="properties[selectedIndex].title"
                     :direccion="properties[selectedIndex].direccion"
@@ -132,7 +132,7 @@
                     :longitudCasa="properties[selectedIndex].longitud"
                     :latitudUni="selectedSede.lat"
                     :longitudUni="selectedSede.lng"
-                    :UniImgUrl="selectedUniversity.imageUrl"
+                    :UniImgUrl="selectedUniversity?.imageUrl || ''"
                   />
                 </div>
               </div>
@@ -148,225 +148,220 @@
 
   </div>
 </template>
-<script>
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from "vue";
+
 import PropertyCard from "../components/PropertyCard.vue";
-import MapView from "../components/MapView.vue";
 import PropertyDetails from "../components/PropertyDetails.vue";
 import HeaderComponent from "../components/HeaderComponent.vue";
 import FooterComponent from "../components/FooterComponent.vue";
 import FilterButtonMultipleOptions from "../components/FilterButtonMultipleOptions.vue";
 import FilterButtonRange from "../components/FilterButtonRange.vue";
+import { useRoute } from "vue-router";
+import { useGestionPropiedades } from "/src/stores/useGestionPropiedades.js";
 
 
-export default {
-  name: "SeacrhDepa",
-  components: {
-    PropertyCard,
-    MapView,
-    PropertyDetails,
-    HeaderComponent,
-    FooterComponent,
-    FilterButtonMultipleOptions,
-    FilterButtonRange
-  },
-  data() {
-    return {
-      selectedIndex: 0,
-      showModal: false, 
-      isCelular: false,
+const storePropiedades = useGestionPropiedades();
+const route = useRoute();
 
-      properties: [
-        {
-          id:1,
-          title: "Acogedor Estudio Amoblado",
-          description: "Un estudio cómodo, perfecto para estudiantes.",
-          direccion: "Av. Lambramani 1057, Arequipa, Perú",
-          precio: 950,
-          habitaciones: 1,
-          distance: "0.5 km hasta la universidad",
-          image: "https://img10.naventcdn.com/avisos/resize/111/01/47/07/99/85/1200x1200/1557832212.jpg",
-          servicios: ["Totalmente amoblado", "Servicios incluidos", "Internet de alta velocidad"],
-          latitud: -16.409047,
-          longitud: -71.537451
-        },
-        {
-          id:2,
-          title: "Amplio Departamento de 2 Habitaciones",
-          description: "Un departamento espacioso, ideal para compartir.",
-          direccion: "Av. Ejército 123, Cayma, Arequipa, Perú",
-          precio: 1500,
-          habitaciones: 2,
-          distance: "1.2 km hasta la universidad",
-          image: "https://img10.naventcdn.com/avisos/resize/111/01/46/76/88/92/1200x1200/1539977692.jpg",
-          servicios: ["Totalmente amoblado", "Internet de alta velocidad"],
-          latitud: -16.404047,
-          longitud: -71.527451
-        },
-        {
-          id:3,
-          title: "Moderno Departamento de 1 Habitación",
-          description: "Un departamento moderno, cerca de la universidad.",
-          direccion: "Calle San Francisco 456, Cercado, Arequipa, Perú",
-          precio: 1200,
-          habitaciones: 1,
-          distance: "0.8 km hasta la universidad",
-          image: "https://img10.naventcdn.com/avisos/resize/111/01/47/56/05/59/1200x1200/1559477041.jpg",
-          servicios: ["Servicios incluidos", "Agua caliente"],
-          latitud: -16.410047,
-          longitud: -71.537451
-        },
-        {
-          id:4,
-          title: "Encantador Departamento con Jardín",
-          description: "Departamento tranquilo con una hermosa vista al jardín.",
-          direccion: "Urb. Los Pinos 789, Yanahuara, Arequipa, Perú",
-          precio: 1100,
-          habitaciones: 1,
-          distance: "1.5 km hasta la universidad",
-          image: "https://img10.naventcdn.com/avisos/resize/111/01/47/44/63/44/1200x1200/1556599390.jpg",
-          servicios: ["Totalmente amoblado", "Electricidad incluida"],
-          latitud: -16.411047,
-          longitud: -71.537451
-        },
-        {
-          id:5,
-          title: "Luminoso Loft con Techo Alto",
-          description: "Loft de planta abierta con abundante luz natural.",
-          direccion: "Av. Los Incas 321, Umacollo, Arequipa, Perú",
-          precio: 1300,
-          habitaciones: 1,
-          distance: "2.0 km hasta la universidad",
-          image: "https://img10.naventcdn.com/avisos/resize/111/01/47/56/01/67/1200x1200/1559458836.jpg",
-          servicios: ["Internet de alta velocidad", "Gas incluido"],
-          latitud: -16.412047,
-          longitud: -71.537451
-        },
-        {
-          id:6,
-          title: "Casa Compartida cerca de la Universidad",
-          description: "Alquila una habitación en una casa compartida y amigable.",
-          direccion: "Calle Paucarpata 654, Cercado, Arequipa, Perú",
-          precio: 700,
-          habitaciones: 1,
-          distance: "0.3 km hasta la universidad",
-          image: "https://img10.naventcdn.com/avisos/resize/111/01/46/76/75/77/1200x1200/1539966748.jpg",
-          servicios: ["Servicios incluidos"],
-          latitud: -16.413047,
-          longitud: -71.537451
-        },
-      ],
+const selectedIndex = ref(0);
+const showModal = ref(false);
+const isCelular = ref(false);
+const propertiesPublicas = ref([])
 
-      universities: [
-        {
-          name: "Universidad Nacional de San Agustin",
-          imageUrl: "../public/Escudo_UNSA.png",
-          sedes: [
-            { name: "Ingenieria", lat: -16.404684, lng: -71.524577 },
-            { name: "Biomedicas", lat: -16.412480, lng: -71.534752 },
-            { name: "Sociales", lat: -16.405969, lng: -71.520543 },
-          ]
-        },
-        {
-          name: "Universidad Catolica de Santa Maria",
-          imageUrl: "../public/Escudo_UCSM.png",
-          sedes: [
-            { name: "Campus Central Umacollo", lat: -16.406310, lng: -71.547563 },
-          ]
-        },
-        {
-          name: "Universidad Tecnologica del Peru",
-          imageUrl: "../public/Escudo_UTP.png",
-          sedes: [
-            { name: "Sede av. Tacna y arica", lat: -16.408627, lng: -71.541031 },
-            { name: "Sede av. Parra", lat: -16.408469, lng: -71.542242 },
-            { name: "Nueva Sede", lat: -16.409622, lng: -71.543182 },
-          ]
-        },
-        {
-          name: "Universidad Continental",
-          imageUrl: "../public/Escudo_Continental.jpg",
-          sedes: [
-            { name: "Campus Principal", lat: -16.412307, lng: -71.524355 },
-          ]
-        },
-        {
-          name: "Universidad de San Martin de Porres",
-          imageUrl: "../public/Escudo_USMP.png",
-          sedes: [
-            { name: "Campus Principal Arequipa", lat: -16.424397, lng: -71.521655 },
-          ]
-        },
-      ],
-      selectedUniversity: null,
-      selectedSede: null,
-    };
-  },
-  created() {
-    // ⚡ Aquí accedemos a la ruta usando this.$route
-    const uniParam = this.$route.query.uni;
-
-    console.log("Parámetro recibido:->", uniParam);
-
-    if (uniParam) {
-      // Buscamos el índice que coincida con el nombre
-      const index = this.universities.findIndex(
-        u => u.name.toLowerCase().trim() === uniParam.toLowerCase().trim()
-      );
-
-      if (index !== -1) {
-        this.selectedUniversity = this.universities[index];
-        this.selectedSede = this.selectedUniversity.sedes[0];
-        console.log(`Universidad seleccionada: ${this.selectedUniversity.name}`);
-      } else {
-        // Si no coincide, selecciona la primera por defecto
-        this.selectedUniversity = this.universities[0];
-        this.selectedSede = this.selectedUniversity.sedes[0];
-      }
-    } else {
-      // Si no hay parámetro ?uni=, selecciona la primera
-      this.selectedUniversity = this.universities[0];
-      this.selectedSede = this.selectedUniversity.sedes[0];
-    }
-  },
-  mounted() {
-    this.isCelular = window.innerWidth < 1024;
-    this._resizeHandler = () => {
-      this.isCelular = window.innerWidth < 1024;
-    };
-    window.addEventListener("resize", this._resizeHandler);
-
-  },
-  beforeUnmount() {
-    window.removeEventListener("resize", this._resizeHandler);
-  },
-
-  methods: {
-    handleUniversitySelected(universityName) {
-      this.selectedUniversity = this.universities.find(
-        (u) => u.name === universityName
-      );
-      this.selectedSede = this.selectedUniversity.sedes[0];
-    },
-    handleSedeSelected(sedeName) {
-      this.selectedSede = this.selectedUniversity.sedes.find(
-        (s) => s.name === sedeName
-      );
-    },
-    handlePriceSelecterd(range) {
-      console.log("Rango de precios seleccionado:", range);
-    },
-    handleBedroomsSelected(range) {
-      console.log("Rango de habitaciones seleccionado:", range);
-    },
-
-    handleCardClicked(index) {
-      this.selectedIndex = index;
-      if (this.isCelular) {
-        this.showModal = true;
-      }
-    },
-  },
+const fetchPublicProperties = async () => {
+  try {
+    propertiesPublicas.value = await storePropiedades.getPropiedadesPublicas();
+    console.log(JSON.stringify(propertiesPublicas.value, null, 2))
+  } catch (err) {
+    console.error("Error al obtener propiedades publicas:", err);
+  }
 };
+
+
+const properties = ref([
+  {
+    id: 1,
+    title: "Acogedor Estudio Amoblado",
+    description: "Un estudio cómodo, perfecto para estudiantes.",
+    direccion: "Av. Lambramani 1057, Arequipa, Perú",
+    precio: 950,
+    habitaciones: 1,
+    distance: "0.5 km hasta la universidad",
+    image: "https://img10.naventcdn.com/avisos/resize/111/01/47/07/99/85/1200x1200/1557832212.jpg",
+    servicios: ["Totalmente amoblado", "Servicios incluidos", "Internet de alta velocidad"],
+    latitud: -16.409047,
+    longitud: -71.537451,
+  },
+  {
+    id: 2,
+    title: "Amplio Departamento de 2 Habitaciones",
+    description: "Un departamento espacioso, ideal para compartir.",
+    direccion: "Av. Ejército 123, Cayma, Arequipa, Perú",
+    precio: 1500,
+    habitaciones: 2,
+    distance: "1.2 km hasta la universidad",
+    image: "https://img10.naventcdn.com/avisos/resize/111/01/46/76/88/92/1200x1200/1539977692.jpg",
+    servicios: ["Totalmente amoblado", "Internet de alta velocidad"],
+    latitud: -16.404047,
+    longitud: -71.527451,
+  },
+  {
+    id: 3,
+    title: "Moderno Departamento de 1 Habitación",
+    description: "Un departamento moderno, cerca de la universidad.",
+    direccion: "Calle San Francisco 456, Cercado, Arequipa, Perú",
+    precio: 1200,
+    habitaciones: 1,
+    distance: "0.8 km hasta la universidad",
+    image: "https://img10.naventcdn.com/avisos/resize/111/01/47/56/05/59/1200x1200/1559477041.jpg",
+    servicios: ["Servicios incluidos", "Agua caliente"],
+    latitud: -16.410047,
+    longitud: -71.537451,
+  },
+  {
+    id: 4,
+    title: "Encantador Departamento con Jardín",
+    description: "Departamento tranquilo con una hermosa vista al jardín.",
+    direccion: "Urb. Los Pinos 789, Yanahuara, Arequipa, Perú",
+    precio: 1100,
+    habitaciones: 1,
+    distance: "1.5 km hasta la universidad",
+    image: "https://img10.naventcdn.com/avisos/resize/111/01/47/44/63/44/1200x1200/1556599390.jpg",
+    servicios: ["Totalmente amoblado", "Electricidad incluida"],
+    latitud: -16.411047,
+    longitud: -71.537451,
+  },
+  {
+    id: 5,
+    title: "Luminoso Loft con Techo Alto",
+    description: "Loft de planta abierta con abundante luz natural.",
+    direccion: "Av. Los Incas 321, Umacollo, Arequipa, Perú",
+    precio: 1300,
+    habitaciones: 1,
+    distance: "2.0 km hasta la universidad",
+    image: "https://img10.naventcdn.com/avisos/resize/111/01/47/56/01/67/1200x1200/1559458836.jpg",
+    servicios: ["Internet de alta velocidad", "Gas incluido"],
+    latitud: -16.412047,
+    longitud: -71.537451,
+  },
+  {
+    id: 6,
+    title: "Casa Compartida cerca de la Universidad",
+    description: "Alquila una habitación en una casa compartida y amigable.",
+    direccion: "Calle Paucarpata 654, Cercado, Arequipa, Perú",
+    precio: 700,
+    habitaciones: 1,
+    distance: "0.3 km hasta la universidad",
+    image: "https://img10.naventcdn.com/avisos/resize/111/01/46/76/75/77/1200x1200/1539966748.jpg",
+    servicios: ["Servicios incluidos"],
+    latitud: -16.413047,
+    longitud: -71.537451,
+  },
+]);
+
+const universities = ref([
+  {
+    name: "Universidad Nacional de San Agustin",
+    imageUrl: "../public/Escudo_UNSA.png",
+    sedes: [
+      { name: "Ingenieria", lat: -16.404684, lng: -71.524577 },
+      { name: "Biomedicas", lat: -16.412480, lng: -71.534752 },
+      { name: "Sociales", lat: -16.405969, lng: -71.520543 },
+    ],
+  },
+  {
+    name: "Universidad Catolica de Santa Maria",
+    imageUrl: "../public/Escudo_UCSM.png",
+    sedes: [{ name: "Campus Central Umacollo", lat: -16.406310, lng: -71.547563 }],
+  },
+  {
+    name: "Universidad Tecnologica del Peru",
+    imageUrl: "../public/Escudo_UTP.png",
+    sedes: [
+      { name: "Sede av. Tacna y arica", lat: -16.408627, lng: -71.541031 },
+      { name: "Sede av. Parra", lat: -16.408469, lng: -71.542242 },
+      { name: "Nueva Sede", lat: -16.409622, lng: -71.543182 },
+    ],
+  },
+  {
+    name: "Universidad Continental",
+    imageUrl: "../public/Escudo_Continental.jpg",
+    sedes: [{ name: "Campus Principal", lat: -16.412307, lng: -71.524355 }],
+  },
+  {
+    name: "Universidad de San Martin de Porres",
+    imageUrl: "../public/Escudo_USMP.png",
+    sedes: [{ name: "Campus Principal Arequipa", lat: -16.424397, lng: -71.521655 }],
+  },
+]);
+
+const selectedUniversity = ref(null);
+const selectedSede = ref(null);
+
+// ===== Inicialización =====
+const initUniversitySelection = () => {
+  const uniParam = route.query.uni;
+  console.log("Parámetro recibido:->", uniParam);
+
+  if (uniParam) {
+    const index = universities.value.findIndex(
+      (u) => u.name.toLowerCase().trim() === uniParam.toLowerCase().trim()
+    );
+
+    if (index !== -1) {
+      selectedUniversity.value = universities.value[index];
+      selectedSede.value = selectedUniversity.value.sedes[0];
+      console.log(`Universidad seleccionada: ${selectedUniversity.value.name}`);
+    } else {
+      selectedUniversity.value = universities.value[0];
+      selectedSede.value = selectedUniversity.value.sedes[0];
+    }
+  } else {
+    selectedUniversity.value = universities.value[0];
+    selectedSede.value = selectedUniversity.value.sedes[0];
+  }
+};
+
+// ===== Eventos =====
+const handleUniversitySelected = (universityName) => {
+  selectedUniversity.value = universities.value.find((u) => u.name === universityName);
+  selectedSede.value = selectedUniversity.value.sedes[0];
+};
+
+const handleSedeSelected = (sedeName) => {
+  selectedSede.value = selectedUniversity.value.sedes.find((s) => s.name === sedeName);
+};
+
+const handlePriceSelecter = (range) => {
+  console.log("Rango de precios seleccionado:", range);
+};
+
+const handleBedroomsSelected = (range) => {
+  console.log("Rango de habitaciones seleccionado:", range);
+};
+
+const handleCardClicked = (index) => {
+  selectedIndex.value = index;
+  if (isCelular.value) showModal.value = true;
+};
+
+// ===== Ciclo de vida =====
+onMounted(() => {
+  initUniversitySelection();
+  fetchPublicProperties()
+  isCelular.value = window.innerWidth < 1024;
+
+  const resizeHandler = () => {
+    isCelular.value = window.innerWidth < 1024;
+  };
+
+  window.addEventListener("resize", resizeHandler);
+
+  onBeforeUnmount(() => {
+    window.removeEventListener("resize", resizeHandler);
+  });
+});
 </script>
 
 <style scoped>

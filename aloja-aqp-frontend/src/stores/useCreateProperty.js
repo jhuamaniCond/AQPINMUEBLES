@@ -7,7 +7,7 @@ export const useCreateProperty = defineStore("propiedad", {
     description: "",
     address: "",
     accommodation_type: "",
-    habitaciones: 0,
+    rooms: 0,
     latitude: "",
     longitude: "",
     amenidades: [],
@@ -28,6 +28,7 @@ export const useCreateProperty = defineStore("propiedad", {
         longitude: parseFloat(this.longitude),
         monthly_price: this.monthly_price,
         coexistence_rules: this.coexistence_rules || "",
+        rooms: this.rooms,
       };
 
       const res = await axios.post(
@@ -117,7 +118,7 @@ export const useCreateProperty = defineStore("propiedad", {
       this.description = data.descripcion;
       this.address = data.direccion;
       this.accommodation_type = data.tipo;
-      this.habitaciones = data.habitaciones;
+      this.rooms = data.rooms;
       this.latitude = data.latitud;
       this.longitude = data.longitud;
     },

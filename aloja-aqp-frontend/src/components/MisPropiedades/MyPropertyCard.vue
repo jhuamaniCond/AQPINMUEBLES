@@ -33,7 +33,7 @@
 
           <button aria-label="Ver propiedad"
             class="flex size-10 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary/20 text-primary text-xl hover:bg-primary/30 transition-colors duration-200 ease-in-out"
-            @click="$emit('ver', props.id)">
+            @click="$emit('ver', { id: props.id, estado: props.estado })">
             <span class="material-symbols-outlined">visibility</span>
           </button>
 
@@ -128,6 +128,7 @@ const estadosFiltrados = computed(() =>
 const toggleMenu = () => {
   menuAbierto.value = !menuAbierto.value;
 };
+
 const cambiarEstado = (nuevoEstado) => {
   menuAbierto.value = false;
   emit("cambiar-estado", { id: props.id, estado: nuevoEstado });

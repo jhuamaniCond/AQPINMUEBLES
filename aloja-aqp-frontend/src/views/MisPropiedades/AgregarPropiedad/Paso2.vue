@@ -77,51 +77,54 @@
 </template>
 
 <script setup>
-import { ref ,onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { useCreateProperty } from '../../../stores/useCreateProperty.js'
-import StepsBar from '../../../components/MisPropiedades/AgregarPropiedad/StepsBar.vue';
-import { webPageData } from '/src/stores/webPageData.js';
+import StepsBar from '../../../components/MisPropiedades/AgregarPropiedad/StepsBar.vue'
+import { webPageData } from '/src/stores/webPageData.js'
 
 const router = useRouter()
 const store = useCreateProperty()
-const storeWebPageData = webPageData();
+const storeWebPageData = webPageData()
 
-const amenities = ref([]);
+// 🔗 Usamos storeToRefs para mantener sincronización directa
+const { amenidades } = storeToRefs(store)
+
+const amenities = ref([])
+
 const fetchAmenities = async () => {
-    try {
-        amenities.value = await storeWebPageData.getServicios();
-    } catch (err) {
-        console.error("Error al obtener tipos de servicios:", err);
-    }
-};
+  try {
+    amenities.value = await storeWebPageData.getServicios()
+  } catch (err) {
+    console.error("Error al obtener tipos de servicios:", err)
+  }
+}
 
 onMounted(() => {
-  fetchAmenities();
-});
+  fetchAmenities()
+})
 
-// Recuperar del store si ya había selecciones
-const selectedAmenities = ref([...store.amenidades])
+// ⚙️ selectedAmenities apunta directamente a amenidades del store
+const selectedAmenities = amenidades
 
 // Alternar selección
 function toggleAmenity(id) {
-    if (selectedAmenities.value.includes(id)) {
-        selectedAmenities.value = selectedAmenities.value.filter(a => a !== id)
-    } else {
-        selectedAmenities.value.push(id)
-    }
+  const index = selectedAmenities.value.indexOf(id)
+  if (index >= 0) {
+    selectedAmenities.value.splice(index, 1)
+  } else {
+    selectedAmenities.value.push(id)
+  }
 }
 
-// Guardar datos del paso
+// Navegación
 function nextStep() {
-    store.setDatosPaso2({ amenidades: selectedAmenities.value })
-    console.log("datos en pinia", JSON.stringify(store.$state))
-    router.push('/mis-propiedades/agregar/paso3')
+  console.log("datos en pinia", JSON.stringify(store.$state))
+  router.push('/mis-propiedades/agregar/paso3')
 }
 
-// Volver atrás
 function previousStep() {
-    router.push('/mis-propiedades/agregar/paso1')
+  router.push('/mis-propiedades/agregar/paso1')
 }
-
 </script>

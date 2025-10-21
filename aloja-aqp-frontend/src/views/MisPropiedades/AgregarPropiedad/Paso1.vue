@@ -8,7 +8,7 @@
                 <!-- Título -->
                 <label class="flex flex-col gap-2">
                     <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Property Title</span>
-                    <input v-model="titulo"
+                    <input v-model="title"
                         class="form-input w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base"
                         placeholder="e.g., Spacious 2-Bedroom Apartment" type="text" />
                 </label>
@@ -16,7 +16,7 @@
                 <!-- Descripción -->
                 <label class="flex flex-col gap-2">
                     <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Property Description</span>
-                    <textarea v-model="descripcion"
+                    <textarea v-model="description"
                         class="form-textarea w-full h-32 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base resize-none"
                         placeholder="Describe your property in detail..."></textarea>
                 </label>
@@ -24,7 +24,7 @@
                 <!-- Dirección -->
                 <label class="flex flex-col gap-2">
                     <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Address</span>
-                    <input v-model="direccion"
+                    <input v-model="address"
                         class="form-input w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base"
                         placeholder="Street Address, City, Postal Code" type="text" />
                 </label>
@@ -36,7 +36,7 @@
                             Property Type
                         </span>
 
-                        <select v-model="tipo"
+                        <select v-model="accommodation_type"
                             class="form-select w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary text-base">
                             <option v-for="t in tiposPropiedad" :key="t.id" :value="t.id">
                                 {{ t.name }}
@@ -46,7 +46,7 @@
 
                     <label class="flex flex-col gap-2">
                         <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Bedrooms</span>
-                        <input v-model.number="habitaciones"
+                        <input v-model.number="rooms"
                             class="form-input w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base"
                             min="0" placeholder="e.g., 2" type="number" />
                     </label>
@@ -60,14 +60,14 @@
                 <div class="grid grid-cols-1 gap-4 w-full">
                     <label class="flex flex-col gap-2">
                         <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Latitude</span>
-                        <input disabled v-model="latitud"
+                        <input disabled v-model="latitude"
                             class="form-input w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-base"
                             type="text" />
                     </label>
 
                     <label class="flex flex-col gap-2">
                         <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Longitude</span>
-                        <input disabled v-model="longitud"
+                        <input disabled v-model="longitude"
                             class="form-input w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-base"
                             type="text" />
                     </label>
@@ -95,19 +95,15 @@ import { useCreateProperty } from '../../../stores/useCreateProperty.js'
 import StepsBar from '../../../components/MisPropiedades/AgregarPropiedad/StepsBar.vue';
 import MapSelectUbi from '../../../components/MisPropiedades/AgregarPropiedad/MapSelectUbi.vue';
 import { webPageData } from '/src/stores/webPageData.js';
+import { storeToRefs } from 'pinia'
+
 
 const router = useRouter()
 const store = useCreateProperty()
 const storeWebPageData = webPageData();
 
-// Campos sincronizados con Pinia (valores iniciales desde el store)
-const titulo = ref(store.titulo)
-const descripcion = ref(store.descripcion)
-const direccion = ref(store.direccion)
-const tipo = ref(store.tipo)
-const habitaciones = ref(store.habitaciones || 0)
-const latitud = ref(store.latitud || '')
-const longitud = ref(store.longitud || '')
+
+const { title, description, address, accommodation_type, latitude, longitude, rooms } = storeToRefs(store)
 
 const tiposPropiedad = ref([]);
 
@@ -122,26 +118,18 @@ const fetchTiposPropiedad = async () => {
 onMounted(async () => {
     await fetchTiposPropiedad();
     if (tiposPropiedad.value.length > 0) {
-        tipo.value = tiposPropiedad.value[0].id;
+        accommodation_type.value = tiposPropiedad.value[0].id;
     }
 });
 
 // Guardar y avanzar al siguiente paso
 function nextStep() {
-    store.setDatosPaso1({
-        titulo: titulo.value,
-        descripcion: descripcion.value,
-        direccion: direccion.value,
-        tipo: tipo.value,
-        habitaciones: habitaciones.value,
-        latitud: latitud.value,
-        longitud: longitud.value
-    })
+
     console.log("datos en pinia", JSON.stringify(store.$state))
     router.push('/mis-propiedades/agregar/paso2') // siguiente paso
 }
 function actualizarUbicacion({ latitud: lat, longitud: lng }) {
-    latitud.value = lat.toFixed(6);
-    longitud.value = lng.toFixed(6);
+    latitude.value = lat.toFixed(6);
+    longitude.value = lng.toFixed(6);
 }
 </script>

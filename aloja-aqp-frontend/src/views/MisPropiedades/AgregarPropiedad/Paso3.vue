@@ -62,14 +62,14 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCreateProperty } from '../../../stores/useCreateProperty.js'
 import StepsBar from '../../../components/MisPropiedades/AgregarPropiedad/StepsBar.vue';
-
+import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const store = useCreateProperty()
 const fileInput = ref(null)
 
 // Recuperar imágenes del store (persistentes entre pasos)
-const imagenes = ref([...store.imagenes])
+const { imagenes } = storeToRefs(store)
 
 // Manejo de archivos seleccionados
 function handleFiles(event) {
@@ -101,7 +101,7 @@ function removeImage(index) {
 
 // Guardar en store y avanzar
 function nextStep() {
-    store.setDatosPaso3({ imagenes: imagenes.value })
+
     router.push('/mis-propiedades/agregar/paso4')
 }
 

@@ -53,17 +53,16 @@ import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { useCreateProperty } from '../../../stores/useCreateProperty.js'
 import StepsBar from '../../../components/MisPropiedades/AgregarPropiedad/StepsBar.vue';
-
+import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const propiedadStore = useCreateProperty()
 
 // Campo vinculado al store (se mantiene al cambiar de paso)
-const precio = ref(propiedadStore.precio)
+
+const { monthly_price: precio } = storeToRefs(propiedadStore)
 
 function nextStep() {
-    // Guardar datos del paso 4 en Pinia
-    propiedadStore.setDatosPaso4({ precio: precio.value })
 
     // Ir al siguiente paso
     router.push('/mis-propiedades/agregar/paso5')

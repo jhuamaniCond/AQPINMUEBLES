@@ -65,9 +65,19 @@ const editarPropiedad = (id) => {
   console.log("Editar propiedad con ID:", id);
 };
 
-const verPropiedad = (id) => {
-  console.log("Ver propiedad con ID:", id);
-  router.push(`/view/${id}`);
+const verPropiedad = ({ id, estado }) => {
+  console.log("Ver propiedad con ID:", id , " y estado :",estado);
+
+  let isPrivate=true
+
+  if (estado == "published") isPrivate=false;
+
+  
+  router.push({
+    path: `/view/${id}`,
+    query: { isPrivate }  
+  });
+
 };
 
 const confirmarEliminacion = (id) => {

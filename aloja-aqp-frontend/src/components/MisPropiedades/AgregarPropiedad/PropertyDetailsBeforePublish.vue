@@ -89,7 +89,7 @@ const detallesPropiedad = computed(() => [
   { label: 'Descripción', value: store.description || 'No especificada', completo: !!store.description },
   { label: 'Dirección', value: store.address || 'No especificada', completo: !!store.address },
   { label: 'Tipo', value: store.accommodation_type || 'No especificado', completo: !!store.accommodation_type },
-  { label: 'Habitaciones', value: store.habitaciones || 'No especificadas', completo: !!store.habitaciones },
+  { label: 'Habitaciones', value: store.rooms || 'No especificadas', completo: !!store.rooms },
   { label: 'Amenidades', value: amenidadesConIconos.value, completo: !!amenidadesConIconos.value.length },
   { label: 'Imágenes', value: store.imagenes.length ? `${store.imagenes.length} subidas` : 'No subidas', completo: !!store.imagenes.length },
   { label: 'Precio', value: store.monthly_price ? `$${store.monthly_price}` : 'No definido', completo: !!store.monthly_price },

@@ -3,8 +3,10 @@ import axios from "axios";
 
 export const useGestionPropiedades = defineStore("gestionPropiedades", {
   state: () => ({
-    propiedades: null, // lista de alojamientos del usuario
-    propiedadActual: null, // alojamiento seleccionado
+    myPropiedades: null, // lista de alojamientos del usuario
+    myPropiedadActual: null, // alojamiento seleccionado
+    propiedadesPublicas:null,
+    propiedadPublicaActual:null,
     loading: false,
     error: null,
   }),
@@ -27,20 +29,20 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           "http://127.0.0.1:8000/api/accommodations/",
           this.getAuthHeaders()
         );
-        this.propiedades = res.data;
-        console.log("✅ Propiedades cargadas:", this.propiedades);
+        this.myPropiedades = res.data;
+        console.log("✅ Propiedades cargadas:", this.myPropiedades);
       } catch (error) {
         this.error = error.response?.data || error.message;
-        console.error("❌ Error al obtener propiedades:", this.error);
+        console.error("❌ Error al obtener mys Propiedades:", this.error);
       } finally {
         this.loading = false;
       }
     },
     async getMisPropiedades() {
-      if (this.propiedades === null) {
+      if (this.myPropiedades === null) {
         await this.fetchMisPropiedades();
       }
-      return this.propiedades;
+      return this.myPropiedades;
     },
     async updateStateMisPropiedades() {
       await this.fetchMisPropiedades();
@@ -55,7 +57,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         );
         console.log("✅ Propiedad eliminada lógicamente:", res.data);
         await this.fetchMisPropiedades();
-        return this.propiedades;
+        return this.myPropiedades;
       } catch (error) {
         console.error(
           "❌ Error al eliminar propiedad:",
@@ -77,7 +79,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         console.log("✅ Propiedad publicada:", res.data);
 
         await this.fetchMisPropiedades();
-        return this.propiedades;
+        return this.myPropiedades;
       } catch (error) {
         console.error(
           "❌ Error al publicar:",
@@ -99,7 +101,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
 
         await this.fetchMisPropiedades();
 
-        return this.propiedades;
+        return this.myPropiedades;
       } catch (error) {
         console.error(
           "❌ Error al ocultar propiedad:",
@@ -110,7 +112,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
     },
 
     // ✏️ Editar propiedad existente
-    async actualizarPropiedad(id, data) {
+    async actualizarMyPropiedad(id, data) {
       try {
         const res = await axios.patch(
           `http://127.0.0.1:8000/api/accommodations/${id}/`,
@@ -118,8 +120,8 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           this.getAuthHeaders()
         );
         // Actualiza en el array local
-        const index = this.propiedades.findIndex((p) => p.id === id);
-        if (index !== -1) this.propiedades[index] = res.data;
+        const index = this.myPropiedades.findIndex((p) => p.id === id);
+        if (index !== -1) this.myPropiedades[index] = res.data;
         console.log("✅ Propiedad actualizada:", res.data);
         return res.data;
       } catch (error) {
@@ -131,7 +133,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
       }
     },
     // 📄 Obtener una propiedad específica (detalle)
-    async fetchPropiedad(id) {
+    async fetchMyPropiedad(id) {
       this.loading = true;
       this.error = null;
       try {
@@ -139,21 +141,77 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           `http://127.0.0.1:8000/api/accommodations/${id}/`,
           this.getAuthHeaders()
         );
-        this.propiedadActual = res.data;
+        this.myPropiedadActual = res.data;
         console.log("✅ Propiedad con id ",id ," obtenida :",res.data);
         return res.data;
       } catch (error) {
         this.error = error.response?.data || error.message;
-        console.error("❌ Error al obtener propiedad:", this.error);
+        console.error("❌ Error al obtener propiedad con id ",id,":", this.error);
       } finally {
         this.loading = false;
       }
     },
-    async getPropiedadActual(id) {
-      if (this.propiedadActual === null) {
-        await this.fetchPropiedad(id);
+    async getMyPropiedadActual(id) {
+      if (this.myPropiedadActual === null) {
+        await this.fetchMyPropiedad(id);
       }
-      return this.propiedadActual;
+      return this.myPropiedadActual;
+    },
+    async updateStateMyPropiedadActual(id) {
+      await this.fetchMyPropiedad(id);
+    },
+    async fetchPropiedadesPublicas() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const res = await axios.get(
+          "http://127.0.0.1:8000/api/public/accommodations/",
+          this.getAuthHeaders()
+        );
+        this.propiedadesPublicas = res.data;
+        console.log("✅ Propiedades publicas cargadas:", this.propiedadesPublicas);
+      } catch (error) {
+        this.error = error.response?.data || error.message;
+        console.error("❌ Error al obtener Propiedades publicas:", this.error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async getPropiedadesPublicas() {
+      if (this.propiedadesPublicas === null) {
+        await this.fetchPropiedadesPublicas();
+      }
+      return this.propiedadesPublicas;
+    },
+    async updateStatePropiedadesPublicas() {
+      await this.fetchPropiedadesPublicas();
+    },
+    async fetchPropiedadPublica(id) {
+      this.loading = true;
+      this.error = null;
+      try {
+        const res = await axios.get(
+          `http://127.0.0.1:8000/api/accommodations/${id}/`,
+          this.getAuthHeaders()
+        );
+        this.propiedadPublicaActual = res.data;
+        console.log("✅ Propiedad con id ",id ," obtenida :",res.data);
+        return res.data;
+      } catch (error) {
+        this.error = error.response?.data || error.message;
+        console.error("❌ Error al obtener propiedad con id ",id," publica:", this.error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async getPropiedadPublicaActual(id) {
+      if (this.propiedadPublicaActual === null) {
+        await this.fetchPropiedadPublica(id);
+      }
+      return this.propiedadPublicaActual;
+    },
+    async updateStatePropiedadPublicaActual(id) {
+      await this.fetchPropiedadPublica(id);
     },
   },
   
