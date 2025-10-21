@@ -147,8 +147,8 @@
 
                                     <div
                                         class="mt-4 aspect-video bg-gray-200 dark:bg-gray-800 rounded-xl overflow-hidden">
-                                        <MapView v-if="selectedSede" :latitudCasa="dataHouse.lat"
-                                            :longitudCasa="dataHouse.lng" :latitudUni="selectedSede.lat"
+                                        <MapView v-if="selectedSede && propiedad.latitude && propiedad.longitude" :latitudCasa="propiedad.latitude"
+                                            :longitudCasa="propiedad.longitude" :latitudUni="selectedSede.lat"
                                             :longitudUni="selectedSede.lng" :UniImgUrl="selectedUniversity.imageUrl" />
                                     </div>
                                 </div>

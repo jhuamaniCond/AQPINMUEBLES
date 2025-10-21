@@ -26,14 +26,12 @@
 
                 <div class="mt-4 flex flex-wrap gap-4">
                   <FilterButtonMultipleOptions titulo="Selecciona la Universidad" v-if="selectedUniversity"
-                    :opciones="universities?.map(u => u.name) || []" @optionFiltroSelected="handleUniversitySelected" 
-                    :defaultOption="selectedUniversity?.name || '' "
-                    />
+                    :opciones="universities?.map(u => u.name) || []" @optionFiltroSelected="handleUniversitySelected"
+                    :defaultOption="selectedUniversity?.name || ''" />
 
                   <FilterButtonMultipleOptions titulo="Selecciona la Sede" v-if="selectedUniversity"
-                    :opciones="selectedUniversity?.sedes?.map(s => s.name) || []" @optionFiltroSelected="handleSedeSelected" 
-                    :defaultOption="selectedSede?.name || ''"
-                    />
+                    :opciones="selectedUniversity?.sedes?.map(s => s.name) || []"
+                    @optionFiltroSelected="handleSedeSelected" :defaultOption="selectedSede?.name || ''" />
 
                   <FilterButtonRange title="Precio" :min="0" :max="3000" :start="500" :end="2000" tipoDato="$"
                     @rangeSelected="handlePriceSelecter" />
@@ -47,15 +45,16 @@
               <div>
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Alojamiento cerca de
                   <span class="text-primary">
-                    {{ selectedUniversity?.name || ''}}
+                    {{ selectedUniversity?.name || '' }}
                   </span>
 
                 </h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
 
-                  <PropertyCard v-for="(property, index) in properties" :key="index" :title="property.title"
-                    :description="property.description" :distance="property.distance" :image="property.image"
-                    :isSelected="selectedIndex === index" @card-clicked="handleCardClicked(index)" />
+                  <PropertyCard v-for="(property, index) in propertiesPublicas" :key="property.id"
+                    :title="property.title" :description="property.description" distance="222 km"
+                    :image="property.photos[0].image" :isSelected="selectedIndex === index"
+                    @card-clicked="handleCardClicked(index)" />
 
                 </div>
                 <div class="mt-8 flex justify-center">
@@ -92,48 +91,42 @@
               </div>
             </div>
 
-            <div v-if="!isCelular" class="hidden lg:block">
-              <PropertyDetails v-if="properties?.length && selectedSede && selectedUniversity"
-              :id="properties[selectedIndex].id"
-              :title="properties[selectedIndex].title" :direccion="properties[selectedIndex].direccion"
-              :precio="properties[selectedIndex].precio" :habitaciones="properties[selectedIndex].habitaciones"
-              :servicios="properties[selectedIndex].servicios" :latitudCasa="properties[selectedIndex].latitud"
-              :longitudCasa="properties[selectedIndex].longitud" :latitudUni="selectedSede.lat"
-              :longitudUni="selectedSede.lng" :UniImgUrl="selectedUniversity?.imageUrl || ''" />
+            <div v-if="!isCelular" class="hidden lg:block dark:!border-gray-800 border border-gray-200 p-6 rounded-xl">
+              <PropertyDetails v-if="propertiesPublicas?.length && selectedSede && selectedUniversity"
+                :id="propertiesPublicas[selectedIndex].id" :title="propertiesPublicas[selectedIndex].title"
+                :direccion="propertiesPublicas[selectedIndex].address"
+                :precio="Number(propertiesPublicas[selectedIndex].monthly_price)"
+                :habitaciones="propertiesPublicas[selectedIndex].rooms"
+                :servicios="propertiesPublicas[selectedIndex].services"
+                :latitudCasa="propertiesPublicas[selectedIndex].latitude"
+                :longitudCasa="propertiesPublicas[selectedIndex].longitude" :latitudUni="selectedSede.lat"
+                :longitudUni="selectedSede.lng" :UniImgUrl="selectedUniversity?.imageUrl || ''" />
+
             </div>
-            
+
 
             <transition name="fade">
-              <div
-                v-if="showModal && isCelular"
-                class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm "
-              >
+              <div v-if="showModal && isCelular"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm ">
                 <div
-                  class="relative bg-background-light dark:!bg-background-dark w-11/12 max-h-[90vh] bg-white rounded-2xl shadow-2xl p-4 overflow-hidden"
-                >
+                  class="relative bg-background-light dark:!bg-background-dark w-11/12 max-h-[90vh] bg-white rounded-2xl shadow-2xl p-4 overflow-hidden">
                   <!-- Botón cerrar -->
                   <button
                     class="absolute top-3 right-3 bg-white/80 hover:bg-white text-gray-700 hover:text-black font-bold rounded-full w-8 h-8 flex items-center justify-center shadow-md z-10"
-                    @click="showModal = false"
-                  >
+                    @click="showModal = false">
                     ✕
                   </button>
 
                   <!-- Contenido -->
-                  <PropertyDetails
-                    v-if="properties?.length && selectedSede && selectedUniversity"
-                    :id="properties[selectedIndex].id"
-                    :title="properties[selectedIndex].title"
-                    :direccion="properties[selectedIndex].direccion"
-                    :precio="properties[selectedIndex].precio"
-                    :habitaciones="properties[selectedIndex].habitaciones"
-                    :servicios="properties[selectedIndex].servicios"
-                    :latitudCasa="properties[selectedIndex].latitud"
-                    :longitudCasa="properties[selectedIndex].longitud"
-                    :latitudUni="selectedSede.lat"
-                    :longitudUni="selectedSede.lng"
-                    :UniImgUrl="selectedUniversity?.imageUrl || ''"
-                  />
+                  <PropertyDetails v-if="propertiesPublicas?.length && selectedSede && selectedUniversity"
+                    :id="propertiesPublicas[selectedIndex].id" :title="propertiesPublicas[selectedIndex].title"
+                    :direccion="propertiesPublicas[selectedIndex].address"
+                    :precio="Number(propertiesPublicas[selectedIndex].monthly_price)"
+                    :habitaciones="propertiesPublicas[selectedIndex].rooms"
+                    :servicios="propertiesPublicas[selectedIndex].services"
+                    :latitudCasa="propertiesPublicas[selectedIndex].latitude"
+                    :longitudCasa="propertiesPublicas[selectedIndex].longitude" :latitudUni="selectedSede.lat"
+                    :longitudUni="selectedSede.lng" :UniImgUrl="selectedUniversity?.imageUrl || ''" />
                 </div>
               </div>
             </transition>
@@ -178,87 +171,6 @@ const fetchPublicProperties = async () => {
   }
 };
 
-
-const properties = ref([
-  {
-    id: 1,
-    title: "Acogedor Estudio Amoblado",
-    description: "Un estudio cómodo, perfecto para estudiantes.",
-    direccion: "Av. Lambramani 1057, Arequipa, Perú",
-    precio: 950,
-    habitaciones: 1,
-    distance: "0.5 km hasta la universidad",
-    image: "https://img10.naventcdn.com/avisos/resize/111/01/47/07/99/85/1200x1200/1557832212.jpg",
-    servicios: ["Totalmente amoblado", "Servicios incluidos", "Internet de alta velocidad"],
-    latitud: -16.409047,
-    longitud: -71.537451,
-  },
-  {
-    id: 2,
-    title: "Amplio Departamento de 2 Habitaciones",
-    description: "Un departamento espacioso, ideal para compartir.",
-    direccion: "Av. Ejército 123, Cayma, Arequipa, Perú",
-    precio: 1500,
-    habitaciones: 2,
-    distance: "1.2 km hasta la universidad",
-    image: "https://img10.naventcdn.com/avisos/resize/111/01/46/76/88/92/1200x1200/1539977692.jpg",
-    servicios: ["Totalmente amoblado", "Internet de alta velocidad"],
-    latitud: -16.404047,
-    longitud: -71.527451,
-  },
-  {
-    id: 3,
-    title: "Moderno Departamento de 1 Habitación",
-    description: "Un departamento moderno, cerca de la universidad.",
-    direccion: "Calle San Francisco 456, Cercado, Arequipa, Perú",
-    precio: 1200,
-    habitaciones: 1,
-    distance: "0.8 km hasta la universidad",
-    image: "https://img10.naventcdn.com/avisos/resize/111/01/47/56/05/59/1200x1200/1559477041.jpg",
-    servicios: ["Servicios incluidos", "Agua caliente"],
-    latitud: -16.410047,
-    longitud: -71.537451,
-  },
-  {
-    id: 4,
-    title: "Encantador Departamento con Jardín",
-    description: "Departamento tranquilo con una hermosa vista al jardín.",
-    direccion: "Urb. Los Pinos 789, Yanahuara, Arequipa, Perú",
-    precio: 1100,
-    habitaciones: 1,
-    distance: "1.5 km hasta la universidad",
-    image: "https://img10.naventcdn.com/avisos/resize/111/01/47/44/63/44/1200x1200/1556599390.jpg",
-    servicios: ["Totalmente amoblado", "Electricidad incluida"],
-    latitud: -16.411047,
-    longitud: -71.537451,
-  },
-  {
-    id: 5,
-    title: "Luminoso Loft con Techo Alto",
-    description: "Loft de planta abierta con abundante luz natural.",
-    direccion: "Av. Los Incas 321, Umacollo, Arequipa, Perú",
-    precio: 1300,
-    habitaciones: 1,
-    distance: "2.0 km hasta la universidad",
-    image: "https://img10.naventcdn.com/avisos/resize/111/01/47/56/01/67/1200x1200/1559458836.jpg",
-    servicios: ["Internet de alta velocidad", "Gas incluido"],
-    latitud: -16.412047,
-    longitud: -71.537451,
-  },
-  {
-    id: 6,
-    title: "Casa Compartida cerca de la Universidad",
-    description: "Alquila una habitación en una casa compartida y amigable.",
-    direccion: "Calle Paucarpata 654, Cercado, Arequipa, Perú",
-    precio: 700,
-    habitaciones: 1,
-    distance: "0.3 km hasta la universidad",
-    image: "https://img10.naventcdn.com/avisos/resize/111/01/46/76/75/77/1200x1200/1539966748.jpg",
-    servicios: ["Servicios incluidos"],
-    latitud: -16.413047,
-    longitud: -71.537451,
-  },
-]);
 
 const universities = ref([
   {
