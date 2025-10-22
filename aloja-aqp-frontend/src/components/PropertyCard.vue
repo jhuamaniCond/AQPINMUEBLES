@@ -3,8 +3,8 @@
   class="cursor-pointer"
     :class="[
       isSelected
-        ? 'bg-blue-50 dark:bg-primary/20 ring-2 ring-primary rounded-xl shadow-lg overflow-hidden transition-shadow duration-300'
-        : 'bg-white dark:!bg-background-dark rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300'
+        ? 'bg-blue-50 dark:bg-primary/20 ring-2 ring-primary rounded-xl shadow-2xl overflow-hidden transition-shadow duration-300'
+        : 'shadow-2xl bg-white dark:!bg-background-dark rounded-xl shadow-md overflow-hidden transition-shadow duration-300 dark:!border-gray-800 shadow-lg border'
     ]"
     @click="$emit('card-clicked')"
   >

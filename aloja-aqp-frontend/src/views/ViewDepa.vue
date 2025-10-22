@@ -361,8 +361,8 @@ const fetchMyPropertiePrivate = async (id) => {
 };
 const fetchMyPropertiePublic = async (id) => {
     try {
-        await storePropiedades.updateStateMyPropiedadActual(id);
-        propiedad.value = await storePropiedades.getMyPropiedadActual(id);
+        await storePropiedades.updateStatePropiedadPublicaActual(id);
+        propiedad.value = await storePropiedades.getPropiedadPublicaActual(id);
         console.log("propiedad actual :", JSON.stringify(propiedad.value));
     } catch (err) {
         console.error("Error al obtener propiedad id ", id, " :", err);

@@ -109,7 +109,7 @@ export const useCreateProperty = defineStore("propiedad", {
       await this.crearServicios(alojamiento.id, token);
       await this.subirFotos(alojamiento.id, token);
       this.limpiarDatos();
-
+      return alojamiento.id
     },
 
     // Métodos para guardar datos paso a paso (como ya tenías)

@@ -9,7 +9,7 @@
   <!-- ImageGrid con animación -->
   <TransitionGroup name="fade" tag="div" class="grid grid-cols-[repeat(auto-fit,minmax(250px,350px))] gap-6">
     <MyPropertyCard v-for="propiedad in propiedades" :key="propiedad.id" :id="propiedad.id" :titulo="propiedad.title"
-      :precio="propiedad.monthly_price" :estado="propiedad.status" :imagen="propiedad.photos[0]?.image"
+      :precio="propiedad.monthly_price" :estado="propiedad.status" :imagen="propiedad.photos[0]?.image ? propiedad.photos[0].image : 'https://placehold.co/500x300?text=Sin+imagen'" 
       @editar="editarPropiedad" @ver="verPropiedad" @eliminar="confirmarEliminacion" @cambiar-estado="cambiarEstado" />
   </TransitionGroup>
 
@@ -35,6 +35,7 @@
     </div>
   </div>
   <Loader :show="loading" :message="loaderMessage" />
+  <EditarPropiedad  v-if="selectedPropertyId !== null" :id="selectedPropertyId" :visible="showEditarModal" @close="cerrarModal"/>
 </template>
 
 <script setup>
@@ -43,6 +44,8 @@ import { ref, onMounted } from "vue";
 import { useGestionPropiedades } from "/src/stores/useGestionPropiedades.js";
 import MyPropertyCard from "/src/components/MisPropiedades/MyPropertyCard.vue"
 import { useRouter } from 'vue-router';
+import EditarPropiedad from '/src/components/MisPropiedades/EditarPropiedad/EditarPropiedad.vue';
+
 
 const storePropiedades = useGestionPropiedades();
 const propiedades = ref([]);
@@ -52,6 +55,8 @@ const emit = defineEmits(["sinPropiedades"]);
 const loading = ref(false)
 const loaderMessage = ref('')
 const router = useRouter();
+const showEditarModal = ref(false);
+const selectedPropertyId = ref(null);
 
 const fetchMyProperties = async () => {
   try {
@@ -63,6 +68,9 @@ const fetchMyProperties = async () => {
 
 const editarPropiedad = (id) => {
   console.log("Editar propiedad con ID:", id);
+  selectedPropertyId.value = id
+  showEditarModal.value = true;
+
 };
 
 const verPropiedad = ({ id, estado }) => {
@@ -113,7 +121,10 @@ const cambiarEstado = async ({ id, estado }) => {
   }
 
 };
-
+const cerrarModal= ()=>{
+  showEditarModal.value = false
+  selectedPropertyId.value = null
+}
 const eliminarPropiedad = async (id) => {
   showConfirm.value = false;
   try {

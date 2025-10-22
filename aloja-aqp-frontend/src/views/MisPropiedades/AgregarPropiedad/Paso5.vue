@@ -58,8 +58,11 @@ async function publicarPropiedad() {
     try {
         loading.value = true
         loaderMessage.value = 'Publishing property...'
-        await store.publicarPropiedad();
-        await storePropiedades.updateStateMisPropiedades();
+        //siempre se guarda como borrador
+        const idPropertyCreated = await store.publicarPropiedad();
+        //poner estado a publicado
+        await storePropiedades.publicarPropiedad(idPropertyCreated);
+        // la funcion publicarPropiedad actualiza el estado de las propiedades asi que ya no es necesario actualizar
         router.push('/mis-propiedades')
     } catch (err) {
         console.error("❌ Error al publicar propiedad:", err.response?.data || err);
@@ -73,6 +76,7 @@ async function guardarBorrador() {
     try {
         loading.value = true
         loaderMessage.value = 'Guardando borrador...'
+        //siempre se guarda como borrador
         await store.publicarPropiedad();
         await storePropiedades.updateStateMisPropiedades();
         

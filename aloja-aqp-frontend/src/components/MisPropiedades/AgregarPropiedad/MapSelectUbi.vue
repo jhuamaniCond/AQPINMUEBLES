@@ -10,8 +10,14 @@ import houseIconUrl from "../../../assets/house.svg";
 
 export default {
     name: "SelectLocationMap",
+    props: {
+        predefinedUbication: {
+            type: Object,
+            default: null,
+        },
+    },
     emits: ["ubicacion-seleccionada"],
-    setup(_, { emit }) {
+    setup(props, { emit }) {
         const map = ref(null);
         let markerLayer = null;
         let houseMarker = null;
@@ -26,8 +32,13 @@ export default {
         onMounted(async () => {
             await nextTick();
 
+            const defaultCoords = [-16.409047, -71.537451];
+            const initialCoords = props.predefinedUbication
+                ? [props.predefinedUbication.latitud, props.predefinedUbication.longitud]
+                : defaultCoords;
+
             // Crear el mapa centrado en una posición por defecto
-            map.value = L.map("select-map").setView([-16.409047, -71.537451], 13);
+            map.value = L.map("select-map").setView(initialCoords, 13);
 
             // Cargar los tiles de OpenStreetMap
             L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -37,6 +48,15 @@ export default {
 
             // Capa para los marcadores
             markerLayer = L.layerGroup().addTo(map.value);
+
+            // Si se definió una ubicación preexistente, colocar el marcador
+            if (props.predefinedUbication) {
+                console.log("ubicacion predefinida ",initialCoords)
+                houseMarker = L.marker(initialCoords, { icon: houseIcon })
+                    .addTo(markerLayer)
+                    .bindPopup("Ubicación seleccionada")
+                    .openPopup();
+            }
 
             // Escuchar clics en el mapa
             map.value.on("click", (e) => {

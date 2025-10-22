@@ -53,7 +53,7 @@
 
                   <PropertyCard v-for="(property, index) in propertiesPublicas" :key="property.id"
                     :title="property.title" :description="property.description" distance="222 km"
-                    :image="property.photos[0].image" :isSelected="selectedIndex === index"
+                    :image="property.photos[0]?.image ? property.photos[0].image : 'https://placehold.co/500x300?text=Sin+imagen' " :isSelected="selectedIndex === index"
                     @card-clicked="handleCardClicked(index)" />
 
                 </div>

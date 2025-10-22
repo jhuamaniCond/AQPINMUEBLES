@@ -5,8 +5,8 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
   state: () => ({
     myPropiedades: null, // lista de alojamientos del usuario
     myPropiedadActual: null, // alojamiento seleccionado
-    propiedadesPublicas:null,
-    propiedadPublicaActual:null,
+    propiedadesPublicas: null,
+    propiedadPublicaActual: null,
     loading: false,
     error: null,
   }),
@@ -17,6 +17,18 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
       const token = localStorage.getItem("access_token");
       const headers = {};
       if (token) headers.Authorization = `Bearer ${token}`;
+      return { headers };
+    },
+    getAuthHeaderDelete() {
+      const token = localStorage.getItem("access_token");
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      } else {
+        console.warn("⚠️ No hay token en localStorage (access_token).");
+      }
       return { headers };
     },
 
@@ -111,27 +123,6 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
       }
     },
 
-    // ✏️ Editar propiedad existente
-    async actualizarMyPropiedad(id, data) {
-      try {
-        const res = await axios.patch(
-          `http://127.0.0.1:8000/api/accommodations/${id}/`,
-          data,
-          this.getAuthHeaders()
-        );
-        // Actualiza en el array local
-        const index = this.myPropiedades.findIndex((p) => p.id === id);
-        if (index !== -1) this.myPropiedades[index] = res.data;
-        console.log("✅ Propiedad actualizada:", res.data);
-        return res.data;
-      } catch (error) {
-        console.error(
-          "❌ Error al actualizar propiedad:",
-          error.response?.data || error.message
-        );
-        throw error;
-      }
-    },
     // 📄 Obtener una propiedad específica (detalle)
     async fetchMyPropiedad(id) {
       this.loading = true;
@@ -142,19 +133,35 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           this.getAuthHeaders()
         );
         this.myPropiedadActual = res.data;
-        console.log("✅ Propiedad con id ",id ," obtenida :",res.data);
+        console.log("✅ Propiedad con id ", id, " obtenida :", res.data);
         return res.data;
       } catch (error) {
         this.error = error.response?.data || error.message;
-        console.error("❌ Error al obtener propiedad con id ",id,":", this.error);
+        console.error(
+          "❌ Error al obtener propiedad con id ",
+          id,
+          ":",
+          this.error
+        );
       } finally {
         this.loading = false;
       }
     },
     async getMyPropiedadActual(id) {
-      if (this.myPropiedadActual === null) {
-        await this.fetchMyPropiedad(id);
+      if (this.myPropiedades && Array.isArray(this.myPropiedades)) {
+        // Busca la propiedad por id
+        const propiedad = this.myPropiedades.find(
+          (p) => Number(p.id) === Number(id)
+        );
+
+        if (propiedad) {
+          this.myPropiedadActual = propiedad;
+          console.log("Propiedad encontrada localmente:", propiedad);
+          return propiedad;
+        }
       }
+      console.log("Propiedad no encontrada localmente:");
+      await this.fetchMyPropiedad(id);
       return this.myPropiedadActual;
     },
     async updateStateMyPropiedadActual(id) {
@@ -169,7 +176,10 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           this.getAuthHeaders()
         );
         this.propiedadesPublicas = res.data;
-        console.log("✅ Propiedades publicas cargadas:", this.propiedadesPublicas);
+        console.log(
+          "✅ Propiedades publicas cargadas:",
+          this.propiedadesPublicas
+        );
       } catch (error) {
         this.error = error.response?.data || error.message;
         console.error("❌ Error al obtener Propiedades publicas:", this.error);
@@ -191,15 +201,20 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
       this.error = null;
       try {
         const res = await axios.get(
-          `http://127.0.0.1:8000/api/accommodations/${id}/`,
+          `http://127.0.0.1:8000/api/public/accommodations/${id}/`,
           this.getAuthHeaders()
         );
         this.propiedadPublicaActual = res.data;
-        console.log("✅ Propiedad con id ",id ," obtenida :",res.data);
+        console.log("✅ Propiedad con id ", id, " obtenida :", res.data);
         return res.data;
       } catch (error) {
         this.error = error.response?.data || error.message;
-        console.error("❌ Error al obtener propiedad con id ",id," publica:", this.error);
+        console.error(
+          "❌ Error al obtener propiedad con id ",
+          id,
+          " publica:",
+          this.error
+        );
       } finally {
         this.loading = false;
       }
@@ -213,6 +228,206 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
     async updateStatePropiedadPublicaActual(id) {
       await this.fetchPropiedadPublica(id);
     },
+
+    async crearServicios(arrBodyCrearServicios) {
+      // amenidades es un array de IDs o de objetos
+      for (const bodyCrearServicio of arrBodyCrearServicios) {
+        const res = await axios.post(
+          "http://127.0.0.1:8000/api/accommodation-services/",
+          bodyCrearServicio,
+          this.getAuthHeaders()
+        );
+        console.log(`✅ creado servicio:`, res.data);
+      }
+    },
+    async borrarServicios(arrBodyDeleteServicios) {
+      // amenidades es un array de IDs o de objetos
+      for (const bodyDeleteServicio of arrBodyDeleteServicios) {
+        console.log("bodyDeleteServicio", JSON.stringify(bodyDeleteServicio));
+        const authHeaders = this.getAuthHeaders();
+        console.log("🔑 Cabeceras:", authHeaders);
+
+        if (!authHeaders.headers.Authorization) {
+          console.error("❌ No se encontró token de autenticación.");
+          return;
+        }
+        const res = await axios.delete(
+          `http://127.0.0.1:8000/api/accommodation-services/${bodyDeleteServicio.id}/`,
+          authHeaders
+        );
+        console.log(`✅ servicio borrado:`, res.data);
+      }
+    },
+    async borrarFotos(arrBodyDeletePhotos) {
+      // amenidades es un array de IDs o de objetos
+      for (const bodyDeletePhoto of arrBodyDeletePhotos) {
+        console.log("bodyDeletePhoto", JSON.stringify(bodyDeletePhoto));
+        const authHeaders = this.getAuthHeaders();
+        console.log("🔑 Cabeceras:", authHeaders);
+
+        if (!authHeaders.headers.Authorization) {
+          console.error("❌ No se encontró token de autenticación.");
+          return;
+        }
+        const res = await axios.delete(
+          `http://127.0.0.1:8000/api/accommodation-photos/${bodyDeletePhoto.id}/`,
+          authHeaders
+        );
+        console.log(`✅ photo borrado:`, res.data);
+      }
+    },
+    // 🔹 Paso 3: Subir fotos
+    async subirFotos(accommodationId,arrBodyCreatePhotos ) {
+      for (let i = 0; i < arrBodyCreatePhotos.length; i++) {
+        const img = arrBodyCreatePhotos[i];
+        const formData = new FormData();
+
+        // Si es Base64, convertirla a File
+        let file;
+        if (typeof img === "string" && img.startsWith("data:image")) {
+          const arr = img.split(",");
+          const mime = arr[0].match(/:(.*?);/)[1];
+          const bstr = atob(arr[1]);
+          let n = bstr.length;
+          const u8arr = new Uint8Array(n);
+          while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+          }
+          file = new File([u8arr], `photo_${i}.${mime.split("/")[1]}`, {
+            type: mime,
+          });
+        } else {
+          // Si ya es un archivo tipo File
+          file = img;
+        }
+
+        formData.append("accommodation", accommodationId);
+        formData.append("image", file);
+        formData.append("order_num", i + 1);
+
+        const res = await axios.post(
+          "http://127.0.0.1:8000/api/accommodation-photos/",
+          formData,
+          this.getAuthHeaders()
+        );
+        console.log(`✅ creado foto:`, res.data);
+      }
+    },
+
+    // ✏️ Editar propiedad existente
+    async actualizarMyPropiedad(id, data) {
+      try {
+        const res = await axios.patch(
+          `http://127.0.0.1:8000/api/accommodations/${id}/`,
+          data,
+          this.getAuthHeaders()
+        );
+        // Actualiza en el array local
+        const index = this.myPropiedades.findIndex((p) => p.id === id);
+        if (index !== -1) this.myPropiedades[index] = res.data;
+        console.log("✅ Propiedad actualizada:", res.data);
+        return res.data;
+      } catch (error) {
+        console.error(
+          "❌ Error al actualizar propiedad:",
+          error.response?.data || error.message
+        );
+        throw error;
+      }
+    },
+
+    async actualizarMyPropiedadAllProperties(payload) {
+      try {
+
+        const ActualizarPropiedadBody =
+          this.crearBodyActualizarMyPropiedad(payload);
+        
+        await this.actualizarMyPropiedad(payload.id, ActualizarPropiedadBody);
+        const arrBodyDeleteServices = this.crearArrBodyDeleteServices(payload);
+        const arrBodyCreateServices = this.crearArrBodyCreateServices(payload);
+
+        await this.borrarServicios(arrBodyDeleteServices);
+        await this.crearServicios(arrBodyCreateServices);
+
+        const arrBodyDeletePhotos = this.crearArrBodyDeletePhotos(payload);
+
+        await this.borrarFotos(arrBodyDeletePhotos)
+
+        const arrBodyCreatePhotos = this.crearArrBodyCreatePhotos(payload);
+
+        await this.subirFotos(payload.id,arrBodyCreatePhotos)
+
+      } catch (error) {
+        console.error("❌ Error en actualizarMyPropiedadAllProperties:", error);
+      }
+    },
+    crearBodyActualizarMyPropiedad(payload) {
+      const filteredData = {
+        title: payload.title,
+        description: payload.description,
+        address: payload.address,
+        latitude: payload.latitude,
+        longitude: payload.longitude,
+        monthly_price: payload.monthly_price,
+        coexistence_rules: payload.coexistence_rules,
+        rooms: payload.rooms,
+        accommodation_type: payload.accommodation_type,
+      };
+      return filteredData;
+    },
+    crearArrBodyDeleteServices(payload) {
+      if (
+        !payload.previousServices ||
+        !Array.isArray(payload.previousServices)
+      ) {
+        return [];
+      }
+
+      // Mapea cada servicio previo a su id en formato { id: id }
+      const deleteBody = payload.previousServices.map((service) => ({
+        id: service.id,
+      }));
+
+      return deleteBody;
+    },
+    crearArrBodyCreateServices(payload) {
+      // Verifica que existan servicios nuevos
+      if (!payload.nextServices || !Array.isArray(payload.nextServices)) {
+        return [];
+      }
+
+      // Mapea cada id de servicio nuevo al formato esperado por el backend
+      const createBody = payload.nextServices.map((serviceId) => ({
+        accommodation: payload.id,
+        service: serviceId,
+      }));
+
+      return createBody;
+    },
+    crearArrBodyDeletePhotos(payload) {
+
+      const nextPhotos = payload.nextPhotos || [];
+
+      // Filtra las fotos anteriores que ya no están en nextPhotos
+      const deleteBody = payload.photos
+        .filter((photo) => !nextPhotos.includes(photo.image))
+        .map((photo) => ({ id: photo.id }));
+
+      return deleteBody;
+    },
+    crearArrBodyCreatePhotos(payload) {
+      
+      const previousPhotos = payload.photos || [];
+      const nextPhotos = payload.nextPhotos || [];
+
+      // Extrae solo las URLs de las fotos anteriores
+      const previousUrls = previousPhotos.map((photo) => photo.image);
+
+      // URLs nuevas que no existían antes
+      const createBody = nextPhotos
+        .filter((url) => !previousUrls.includes(url))
+        .map((url) => (url));
+      return createBody;
+    },
   },
-  
 });
