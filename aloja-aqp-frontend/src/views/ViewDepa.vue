@@ -119,16 +119,6 @@
                                     No hay servicios disponibles
                                 </div>
 
-                                <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
-                                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                                        Planos de la Casa
-                                    </h2>
-                                    <div
-                                        class="mt-4 bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex justify-center items-center">
-                                        <img alt="Floor plan" class="max-w-full h-auto rounded-md"
-                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2d_f_g-h_j_k-l_m_n-p_q_r-s_t_u-v_w_x-y_z_a-b_c_d_e_f-g_h_j_k-l_m_n_p-q_r_s_t-u_v_w_x_y_z_a_b-c_d_e_f-g_h_j_k-l_m_n_p_q_r_s" />
-                                    </div>
-                                </div>
 
                                 <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
                                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
@@ -147,9 +137,10 @@
 
                                     <div
                                         class="mt-4 aspect-video bg-gray-200 dark:bg-gray-800 rounded-xl overflow-hidden">
-                                        <MapView v-if="selectedSede && propiedad.latitude && propiedad.longitude" :latitudCasa="propiedad.latitude"
-                                            :longitudCasa="propiedad.longitude" :latitudUni="selectedSede.lat"
-                                            :longitudUni="selectedSede.lng" :UniImgUrl="selectedUniversity.imageUrl" />
+                                        <MapView v-if="selectedSede && propiedad.latitude && propiedad.longitude"
+                                            :latitudCasa="propiedad.latitude" :longitudCasa="propiedad.longitude"
+                                            :latitudUni="selectedSede.lat" :longitudUni="selectedSede.lng"
+                                            :UniImgUrl="selectedUniversity.imageUrl" />
                                     </div>
                                 </div>
                                 <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
@@ -157,45 +148,13 @@
                                         Comentarios
                                     </h2>
                                     <div class="mt-6 space-y-6">
-                                        <div class="flex gap-4">
-                                            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-                                                style="
-                          background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDAlo91pnfJSsmHzc7pE-x3DyhQpI5SdlPENuRZV09BVDE07nVggll8-ZPJv_zOvrbGND65gR_1J1PkODUb__E4-qoBIEklzVkCJdqbKXmo7K3YMwkG4waSkHJsJr-czKTozUCQvl8Kt43MwPX2yN3M-BOBZr3_kL8M3-RuXO58o5SMBBG1kDO35zhXduURZU2Jm6HkHDCEHapiNvC5Y-iyVdtU9D4zhkzgwkwa-4aV3gzkJU038j6day4QXDxGw1qavnntTNVitAE');
-                        "></div>
-                                            <div class="flex-1">
-                                                <p class="font-semibold text-gray-800 dark:text-white">
-                                                    Kenji Tanaka
-                                                </p>
-                                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                                                    hace 2 días
-                                                </p>
-                                                <p class="text-gray-600 dark:text-gray-300">
-                                                    "¿Alguien sabe si la cocina tiene microondas? No está
-                                                    incluido en la lista de servicios, pero no puedo
-                                                    imaginar una cocina moderna sin uno."
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="flex gap-4">
-                                            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-                                                style="
-                          background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-q5pD2v7R6e3F-h4G-i2J_k1L_m3N_o5P_q7R_s9T-u0V-w2X-y4Z_a6B-c8D_e0F_g1H_i3J_k5L-m7N_o9P_q1R_s3T-u5V-w7X_y9Z_a1B-c3D_e5F_g7H');
-                        "></div>
-                                            <div class="flex-1">
-                                                <p class="font-semibold text-gray-800 dark:text-white">
-                                                    Sarah Johnson (Agente)
-                                                </p>
-                                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                                                    hace 1 día
-                                                </p>
-                                                <p class="text-gray-600 dark:text-gray-300">
-                                                    "¡Hola Kenji, excelente pregunta! Sí, la cocina está
-                                                    totalmente equipada e incluye un microondas.
-                                                    Actualizaremos la lista de servicios. ¡Avísame si
-                                                    tienes alguna otra pregunta!"
-                                                </p>
-                                            </div>
-                                        </div>
+
+                                        <Comentario v-for="review in actualReviews" :key="review.id"
+                                            :imagen="review.user.avatar || '/src/public/default_avatar.png'"
+                                            :autor="`${toStartCase(review.user.first_name)} ${toStartCase(review.user.last_name)}`"
+                                            :diasAntiguedad="calcularDiasAntiguedad(review.review_date)"
+                                            :comentario="review.comment" :isAutor="esAutor(review.user.id)" />
+
 
                                         <div class="mt-8">
                                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -203,14 +162,15 @@
                                             </h3>
                                             <div class="flex items-start gap-4">
                                                 <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-                                                    style="
-                            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDAlo91pnfJSsmHzc7pE-x3DyhQpI5SdlPENuRZV09BVDE07nVggll8-ZPJv_zOvrbGND65gR_1J1PkODUb__E4-qoBIEklzVkCJdqbKXmo7K3YMwkG4waSkHJsJr-czKTozUCQvl8Kt43MwPX2yN3M-BOBZr3_kL8M3-RuXO58o5SMBBG1kDO35zhXduURZU2Jm6HkHDCEHapiNvC5Y-iyVdtU9D4zhkzgwkwa-4aV3gzkJU038j6day4QXDxGw1qavnntTNVitAE');
-                          "></div>
+                                                    :style="{
+                                                        backgroundImage: `url(${auth.user?.avatar || '/src/public/default_avatar.png'
+                                                            })`,
+                                                    }"></div>
                                                 <div class="flex-1">
-                                                    <textarea
+                                                    <textarea v-model="nuevoComentarioComment"
                                                         class="w-full p-3 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 focus:ring-primary focus:border-primary transition"
                                                         placeholder="Escribe tu comentario..." rows="4"></textarea>
-                                                    <button
+                                                    <button @click="publicarComentario"
                                                         class="mt-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/90 transition-colors">
                                                         Publicar Comentario
                                                     </button>
@@ -282,22 +242,52 @@
             </main>
         </div>
     </div>
+    <LoginModal :show="showLogin" @close="showLogin = false" @login-success="onLoginSuccess" />
+    
 </template>
 
 <script setup>
+import LoginModal from "../components/authorization/LoginModal.vue";
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import MapView from "../components/MapView.vue";
 import FilterButtonMultipleOptions from "../components/FilterButtonMultipleOptions.vue";
 import HeaderComponent from "../components/HeaderComponent.vue";
 import { useGestionPropiedades } from "/src/stores/useGestionPropiedades.js";
+import Comentario from "../components/Comentario.vue";
+import { useGestionComments } from "/src/stores/useGestionComments.js";
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "../stores/auth";
+const auth = useAuthStore();
+console.log("usuario en view depa", JSON.stringify(auth.user, null, 2));
+const showLogin = ref(false);
 
 // Accedemos al parámetro "id" desde la URL
 const route = useRoute();
 const router = useRouter();
 const id = computed(() => route.params.id);
 const storePropiedades = useGestionPropiedades();
+const storeComentarios = useGestionComments();
 const isPrivate = route.query.isPrivate === "true";
+
+const { nuevoComentarioComment, nuevoComentarioAccomodationId } = storeToRefs(storeComentarios);
+const actualReviews = ref([])
+
+const publicarComentario = async () => {
+    if (auth.user){
+        const newComentario= await storeComentarios.publicarComentario();
+        actualReviews.value = [...actualReviews.value, newComentario]
+    }else{
+        //si el usuario no esta logeado abrir modal
+        showLogin.value = true;
+    }
+    
+};
+
+const onLoginSuccess = () => {
+    console.log('Evento login-success recibido');
+  showLogin.value = false;
+};
 
 // Datos base
 const dataHouse = ref({
@@ -354,7 +344,8 @@ const fetchMyPropertiePrivate = async (id) => {
     try {
         await storePropiedades.updateStateMyPropiedadActual(id);
         propiedad.value = await storePropiedades.getMyPropiedadActual(id);
-        console.log("propiedad actual :", JSON.stringify(propiedad.value));
+        nuevoComentarioAccomodationId.value = propiedad.value.id
+        actualReviews.value = propiedad.value.reviews
     } catch (err) {
         console.error("Error al obtener propiedad id ", id, " :", err);
     }
@@ -363,7 +354,8 @@ const fetchMyPropertiePublic = async (id) => {
     try {
         await storePropiedades.updateStatePropiedadPublicaActual(id);
         propiedad.value = await storePropiedades.getPropiedadPublicaActual(id);
-        console.log("propiedad actual :", JSON.stringify(propiedad.value));
+        nuevoComentarioAccomodationId.value = propiedad.value.id
+        actualReviews.value = propiedad.value.reviews
     } catch (err) {
         console.error("Error al obtener propiedad id ", id, " :", err);
     }
@@ -381,6 +373,17 @@ const mainPhoto = computed(
 const sidePhotos = computed(
     () => propiedad.value?.photos?.filter((p) => !p.is_main) || []
 );
+
+const calcularDiasAntiguedad = (fecha) => {
+  const fechaReview = new Date(fecha)
+  const hoy = new Date()
+  const diff = Math.floor((hoy - fechaReview) / (1000 * 60 * 60 * 24))
+  return diff
+}
+
+// Determina si el usuario actual es el autor
+const esAutor = (userId) => userId === propiedad.value.user.id
+
 
 // Inicialización
 onMounted(() => {
