@@ -134,9 +134,11 @@ function renderGoogleButton() {
   if (!googleButton.value) return;
   ensureGoogleLoaded(() => {
     if (!window.googleInitialized) {
+      console.log(          import.meta.env.VITE_GOOGLE_CLIENT_ID,
+)
       window.google.accounts.id.initialize({
         client_id:
-          "708526682489-s8pf4a79o51jr6bdgi2pl8f1kutlvch7.apps.googleusercontent.com",
+          import.meta.env.VITE_GOOGLE_CLIENT_ID,
         callback: handleCredentialResponse,
       });
       window.googleInitialized = true;
