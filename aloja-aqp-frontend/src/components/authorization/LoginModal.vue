@@ -97,10 +97,10 @@ const loginUser = async () => {
   const result = await auth.login(email.value, password.value);
 
   if (result.success) {
-    alert("✅ Inicio de sesión exitoso");
+    alert("  Inicio de sesión exitoso");
     emit("login-success");
   } else {
-    alert("❌ " + result.message);
+    alert("  " + result.message);
   }
 };
 
@@ -113,10 +113,10 @@ function handleCredentialResponse(response) {
 
   auth.googleLogin(response.credential).then((result) => {
     if (result.success) {
-      alert("✅ Login exitoso con Google");
+      alert("  Login exitoso con Google");
       emit("login-success");
     } else {
-      alert("❌ " + result.message);
+      alert("  " + result.message);
     }
   });
 }

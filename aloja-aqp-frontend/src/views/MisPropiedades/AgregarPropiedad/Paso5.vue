@@ -65,7 +65,7 @@ async function publicarPropiedad() {
         // la funcion publicarPropiedad actualiza el estado de las propiedades asi que ya no es necesario actualizar
         router.push('/mis-propiedades')
     } catch (err) {
-        console.error("❌ Error al publicar propiedad:", err.response?.data || err);
+        console.error("  Error al publicar propiedad:", err.response?.data || err);
     }finally{
         loading.value = false
     }
@@ -82,7 +82,7 @@ async function guardarBorrador() {
         
         router.push('/mis-propiedades')
     } catch (err) {
-        console.error("❌ Error al guardar propiedad:", err.response?.data || err);
+        console.error("  Error al guardar propiedad:", err.response?.data || err);
     }finally{
         loading.value = false
     }

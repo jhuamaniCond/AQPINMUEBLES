@@ -30,7 +30,7 @@ export const useAuthStore = defineStore('auth', {
           return { success: false, message: "Credenciales incorrectas" };
         }
       } catch (error) {
-        console.error("❌ Error al iniciar sesión:", error);
+        console.error("  Error al iniciar sesión:", error);
         return { success: false, message: "Error de conexión" };
       }
     },
@@ -56,7 +56,7 @@ export const useAuthStore = defineStore('auth', {
           return { success: false, message: "Error en el login con Google" };
         }
       } catch (err) {
-        console.error("❌ Error en login Google:", err);
+        console.error("  Error en login Google:", err);
         return { success: false, message: "Error de conexión" };
       }
     },
@@ -77,13 +77,13 @@ export const useAuthStore = defineStore('auth', {
           })
 
           if (res.ok) {
-            console.log('✅ Logout exitoso en el backend')
+            console.log('  Logout exitoso en el backend')
           } else {
             console.warn('⚠️ El backend respondió:', res.status, res.statusText)
           }
         }
       } catch (error) {
-        console.error('❌ Error al cerrar sesión:', error)
+        console.error('  Error al cerrar sesión:', error)
       } finally {
         // 🔹 Limpia almacenamiento local
         localStorage.removeItem('access_token')
@@ -94,7 +94,7 @@ export const useAuthStore = defineStore('auth', {
         this.isLogged = false
         this.user = null
 
-        alert('👋 Sesión cerrada desde el auth')
+        alert('Sesión cerrada desde el auth')
       }
     },
     // --- REGISTRAR PROPIETARIO ---
@@ -120,16 +120,16 @@ export const useAuthStore = defineStore('auth', {
         console.log("💡 Respuesta del backend:", data);
 
         if (res.ok) {
-          alert("✅ Perfil de propietario creado exitosamente.");
+          alert("  Perfil de propietario creado exitosamente.");
           localStorage.setItem("user_info", JSON.stringify(data.user));
           return { success: true };
         } else {
           const msg = data.message || data.error || JSON.stringify(data);
-          alert(`❌ Error al registrar propietario: ${msg}`);
+          alert(`  Error al registrar propietario: ${msg}`);
           return { success: false };
         }
       } catch (err) {
-        console.error("❌ Error al comunicarse con el servidor:", err);
+        console.error("  Error al comunicarse con el servidor:", err);
         alert("Error de conexión con el servidor.");
         return { success: false };
       }
@@ -152,7 +152,7 @@ export const useAuthStore = defineStore('auth', {
           return { success: false, message: data[0] || "Verifica los datos." };
         }
       } catch (err) {
-        console.error("❌ Error en registro:", err);
+        console.error("  Error en registro:", err);
         return { success: false, message: "Error al comunicarse con el servidor" };
       }
     },
@@ -180,15 +180,15 @@ export const useAuthStore = defineStore('auth', {
           // 🔹 Actualiza datos locales
           this.user = data;
           localStorage.setItem("user_info", JSON.stringify(data));
-          alert("✅ Datos actualizados correctamente.");
+          alert("  Datos actualizados correctamente.");
           return { success: true, user: data };
         } else {
           const msg = data.detail || data.error || "Error al actualizar.";
-          alert(`❌ ${msg}`);
+          alert(`  ${msg}`);
           return { success: false };
         }
       } catch (err) {
-        console.error("❌ Error al actualizar usuario:", err);
+        console.error("  Error al actualizar usuario:", err);
         alert("Error de conexión con el servidor.");
         return { success: false };
       }

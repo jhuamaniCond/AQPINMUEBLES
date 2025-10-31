@@ -201,7 +201,7 @@ const registerStudent = async () => {
     alert(res.message);
     router.push('/');
   } else {
-    alert(`❌ ${res.message}`);
+    alert(`  ${res.message}`);
   }
 };
 

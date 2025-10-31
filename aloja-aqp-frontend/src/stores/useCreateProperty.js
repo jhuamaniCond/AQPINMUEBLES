@@ -38,7 +38,7 @@ export const useCreateProperty = defineStore("propiedad", {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log(`✅ creado alojamiento:`, res.data);
+      console.log(`  creado alojamiento:`, res.data);
       return res.data; // devuelve el alojamiento creado (con id)
     },
 
@@ -54,7 +54,7 @@ export const useCreateProperty = defineStore("propiedad", {
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        console.log(`✅ creado servicio:`, res.data);
+        console.log(`  creado servicio:`, res.data);
       }
 
     },
@@ -99,7 +99,7 @@ export const useCreateProperty = defineStore("propiedad", {
             },
           }
         );
-        console.log(`✅ creado foto:`, res.data);
+        console.log(`  creado foto:`, res.data);
       }
     },
     // 🔹 Flujo completo (si lo quieres automatizar todo)

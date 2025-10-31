@@ -292,7 +292,7 @@ const publishProperty = () => {
 
   // Si ya tiene rol de propietario
   if (auth.user && auth.user?.roles?.includes("owner")) {
-    alert("✅ Ya eres propietario. Puedes publicar tus anuncios desde tu perfil.");
+    alert("  Ya eres propietario. Puedes publicar tus anuncios desde tu perfil.");
     return;
   }
 

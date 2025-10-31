@@ -70,7 +70,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { onClickOutside } from '@vueuse/core'
-// ✅ Definimos las props y las guardamos en una variable
+//   Definimos las props y las guardamos en una variable
 const props = defineProps({
   id: {
     type: [String, Number],
@@ -133,14 +133,14 @@ const cambiarEstado = (nuevoEstado) => {
   menuAbierto.value = false;
   emit("cambiar-estado", { id: props.id, estado: nuevoEstado });
 };
-// ✅ Computed para cambiar color según estado
+//   Computed para cambiar color según estado
 const estadoClase = computed(() => {
   const estado = props.estado.toLowerCase();
 
-  if (estado === "published") return "bg-green-100 text-green-800";  // ✅ Publicado
+  if (estado === "published") return "bg-green-100 text-green-800";  //   Publicado
   if (estado === "draft") return "bg-yellow-100 text-yellow-800";    // 📝 Borrador
   if (estado === "hidden") return "bg-gray-200 text-gray-800";       // 👁️‍🗨️ Oculto
-  if (estado === "deleted") return "bg-red-100 text-red-800";        // ❌ Eliminado
+  if (estado === "deleted") return "bg-red-100 text-red-800";        //   Eliminado
   return "bg-gray-100 text-gray-800";
 });
 </script>

@@ -18,12 +18,12 @@ export const webPageData = defineStore("webPageData", {
 
         const res = await axios.get(`http://127.0.0.1:8000/api/${endpoint}/`, { headers });
 
-        console.log(`✅ ${resourceName}:`, res.data);
+        console.log(`  ${resourceName}:`, res.data);
         this.cache[resourceName] = res.data;
         return res.data;
       } catch (error) {
         console.error(
-          `❌ Error al obtener ${resourceName}:`,
+          `  Error al obtener ${resourceName}:`,
           error.response?.data || error.message
         );
         throw error;

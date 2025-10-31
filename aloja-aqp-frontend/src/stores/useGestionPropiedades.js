@@ -42,10 +42,10 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           this.getAuthHeaders()
         );
         this.myPropiedades = res.data;
-        console.log("✅ Propiedades cargadas:", this.myPropiedades);
+        console.log("  Propiedades cargadas:", this.myPropiedades);
       } catch (error) {
         this.error = error.response?.data || error.message;
-        console.error("❌ Error al obtener mys Propiedades:", this.error);
+        console.error("  Error al obtener mys Propiedades:", this.error);
       } finally {
         this.loading = false;
       }
@@ -67,12 +67,12 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           {},
           this.getAuthHeaders()
         );
-        console.log("✅ Propiedad eliminada lógicamente:", res.data);
+        console.log("  Propiedad eliminada lógicamente:", res.data);
         await this.fetchMisPropiedades();
         return this.myPropiedades;
       } catch (error) {
         console.error(
-          "❌ Error al eliminar propiedad:",
+          "  Error al eliminar propiedad:",
           error.response?.data || error.message
         );
         throw error;
@@ -88,13 +88,13 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           this.getAuthHeaders()
         );
 
-        console.log("✅ Propiedad publicada:", res.data);
+        console.log("  Propiedad publicada:", res.data);
 
         await this.fetchMisPropiedades();
         return this.myPropiedades;
       } catch (error) {
         console.error(
-          "❌ Error al publicar:",
+          "  Error al publicar:",
           error.response?.data || error.message
         );
         throw error;
@@ -109,14 +109,14 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           {},
           this.getAuthHeaders()
         );
-        console.log("✅ Propiedad ocultada:", res.data);
+        console.log("  Propiedad ocultada:", res.data);
 
         await this.fetchMisPropiedades();
 
         return this.myPropiedades;
       } catch (error) {
         console.error(
-          "❌ Error al ocultar propiedad:",
+          "  Error al ocultar propiedad:",
           error.response?.data || error.message
         );
         throw error;
@@ -133,12 +133,12 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           this.getAuthHeaders()
         );
         this.myPropiedadActual = res.data;
-        console.log("✅ Propiedad con id ", id, " obtenida :", res.data);
+        console.log("  Propiedad con id ", id, " obtenida :", res.data);
         return res.data;
       } catch (error) {
         this.error = error.response?.data || error.message;
         console.error(
-          "❌ Error al obtener propiedad con id ",
+          "  Error al obtener propiedad con id ",
           id,
           ":",
           this.error
@@ -177,12 +177,12 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         );
         this.propiedadesPublicas = res.data;
         console.log(
-          "✅ Propiedades publicas cargadas:",
+          "  Propiedades publicas cargadas:",
           this.propiedadesPublicas
         );
       } catch (error) {
         this.error = error.response?.data || error.message;
-        console.error("❌ Error al obtener Propiedades publicas:", this.error);
+        console.error("  Error al obtener Propiedades publicas:", this.error);
       } finally {
         this.loading = false;
       }
@@ -205,12 +205,12 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           this.getAuthHeaders()
         );
         this.propiedadPublicaActual = res.data;
-        console.log("✅ Propiedad con id ", id, " obtenida :", res.data);
+        console.log("  Propiedad con id ", id, " obtenida :", res.data);
         return res.data;
       } catch (error) {
         this.error = error.response?.data || error.message;
         console.error(
-          "❌ Error al obtener propiedad con id ",
+          "  Error al obtener propiedad con id ",
           id,
           " publica:",
           this.error
@@ -237,7 +237,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           bodyCrearServicio,
           this.getAuthHeaders()
         );
-        console.log(`✅ creado servicio:`, res.data);
+        console.log(`  creado servicio:`, res.data);
       }
     },
     async borrarServicios(arrBodyDeleteServicios) {
@@ -248,14 +248,14 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         console.log("🔑 Cabeceras:", authHeaders);
 
         if (!authHeaders.headers.Authorization) {
-          console.error("❌ No se encontró token de autenticación.");
+          console.error("  No se encontró token de autenticación.");
           return;
         }
         const res = await axios.delete(
           `http://127.0.0.1:8000/api/accommodation-services/${bodyDeleteServicio.id}/`,
           authHeaders
         );
-        console.log(`✅ servicio borrado:`, res.data);
+        console.log(`  servicio borrado:`, res.data);
       }
     },
     async borrarFotos(arrBodyDeletePhotos) {
@@ -266,14 +266,14 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         console.log("🔑 Cabeceras:", authHeaders);
 
         if (!authHeaders.headers.Authorization) {
-          console.error("❌ No se encontró token de autenticación.");
+          console.error("  No se encontró token de autenticación.");
           return;
         }
         const res = await axios.delete(
           `http://127.0.0.1:8000/api/accommodation-photos/${bodyDeletePhoto.id}/`,
           authHeaders
         );
-        console.log(`✅ photo borrado:`, res.data);
+        console.log(`  photo borrado:`, res.data);
       }
     },
     // 🔹 Paso 3: Subir fotos
@@ -310,7 +310,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           formData,
           this.getAuthHeaders()
         );
-        console.log(`✅ creado foto:`, res.data);
+        console.log(`  creado foto:`, res.data);
       }
     },
 
@@ -325,11 +325,11 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         // Actualiza en el array local
         const index = this.myPropiedades.findIndex((p) => p.id === id);
         if (index !== -1) this.myPropiedades[index] = res.data;
-        console.log("✅ Propiedad actualizada:", res.data);
+        console.log("  Propiedad actualizada:", res.data);
         return res.data;
       } catch (error) {
         console.error(
-          "❌ Error al actualizar propiedad:",
+          "  Error al actualizar propiedad:",
           error.response?.data || error.message
         );
         throw error;
@@ -358,7 +358,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         await this.subirFotos(payload.id,arrBodyCreatePhotos)
 
       } catch (error) {
-        console.error("❌ Error en actualizarMyPropiedadAllProperties:", error);
+        console.error("  Error en actualizarMyPropiedadAllProperties:", error);
       }
     },
     crearBodyActualizarMyPropiedad(payload) {

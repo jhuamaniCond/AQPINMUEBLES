@@ -24,10 +24,10 @@ export const useGestionComments = defineStore("gestionComentarios", {
           this.getAuthHeaders()
         );
         this.comentarios = res.data;
-        console.log("✅ comentarios cargadas:", this.comentarios);
+        console.log("  comentarios cargadas:", this.comentarios);
       } catch (error) {
         this.error = error.response?.data || error.message;
-        console.error("❌ Error al obtener comentarios:", this.error);
+        console.error("  Error al obtener comentarios:", this.error);
       } finally {
         this.loading = false;
       }
@@ -53,7 +53,7 @@ export const useGestionComments = defineStore("gestionComentarios", {
         data,
         this.getAuthHeaders()
       );
-      console.log(`✅ creado comentario:`, res.data);
+      console.log(`  creado comentario:`, res.data);
       return res.data; // devuelve el alojamiento creado (con id)
     },
   },

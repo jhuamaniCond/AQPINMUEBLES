@@ -255,7 +255,7 @@ function toggleAmenity(id) {
         current.splice(index, 1);
     }
 
-    console.log("✅ Amenidades seleccionadas (nextServices):", JSON.stringify(current));
+    console.log("  Amenidades seleccionadas (nextServices):", JSON.stringify(current));
 }
 
 
@@ -374,7 +374,7 @@ async function saveChanges() {
         await storePropiedades.updateStateMisPropiedades();
         emit("close");
     } catch (err) {
-        console.error("❌ Error al publicar propiedad:", err.response?.data || err);
+        console.error("  Error al publicar propiedad:", err.response?.data || err);
     } finally {
         loading.value = false
     }
