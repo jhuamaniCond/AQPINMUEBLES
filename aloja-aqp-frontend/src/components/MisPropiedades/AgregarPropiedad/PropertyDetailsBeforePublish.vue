@@ -26,9 +26,8 @@
             <!-- Amenidades con íconos -->
             <template v-if="detail.label === 'Amenidades'">
               <div v-if="detail.value.length" class="flex flex-wrap gap-3 justify-end">
-                <span v-for="a in detail.value" :key="a.id"
-                  class="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-                  <span class="material-symbols-outlined text-lg">{{ a.icon_class }}</span>
+                <span v-for="a in detail.value" :key="a.id" class="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                  <ServiceIcon :name="a.icon_name || a.icon_class" :url="a.image_url" :size="18" />
                 </span>
               </div>
               <span v-else class="text-gray-400">No agregadas</span>
@@ -53,6 +52,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+//import ServiceIcon from '/src/components/icons/ServiceIcon.vue'
 import { useCreateProperty } from '/src/stores/useCreateProperty' // Ajusta la ruta según tu estructura
 import { webPageData } from '/src/stores/webPageData.js';
 

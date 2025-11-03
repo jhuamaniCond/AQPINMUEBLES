@@ -31,12 +31,8 @@
                         ? 'bg-primary/10 border-primary'
                         : 'bg-gray-100 dark:bg-gray-700 border-dashed border-gray-300 dark:border-gray-600 hover:border-primary hover:bg-primary/10'
                 ]">
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-full size-16 flex items-center justify-center mb-3 shadow-md group-hover:scale-110 transition-transform">
-                    <span class="material-symbols-outlined text-4xl"
-                        :class="selectedAmenities.includes(amenity.id) ? 'text-primary' : 'text-gray-500 group-hover:text-primary'">
-                        {{ amenity.icon_class }}
-                    </span>
+                <div class="bg-white dark:bg-gray-800 rounded-full size-16 flex items-center justify-center mb-3 shadow-md group-hover:scale-110 transition-transform">
+                    <ServiceIcon :name="amenity.icon_name || amenity.icon_class" :url="amenity.image_url" :class="selectedAmenities.includes(amenity.id) ? 'text-primary' : 'text-gray-500 group-hover:text-primary'" :size="28" />
                 </div>
                 <p class="text-lg font-medium mb-2" :class="selectedAmenities.includes(amenity.id)
                     ? 'text-primary'
@@ -83,6 +79,7 @@ import { storeToRefs } from 'pinia'
 import { useCreateProperty } from '../../../stores/useCreateProperty.js'
 import StepsBar from '../../../components/MisPropiedades/AgregarPropiedad/StepsBar.vue'
 import { webPageData } from '/src/stores/webPageData.js'
+import ServiceIcon from '/src/components/icons/ServiceIcon.vue'
 
 const router = useRouter()
 const store = useCreateProperty()

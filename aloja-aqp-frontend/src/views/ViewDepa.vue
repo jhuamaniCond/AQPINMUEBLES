@@ -105,12 +105,10 @@
 
                                     <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                                         <div v-for="(item, index) in propiedad.services" :key="item.id || index"
-                                            class="flex items-center gap-2">
-                                            <span class="material-symbols-outlined text-primary">
-                                                {{ item.service.icon_class }}
-                                            </span>
-                                            <span>{{ item.service.name }}</span>
-                                        </div>
+                                                class="flex items-center gap-2">
+                                                <ServiceIcon :name="item.service.icon_name || item.service.icon_class" :url="item.service.image_url" class="text-primary" :size="20" />
+                                                <span>{{ item.service.name }}</span>
+                                            </div>
                                     </div>
                                 </div>
 
@@ -248,6 +246,7 @@
 
 <script setup>
 import LoginModal from "../components/authorization/LoginModal.vue";
+import ServiceIcon from '/src/components/icons/ServiceIcon.vue'
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import MapView from "../components/MapView.vue";

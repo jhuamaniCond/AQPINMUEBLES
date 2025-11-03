@@ -48,7 +48,7 @@
                         <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Bedrooms</span>
                         <input v-model.number="rooms"
                             class="form-input w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base"
-                            min="0" placeholder="e.g., 2" type="number" />
+                            min="1" placeholder="1" type="number" @change="onRoomsChange" />
                     </label>
                 </div>
             </div>
@@ -168,6 +168,13 @@ function onCampusChange() {
         }
     } else {
         selectedCampusCoords.value = null;
+    }
+}
+
+function onRoomsChange() {
+    // Ensure at least 1 bedroom
+    if (!rooms.value || Number(rooms.value) < 1) {
+        rooms.value = 1;
     }
 }
 </script>

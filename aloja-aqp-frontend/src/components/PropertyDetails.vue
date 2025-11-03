@@ -39,9 +39,7 @@
                     <li v-for="(servicio, index) in servicios.slice(0, 3)" :key="index"
                         class="relative flex justify-between items-center pl-4 pr-2 before:content-['•'] before:absolute before:left-0 before:text-gray-600 dark:before:text-gray-400">
                         <span>{{ servicio.service.name }}</span>
-                        <i class="material-icons text-blue-500">
-                            {{ servicio.service.icon_class }}
-                        </i>
+                        <ServiceIcon :name="servicio.service.icon_name || servicio.service.icon_class" :url="servicio.service.image_url" class="text-blue-500" :size="18" />
                     </li>
 
                     <!-- Mostrar el mensaje si hay más de 3 -->
@@ -61,6 +59,7 @@
 
 <script>
 import MapView from "../components/MapView.vue";
+import ServiceIcon from '/src/components/icons/ServiceIcon.vue'
 
 export default {
     name: "PropertyDetails",
@@ -82,6 +81,7 @@ export default {
     },
     components: {
         MapView
+        , ServiceIcon
     },
     data() {
         return {
