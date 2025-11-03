@@ -53,25 +53,21 @@
                 </div>
             </div>
             <div class="w-full md:w-1/3 flex flex-col gap-4 items-center">
-                <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Selecciona la ubicacion del
-                    alojamiento en el mapa</span>
-                <MapSelectUbi @ubicacion-seleccionada="actualizarUbicacion" />
+                <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Selecciona la ubicación del alojamiento</span>
 
-                <div class="grid grid-cols-1 gap-4 w-full">
+                <!-- Lista de campus disponibles -->
+                <div class="w-full">
                     <label class="flex flex-col gap-2">
-                        <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Latitude</span>
-                        <input disabled v-model="latitude"
-                            class="form-input w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-base"
-                            type="text" />
-                    </label>
-
-                    <label class="flex flex-col gap-2">
-                        <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Longitude</span>
-                        <input disabled v-model="longitude"
-                            class="form-input w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-base"
-                            type="text" />
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Campus (elige uno para centrar el mapa)</span>
+                        <select v-model="selectedCampusId" @change="onCampusChange"
+                            class="form-select w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary text-base">
+                            <option value="">-- Selecciona un campus --</option>
+                            <option v-for="c in campuses" :key="c.id" :value="c.id">{{ c.name }}</option>
+                        </select>
                     </label>
                 </div>
+
+                <MapSelectUbi :predefinedUbication="selectedCampusCoords" @ubicacion-seleccionada="actualizarUbicacion" />
             </div>
         </div>
 
@@ -106,6 +102,9 @@ const storeWebPageData = webPageData();
 const { title, description, address, accommodation_type, latitude, longitude, rooms } = storeToRefs(store)
 
 const tiposPropiedad = ref([]);
+const campuses = ref([]);
+const selectedCampusId = ref("");
+const selectedCampusCoords = ref(null);
 
 const fetchTiposPropiedad = async () => {
     try {
@@ -115,8 +114,17 @@ const fetchTiposPropiedad = async () => {
     }
 };
 
+const fetchCampuses = async () => {
+    try {
+        campuses.value = await storeWebPageData.getUniversityCampus();
+    } catch (err) {
+        console.error('Error al obtener campus:', err);
+    }
+};
+
 onMounted(async () => {
     await fetchTiposPropiedad();
+    await fetchCampuses();
     if (tiposPropiedad.value.length > 0) {
         accommodation_type.value = tiposPropiedad.value[0].id;
     }
@@ -128,8 +136,38 @@ function nextStep() {
     console.log("datos en pinia", JSON.stringify(store.$state))
     router.push('/mis-propiedades/agregar/paso2') // siguiente paso
 }
-function actualizarUbicacion({ latitud: lat, longitud: lng }) {
-    latitude.value = lat.toFixed(6);
-    longitude.value = lng.toFixed(6);
+function actualizarUbicacion({ latitud: lat, longitud: lng, address: addr = null }) {
+    // Guardar coordenadas internamente (aunque no mostramos los campos)
+    if (lat != null && lng != null) {
+        latitude.value = Number(lat).toFixed(6);
+        longitude.value = Number(lng).toFixed(6);
+    }
+
+    // Si el reverse geocoding devolvió dirección, actualizar el campo address (disabled)
+    if (addr) {
+        address.value = addr;
+    } else {
+        // opcional: podríamos llamar a un reverse geocode aquí si el Map no lo envía
+    }
+}
+
+function onCampusChange() {
+    const sel = campuses.value.find((c) => c.id == selectedCampusId.value);
+    if (sel) {
+        // esperar formato: sel.lat, sel.lng or sel.latitude/longitude
+        const lat = sel.lat || sel.latitude || sel.latitud || sel.latitude;
+        const lng = sel.lng || sel.longitude || sel.longitud || sel.longitude;
+        if (lat && lng) {
+            selectedCampusCoords.value = { latitud: lat, longitud: lng };
+        } else {
+            // if campus item has nested structure, try sedes
+            if (sel.sedes && sel.sedes.length) {
+                const s = sel.sedes[0];
+                selectedCampusCoords.value = { latitud: s.lat || s.latitude, longitud: s.lng || s.longitude };
+            }
+        }
+    } else {
+        selectedCampusCoords.value = null;
+    }
 }
 </script>

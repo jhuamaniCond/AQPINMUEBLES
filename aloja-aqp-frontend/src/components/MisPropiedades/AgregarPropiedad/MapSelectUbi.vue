@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { ref, onMounted, nextTick } from "vue";
+import { ref, onMounted, nextTick, watch } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import houseIconUrl from "../../../assets/house.svg";
@@ -73,9 +73,64 @@ export default {
                         .openPopup();
                 }
 
-                // Emitir la ubicación al componente padre
-                emit("ubicacion-seleccionada", { latitud: lat, longitud: lng });
+                // Reverse geocode to get address (Nominatim)
+                const getAddress = async () => {
+                    try {
+                        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`;
+                        const resp = await fetch(url, {
+                            headers: {
+                                'Accept': 'application/json',
+                            }
+                        });
+                        const json = await resp.json();
+                        const address = json.display_name || '';
+                        // Emitir la ubicación + dirección al componente padre
+                        emit("ubicacion-seleccionada", { latitud: lat, longitud: lng, address });
+                    } catch (err) {
+                        console.error('Error reverse geocoding:', err);
+                        emit("ubicacion-seleccionada", { latitud: lat, longitud: lng, address: '' });
+                    }
+                };
+                getAddress();
             });
+
+            // Watch for changes in predefinedUbication prop to recenter the map
+            watch(
+                () => props.predefinedUbication,
+                (newVal) => {
+                    if (newVal && map.value) {
+                        const lat = newVal.latitud || newVal.lat || newVal.latitude;
+                        const lng = newVal.longitud || newVal.lng || newVal.longitude;
+                        if (lat && lng) {
+                            map.value.setView([lat, lng], 14);
+                            // move marker to campus center
+                            if (houseMarker) {
+                                houseMarker.setLatLng([lat, lng]);
+                            } else {
+                                houseMarker = L.marker([lat, lng], { icon: houseIcon })
+                                    .addTo(markerLayer)
+                                    .bindPopup("Ubicación seleccionada")
+                                    .openPopup();
+                            }
+
+                            // Reverse geocode the campus coordinates and emit address
+                            (async () => {
+                                try {
+                                    const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`;
+                                    const resp = await fetch(url, { headers: { Accept: 'application/json' } });
+                                    const json = await resp.json();
+                                    const address = json.display_name || '';
+                                    emit('ubicacion-seleccionada', { latitud: lat, longitud: lng, address });
+                                } catch (err) {
+                                    console.error('Error reverse geocoding campus:', err);
+                                    emit('ubicacion-seleccionada', { latitud: lat, longitud: lng, address: '' });
+                                }
+                            })();
+                        }
+                    }
+                },
+                { immediate: true }
+            );
 
             // Asegurar que el mapa se renderice bien si está en un contenedor oculto
             const ensureSize = () => {

@@ -7,7 +7,7 @@ export const useCreateProperty = defineStore("propiedad", {
     description: "",
     address: "",
     accommodation_type: "",
-    rooms: 0,
+    rooms: 1,
     latitude: "",
     longitude: "",
     amenidades: [],
