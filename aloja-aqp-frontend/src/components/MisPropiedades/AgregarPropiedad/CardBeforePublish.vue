@@ -37,8 +37,11 @@ const urlDefecto = "https://lh3.googleusercontent.com/aida-public/AB6AXuDNJsh0Mz
 
 
 const imagenFondo = computed(() => {
-  return store.imagenes && store.imagenes.length > 0
-    ? store.imagenes[0]   // primera imagen del array
-    : urlDefecto
+  if (store.imagenes && store.imagenes.length > 0) {
+    const idx = Number(store.main_image_index) || 0
+    if (idx >= 0 && idx < store.imagenes.length) return store.imagenes[idx]
+    return store.imagenes[0]
+  }
+  return urlDefecto
 })
 </script>

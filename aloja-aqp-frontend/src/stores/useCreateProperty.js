@@ -12,6 +12,8 @@ export const useCreateProperty = defineStore("propiedad", {
     longitude: "",
     amenidades: [],
     imagenes: [],
+    // índice de la imagen marcada como principal
+    main_image_index: 0,
     monthly_price: 0,
     coexistence_rules: "",
   }),
@@ -87,16 +89,14 @@ export const useCreateProperty = defineStore("propiedad", {
         formData.append("accommodation", accommodationId);
         formData.append("image", file);
         formData.append("order_num", i + 1);
-        formData.append("is_main", i === 0);
+        // marcar la imagen principal según el índice en el store
+        formData.append("is_main", i === Number(this.main_image_index) ? "1" : "0");
 
         const res = await axios.post(
           "http://127.0.0.1:8000/api/accommodation-photos/",
           formData,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
+            headers: { Authorization: `Bearer ${token}` }, // dejar que axios asigne Content-Type con boundary
           }
         );
         console.log(`  creado foto:`, res.data);
@@ -127,6 +127,9 @@ export const useCreateProperty = defineStore("propiedad", {
     },
     setDatosPaso3(data) {
       this.imagenes = data.imagenes;
+    },
+    setMainImageIndex(idx) {
+      this.main_image_index = idx;
     },
     setDatosPaso4(data) {
       this.monthly_price = data.precio;
