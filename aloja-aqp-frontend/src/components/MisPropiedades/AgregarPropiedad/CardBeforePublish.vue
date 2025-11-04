@@ -21,7 +21,7 @@
         <span class="text-sm font-medium text-gray-200">/mes</span>
       </p>
       <p class="text-sm text-gray-300 font-medium">
-        🛏 {{ store.habitaciones || "0" }} habitaciones
+        🛏 {{ store.rooms ?? store.habitaciones ?? 0 }} habitaciones
       </p>
     </div>
   </div>

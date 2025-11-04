@@ -4,7 +4,7 @@
         <CardBeforePublish />
         <PropertyDetails />
 
-        <!-- 🟡 Botón Guardar borrador -->
+        <!--  Botón Guardar borrador -->
     <button
       @click="guardarBorrador"
       class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-16 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white text-xl font-bold leading-normal tracking-[0.015em] transition-colors duration-200 ease-in-out hover:bg-gray-300 dark:hover:bg-gray-600 mt-6"
@@ -13,7 +13,7 @@
       <span class="truncate">Guardar borrador</span>
     </button>
 
-    <!-- 🟢 Botón Publicar propiedad -->
+    <!--  Botón Publicar propiedad -->
         <button @click="publicarPropiedad"
             class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-16 bg-primary text-white text-xl font-bold leading-normal tracking-[0.015em] transition-colors duration-200 ease-in-out hover:bg-blue-600 mt-8">
             <span class="material-symbols-outlined mr-2">send</span>
