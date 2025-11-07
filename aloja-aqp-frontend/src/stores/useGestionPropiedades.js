@@ -233,7 +233,26 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
     async fetchUniversities() {
       try {
         const res = await axios.get("http://127.0.0.1:8000/api/universities/");
-        return res.data.results ? res.data.results : res.data;
+        let data = res.data.results ? res.data.results : res.data;
+
+        // Some backends expose an API root with links, e.g. { universities: 'http://.../universities/' }
+        // In that case follow the link (or extract the array if present)
+        if (data && typeof data === "object" && !Array.isArray(data)) {
+          // if the key points to a URL (string), request it
+          const potentialUrl = data.universities || data["universities/"] || data["university-campuses"] || data["university-campuses/"];
+          if (typeof potentialUrl === "string") {
+            const res2 = await axios.get(potentialUrl);
+            data = res2.data.results ? res2.data.results : res2.data;
+          } else if (Array.isArray(data.universities)) {
+            data = data.universities;
+          } else {
+            // fallback: no usable payload, return empty array
+            console.warn("fetchUniversities: API returned an object but no 'universities' array or URL was found.", data);
+            return [];
+          }
+        }
+
+        return data;
       } catch (err) {
         console.error("Error al obtener universidades:", err.response?.data || err.message);
         return [];

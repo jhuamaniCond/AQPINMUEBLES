@@ -77,6 +77,11 @@
                 </h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
 
+                  <!-- DEBUG: show selection state -->
+                  <div class="col-span-full text-sm text-gray-500 mb-2">
+                    Debug: selectedIndex={{ selectedIndex }} · results={{ propertiesPublicas.length }} · selectedProperty={{ selectedProperty ? selectedProperty.id : 'null' }}
+                  </div>
+
                   <PropertyCard v-for="(property, index) in propertiesPublicas" :key="property.id"
                     :title="property.title" :description="property.description" distance="222 km"
                     :image="property.photos && property.photos.length ? property.photos[0].image : 'https://placehold.co/500x300?text=Sin+imagen' " :isSelected="selectedIndex === index"
@@ -118,15 +123,26 @@
             </div>
 
             <div v-if="!isCelular" class="hidden lg:block dark:!border-gray-800 border border-gray-200 p-6 rounded-xl">
-              <PropertyDetails v-if="propertiesPublicas?.length"
-                :id="propertiesPublicas[selectedIndex].id" :title="propertiesPublicas[selectedIndex].title"
-                :direccion="propertiesPublicas[selectedIndex].address"
-                :precio="Number(propertiesPublicas[selectedIndex].monthly_price)"
-                :habitaciones="propertiesPublicas[selectedIndex].rooms"
-                :servicios="propertiesPublicas[selectedIndex].services"
-                :latitudCasa="propertiesPublicas[selectedIndex].latitude"
-                :longitudCasa="propertiesPublicas[selectedIndex].longitude" :latitudUni="selectedSede?.lat"
-                :longitudUni="selectedSede?.lng" :UniImgUrl="selectedUniversity?.imageUrl || ''" />
+              <template v-if="selectedProperty">
+                <PropertyDetails
+                  :id="selectedProperty.id" :title="selectedProperty.title"
+                  :direccion="selectedProperty.address"
+                  :precio="Number(selectedProperty.monthly_price)"
+                  :habitaciones="selectedProperty.rooms"
+                  :servicios="selectedProperty.services"
+                  :latitudCasa="selectedProperty.latitude"
+                  :longitudCasa="selectedProperty.longitude" :latitudUni="selectedSede?.lat"
+                  :longitudUni="selectedSede?.lng" :UniImgUrl="selectedUniversity?.imageUrl || ''" />
+              </template>
+
+              <template v-else>
+                <div class="p-6 text-center">
+                  <p class="text-gray-600 dark:text-gray-400">No hay alojamientos para los filtros seleccionados.</p>
+                  <p class="text-sm text-gray-500 mt-2">Prueba quitar el filtro de universidad/sede o haz clic en "Mostrar todos" para volver a ver todas las propiedades.</p>
+                  <button @click="showAll()"
+                    class="mt-4 inline-block bg-primary text-white px-4 py-2 rounded-lg text-sm">Mostrar todos</button>
+                </div>
+              </template>
 
             </div>
 
@@ -144,15 +160,26 @@
                   </button>
 
                   <!-- Contenido -->
-                  <PropertyDetails v-if="propertiesPublicas?.length"
-                    :id="propertiesPublicas[selectedIndex].id" :title="propertiesPublicas[selectedIndex].title"
-                    :direccion="propertiesPublicas[selectedIndex].address"
-                    :precio="Number(propertiesPublicas[selectedIndex].monthly_price)"
-                    :habitaciones="propertiesPublicas[selectedIndex].rooms"
-                    :servicios="propertiesPublicas[selectedIndex].services"
-                    :latitudCasa="propertiesPublicas[selectedIndex].latitude"
-                    :longitudCasa="propertiesPublicas[selectedIndex].longitude" :latitudUni="selectedSede?.lat"
-                    :longitudUni="selectedSede?.lng" :UniImgUrl="selectedUniversity?.imageUrl || ''" />
+                  <template v-if="selectedProperty">
+                    <PropertyDetails
+                      :id="selectedProperty.id" :title="selectedProperty.title"
+                      :direccion="selectedProperty.address"
+                      :precio="Number(selectedProperty.monthly_price)"
+                      :habitaciones="selectedProperty.rooms"
+                      :servicios="selectedProperty.services"
+                      :latitudCasa="selectedProperty.latitude"
+                      :longitudCasa="selectedProperty.longitude" :latitudUni="selectedSede?.lat"
+                      :longitudUni="selectedSede?.lng" :UniImgUrl="selectedUniversity?.imageUrl || ''" />
+                  </template>
+                  <template v-else>
+                    <div class="p-4 text-center">
+                      <p class="text-gray-600 dark:text-gray-400">No hay alojamientos para los filtros seleccionados.</p>
+                      <div class="mt-3">
+                        <button @click="showAll(true)"
+                          class="bg-primary text-white px-4 py-2 rounded-lg text-sm">Mostrar todos</button>
+                      </div>
+                    </div>
+                  </template>
                 </div>
               </div>
             </transition>
@@ -168,7 +195,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 
 import PropertyCard from "../components/PropertyCard.vue";
 import PropertyDetails from "../components/PropertyDetails.vue";
@@ -188,6 +215,17 @@ const selectedIndex = ref(0);
 const showModal = ref(false);
 const isCelular = ref(false);
 const propertiesPublicas = ref([])
+
+// selectedProperty is a safe accessor for the currently selected property
+const selectedProperty = computed(() => {
+  if (!propertiesPublicas.value || !Array.isArray(propertiesPublicas.value)) return null;
+  if (selectedIndex.value == null) return null;
+  if (selectedIndex.value < 0 || selectedIndex.value >= propertiesPublicas.value.length) return null;
+  return propertiesPublicas.value[selectedIndex.value];
+});
+
+// Prevent infinite auto-fallback loops: attempt automatic "showAll" only once per applyFilters call
+const attemptedAutoFallback = ref(false);
 
 // search + suggestions state
 const searchQuery = ref("");
@@ -223,49 +261,71 @@ const fetchPublicProperties = async () => {
 const initUniversitySelection = async () => {
   const uniParam = route.query.uni;
   console.log("Parámetro recibido:->", uniParam);
-  // fetch universities and services
-  const fetchedUnis = await storePropiedades.fetchUniversities();
-  const fetchedSvcs = await storePropiedades.fetchPredefinedServices();
 
-  // guard against non-array responses
-  const uniArray = Array.isArray(fetchedUnis) ? fetchedUnis : [];
-  const svcArray = Array.isArray(fetchedSvcs) ? fetchedSvcs : [];
+  try {
+    // fetch universities and services
+    const fetchedUnis = await storePropiedades.fetchUniversities();
+    const fetchedSvcs = await storePropiedades.fetchPredefinedServices();
 
-  // normalize to previous shape (sedes array with lat/lng)
-  universities.value = uniArray.map((u) => ({
-    id: u.id,
-    name: u.name,
-    imageUrl: u.logo || u.imageUrl || null,
-    sedes: (u.campuses || []).map((c) => ({ id: c.id, name: c.name, lat: c.latitude, lng: c.longitude })),
-  }));
+    console.log("fetchedUnis raw:", fetchedUnis);
+    console.log("fetchedSvcs raw:", fetchedSvcs);
 
-  services.value = svcArray;
+    // guard against non-array responses
+    const uniArray = Array.isArray(fetchedUnis) ? fetchedUnis : [];
+    const svcArray = Array.isArray(fetchedSvcs) ? fetchedSvcs : [];
 
-  // Only auto-select a university if it was passed in the query params.
-  if (uniParam && universities.value.length) {
-    const index = universities.value.findIndex(
-      (u) => u.name.toLowerCase().trim() === String(uniParam).toLowerCase().trim()
-    );
-    if (index !== -1) {
-      selectedUniversity.value = universities.value[index];
-      selectedSede.value = selectedUniversity.value.sedes?.[0] || null;
+    // normalize to previous shape (sedes array with lat/lng)
+    universities.value = uniArray.map((u) => ({
+      id: u.id,
+      name: u.name,
+      imageUrl: u.logo || u.imageUrl || null,
+      sedes: (u.campuses || []).map((c) => ({ id: c.id, name: c.name, lat: c.latitude, lng: c.longitude })),
+    }));
+
+    services.value = svcArray;
+
+    console.log("universities normalized:", universities.value);
+    console.log("services normalized:", services.value);
+
+    // Only auto-select a university if it was passed in the query params.
+    if (uniParam && universities.value.length) {
+      const index = universities.value.findIndex(
+        (u) => u.name.toLowerCase().trim() === String(uniParam).toLowerCase().trim()
+      );
+      if (index !== -1) {
+        selectedUniversity.value = universities.value[index];
+        selectedSede.value = selectedUniversity.value.sedes?.[0] || null;
+      }
     }
-  }
 
-  // initial load of properties: show ALL public properties (no filters) on explore
-  await storePropiedades.fetchPropiedadesPublicas();
-  propertiesPublicas.value = await storePropiedades.getPropiedadesPublicas();
+    // initial load of properties: show ALL public properties (no filters) on explore
+    try {
+      await storePropiedades.fetchPropiedadesPublicas();
+      propertiesPublicas.value = await storePropiedades.getPropiedadesPublicas();
+      console.log("propertiesPublicas count:", propertiesPublicas.value?.length);
+    } catch (errProps) {
+      console.error("Error fetching public properties inside initUniversitySelection:", errProps);
+    }
+  } catch (err) {
+    console.error("Error in initUniversitySelection:", err);
+  }
 };
 
 // ===== Eventos =====
 const handleUniversitySelected = (universityName) => {
   selectedUniversity.value = universities.value.find((u) => u.name === universityName) || null;
   selectedSede.value = selectedUniversity.value?.sedes?.[0] || null;
+  console.log('handleUniversitySelected ->', { universityName, selectedUniversity: selectedUniversity.value, selectedSede: selectedSede.value });
+  // reset selectedIndex to the first result so the details panel shows something valid
+  selectedIndex.value = 0;
   applyFilters();
 };
 
 const handleSedeSelected = (sedeName) => {
   selectedSede.value = selectedUniversity.value?.sedes?.find((s) => s.name === sedeName) || null;
+  console.log('handleSedeSelected ->', { sedeName, selectedSede: selectedSede.value });
+  // reset selectedIndex to the first result so the details panel shows something valid
+  selectedIndex.value = 0;
   applyFilters();
 };
 
@@ -302,6 +362,20 @@ const handleCardClicked = (index) => {
       const el = document.querySelector('.sticky');
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 50);
+  }
+};
+
+// Show all public properties (used by the "Mostrar todos" buttons)
+const showAll = async (hideModal = false) => {
+  try {
+    await storePropiedades.fetchPropiedadesPublicas();
+    const res = await storePropiedades.getPropiedadesPublicas();
+    propertiesPublicas.value = res || [];
+    selectedIndex.value = propertiesPublicas.value && propertiesPublicas.value.length ? 0 : null;
+    if (hideModal) showModal.value = false;
+    console.log('showAll -> restored results count', propertiesPublicas.value?.length, 'selectedIndex', selectedIndex.value);
+  } catch (err) {
+    console.error('showAll error', err);
   }
 };
 
@@ -372,6 +446,16 @@ const toggleService = (id) => {
 };
 
 async function applyFilters() {
+  console.log('applyFilters -> start', {
+    selectedIndex: selectedIndex.value,
+    selectedUniversity: selectedUniversity.value,
+    selectedSede: selectedSede.value,
+    priceStart: priceStart.value,
+    priceEnd: priceEnd.value,
+    roomsStart: roomsStart.value,
+    roomsEnd: roomsEnd.value,
+    selectedServices: selectedServices.value
+  });
   const params = {};
   if (searchQuery.value) params.q = searchQuery.value;
   if (selectedUniversity.value) params.university_id = selectedUniversity.value.id;
@@ -386,11 +470,38 @@ async function applyFilters() {
   if (Object.keys(params).length === 0) {
     await storePropiedades.fetchPropiedadesPublicas();
     propertiesPublicas.value = await storePropiedades.getPropiedadesPublicas();
+    console.log('applyFilters -> no-params results count', propertiesPublicas.value?.length);
+    // ensure selectedIndex points to a valid result (or null)
+    if (propertiesPublicas.value && propertiesPublicas.value.length > 0) selectedIndex.value = 0;
+    else selectedIndex.value = null;
+    console.log('applyFilters -> selectedIndex after no-params', selectedIndex.value, 'selectedProperty', selectedProperty.value);
     return;
   }
-
+  console.log('applyFilters -> params', params);
   const results = await storePropiedades.fetchPropiedadesFiltradas(params);
-  propertiesPublicas.value = results;
+  console.log('applyFilters -> results count', results?.length);
+  if (results && results.length) {
+    propertiesPublicas.value = results;
+    selectedIndex.value = 0;
+    // reset attempted fallback for future filter actions
+    attemptedAutoFallback.value = false;
+  } else {
+    console.log('applyFilters -> no results');
+    // If we haven't tried automatic fallback yet, call showAll() once and avoid loops.
+    if (!attemptedAutoFallback.value) {
+      attemptedAutoFallback.value = true;
+      console.log('applyFilters -> no results, performing automatic fallback: showAll()');
+      await showAll();
+      // after showAll we reset the attempted flag so future distinct filter attempts may fallback again
+      attemptedAutoFallback.value = false;
+      return; // return early because showAll has already updated propertiesPublicas/selectedIndex
+    }
+
+    // fallback already attempted or not desired: show empty state
+    propertiesPublicas.value = [];
+    selectedIndex.value = null;
+  }
+  console.log('applyFilters -> selectedIndex after results', selectedIndex.value, 'selectedProperty', selectedProperty.value);
 }
 </script>
 

@@ -46,65 +46,129 @@ export default {
       }
     };
 
-    const drawRecorrido = () => {
+    const haversineDistance = (a, b) => {
+      // a and b are [lat, lng]
+      const toRad = (v) => (v * Math.PI) / 180;
+      const lat1 = a[0];
+      const lon1 = a[1];
+      const lat2 = b[0];
+      const lon2 = b[1];
+      const R = 6371000; // m
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const radLat1 = toRad(lat1);
+      const radLat2 = toRad(lat2);
+      const sinDLat = Math.sin(dLat / 2);
+      const sinDLon = Math.sin(dLon / 2);
+      const aHarv = sinDLat * sinDLat + Math.cos(radLat1) * Math.cos(radLat2) * sinDLon * sinDLon;
+      const c = 2 * Math.atan2(Math.sqrt(aHarv), Math.sqrt(1 - aHarv));
+      return R * c;
+    };
+
+    const drawRecorrido = async () => {
       const houseLatLng = getHouseLatLng();
       const uniLatLng = getUniLatLng();
-      if (!houseLatLng || !uniLatLng) return; // nothing to draw
+      if (!houseLatLng || !uniLatLng) {
+        console.warn('drawRecorrido: coordenadas faltantes', { houseLatLng, uniLatLng });
+        return; // nothing to draw
+      }
 
-      const routing = L.Routing.osrmv1({
-        serviceUrl: "https://router.project-osrm.org/route/v1/"
-      });
+      // Ensure numeric types
+      const hLat = Number(houseLatLng[0]);
+      const hLng = Number(houseLatLng[1]);
+      const uLat = Number(uniLatLng[0]);
+      const uLng = Number(uniLatLng[1]);
+      if ([hLat, hLng, uLat, uLng].some((v) => Number.isNaN(v))) {
+        console.error('drawRecorrido: coordenadas inválidas', { houseLatLng, uniLatLng });
+        return;
+      }
 
-      routing.route(
-        [
-          { latLng: L.latLng(houseLatLng[0], houseLatLng[1]) },
-          { latLng: L.latLng(uniLatLng[0], uniLatLng[1]) }
-        ],
-        (err, routes) => {
-          if (!err && routes && routes.length > 0) {
-            const bestRoute = routes[0];
+      console.log('drawRecorrido -> from (lat,lng)', [hLat, hLng], 'to', [uLat, uLng]);
 
-            // Si ya hay una ruta dibujada, eliminarla
-            if (routeLine) {
-              map.value.removeLayer(routeLine);
+      // Remove previous route if present
+      if (routeLine && map.value) {
+        try { map.value.removeLayer(routeLine); } catch (e) { /* noop */ }
+        routeLine = null;
+      }
+
+      // Build a diagnostic OSRM URL (for logging only)
+      const base = 'https://router.project-osrm.org/route/v1/driving/';
+      const osrmDebugUrl = `${base}${hLng},${hLat};${uLng},${uLat}?overview=full&geometries=geojson`;
+      console.log('drawRecorrido -> osrm url (debug):', osrmDebugUrl);
+
+      // Try using Leaflet Routing Machine (OSRM demo by default)
+      try {
+        const routing = L.Routing.osrmv1({
+          serviceUrl: 'https://router.project-osrm.org/route/v1/'
+        });
+
+        routing.route(
+          [
+            { latLng: L.latLng(hLat, hLng) },
+            { latLng: L.latLng(uLat, uLng) }
+          ],
+          (err, routes) => {
+            try {
+              if (!err && routes && routes.length > 0) {
+                const bestRoute = routes[0];
+
+                // extract coordinates for polyline (try multiple shapes)
+                let coords = bestRoute.coordinates || bestRoute.geometry || null;
+                // If GeoJSON geometry: coordinates are [lon,lat] pairs, convert to [lat,lng]
+                if (coords && coords.type === 'LineString' && Array.isArray(coords.coordinates)) {
+                  coords = coords.coordinates.map((c) => [c[1], c[0]]);
+                }
+
+                // If still null, try route's waypoints -> latLngs
+                if (!coords && bestRoute.coordinates && Array.isArray(bestRoute.coordinates)) {
+                  coords = bestRoute.coordinates;
+                }
+
+                // fallback: if no coords, build simple two-point line
+                if (!coords) coords = [[hLat, hLng], [uLat, uLng]];
+
+                // draw layered polyline for style
+                const blueOuter = L.polyline(coords, { color: '#2563eb', weight: 8, opacity: 1 });
+                const whiteMiddle = L.polyline(coords, { color: '#ffffff', weight: 6, opacity: 1 });
+                const blueInner = L.polyline(coords, { color: '#2563eb', weight: 2, opacity: 1 });
+                routeLine = L.layerGroup([blueOuter, whiteMiddle, blueInner]).addTo(map.value);
+
+                // Try to extract distance/duration from route summary
+                const summary = bestRoute.summary || bestRoute.properties || {};
+                const distance = summary.totalDistance ?? summary.distance ?? (summary?.length || null);
+                const duration = summary.totalTime ?? summary.duration ?? (summary?.time || null);
+
+                // If the route didn't provide numeric summary, compute haversine fallback
+                let finalDistance = typeof distance === 'number' ? distance : haversineDistance([hLat, hLng], [uLat, uLng]);
+                let finalDuration = typeof duration === 'number' ? duration : Math.ceil(finalDistance / 10); // estimate: 10 m/s (~36 km/h)
+
+                emit('ruta-calculada', { distancia: finalDistance, duracion: finalDuration });
+                console.log('Distancia (m):', finalDistance);
+                console.log('Duración (s):', finalDuration);
+              } else {
+                console.warn('drawRecorrido -> OSRM returned no routes or error', err);
+                // fallback: draw straight line and emit estimated distance/duration
+                const straight = [[hLat, hLng], [uLat, uLng]];
+                routeLine = L.polyline(straight, { color: '#ef4444', weight: 3, dashArray: '6,6' }).addTo(map.value);
+                const straightDistance = haversineDistance([hLat, hLng], [uLat, uLng]);
+                const straightDuration = Math.ceil(straightDistance / 10);
+                emit('ruta-calculada', { distancia: straightDistance, duracion: straightDuration });
+                console.log('Fallback distancia (m):', straightDistance, 'duracion (s):', straightDuration);
+              }
+            } catch (innerErr) {
+              console.error('drawRecorrido -> error processing routes callback', innerErr);
             }
-
-            // Azul externo (bordes)
-            const blueOuter = L.polyline(bestRoute.coordinates, {
-              color: "#2563eb",
-              weight: 8,
-              opacity: 1
-            });
-
-            // Blanco en el medio
-            const whiteMiddle = L.polyline(bestRoute.coordinates, {
-              color: "#ffffff",
-              weight: 6,
-              opacity: 1
-            });
-
-            // Azul fino encima (para remarcar)
-            const blueInner = L.polyline(bestRoute.coordinates, {
-              color: "#2563eb",
-              weight: 2,
-              opacity: 1
-            });
-
-            // Agrupar todas las capas
-            routeLine = L.layerGroup([blueOuter, whiteMiddle, blueInner]).addTo(map.value);
-
-            emit("ruta-calculada", {
-              distancia: bestRoute.summary.totalDistance,
-              duracion: bestRoute.summary.totalTime
-            });
-
-            console.log("Distancia (m):", bestRoute.summary.totalDistance);
-            console.log("Duración (s):", bestRoute.summary.totalTime);
-          } else {
-            console.error("Error calculando ruta:", err);
           }
-        }
-      );
+        );
+      } catch (e) {
+        console.error('drawRecorrido -> error initializing routing', e);
+        // fallback: draw straight line
+        const straight = [[hLat, hLng], [uLat, uLng]];
+        routeLine = L.polyline(straight, { color: '#ef4444', weight: 3, dashArray: '6,6' }).addTo(map.value);
+        const straightDistance = haversineDistance([hLat, hLng], [uLat, uLng]);
+        const straightDuration = Math.ceil(straightDistance / 10);
+        emit('ruta-calculada', { distancia: straightDistance, duracion: straightDuration });
+      }
     };
 
     const createUniIcon = (url) => {
