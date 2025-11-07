@@ -175,18 +175,33 @@ export default {
       const safeUrl = url || '';
       let src = '';
       try {
-        // if absolute URL, use as-is; otherwise try to resolve relative
+        // prefer absolute URLs (Cloudinary will be absolute); if it's relative, resolve against import.meta
         if (/^https?:\/\//.test(safeUrl)) src = safeUrl;
         else if (safeUrl) src = new URL(safeUrl, import.meta.url).href;
       } catch (err) {
         console.warn('createUniIcon: unable to resolve url', url, err);
         src = '';
       }
+
+      // Safe-escape the src for embedding in html string
+      const safeSrc = src ? String(src).replace(/"/g, '&quot;') : '';
+
+      // simple inline SVG placeholder (keeps small bundle, no external asset)
+      const placeholderSvg = encodeURIComponent(
+        `<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' fill='%23ef4444'/><text x='50%' y='55%' text-anchor='middle' fill='white' font-size='10' font-family='Arial' dy='0.35em'>UNI</text></svg>`
+      );
+      const placeholderData = `data:image/svg+xml;utf8,${placeholderSvg}`;
+
+      // Build the img element with crossorigin and onerror fallback to placeholder
+      const imgHtml = src
+        ? `<img src="${safeSrc}" crossorigin="anonymous" onerror="this.onerror=null;this.src='${placeholderData}'" alt="uni"/>`
+        : `<img src='${placeholderData}' alt='uni'/>`;
+
       return L.divIcon({
-        className: "custom-uni-icon",
+        className: 'custom-uni-icon',
         html: `
           <div class="uni-marker">
-            ${src ? `<img src="${src}" alt="uni" />` : '<div style="width:26px;height:26px;border-radius:50%;background:#ef4444"></div>'}
+            ${imgHtml}
           </div>
         `,
         iconSize: [50, 50],
@@ -299,9 +314,11 @@ export default {
 }
 
 .uni-marker img {
-  width: 70%;
-  /* que no ocupe todo el círculo */
-  height: 70%;
+  width: 100%;
+  /* que ocupe todo el contenedor circular */
+  height: 100%;
   object-fit: contain;
+  padding: 6px; /* espacio interior para no pegar al borde */
+  border-radius: 50%;
 }
 </style>

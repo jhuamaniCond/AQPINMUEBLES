@@ -69,7 +69,7 @@ export default {
     },
     defaultOption: {
         type: String,
-        default: "Opcion 1",
+        default: "",
     },
   },
   data() {
@@ -79,14 +79,20 @@ export default {
     };
   },
   mounted() {
-    this.selectedOption = this.defaultOption; // valor inicial
+    // Initialize selectedOption with defaultOption when provided,
+    // otherwise show a friendly placeholder based on the title.
+    if (this.defaultOption && String(this.defaultOption).trim().length) {
+      this.selectedOption = this.defaultOption;
+    } else {
+      this.selectedOption = `-- ${this.titulo} --`;
+    }
   },watch: {
     opciones(newVal, oldVal) {
-      if (
-        JSON.stringify(newVal) !== JSON.stringify(oldVal) && 
-        newVal && newVal.length > 0
-      ) {
-        this.selectedOption = newVal[0]; 
+      if (JSON.stringify(newVal) !== JSON.stringify(oldVal) && newVal && newVal.length > 0) {
+        // If current selectedOption is not present in the new options, default to the first
+        if (!this.selectedOption || !newVal.includes(this.selectedOption)) {
+          this.selectedOption = newVal[0];
+        }
       }
     },
   },
