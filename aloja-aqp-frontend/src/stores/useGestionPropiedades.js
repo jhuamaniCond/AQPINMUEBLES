@@ -175,7 +175,8 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           "http://127.0.0.1:8000/api/public/accommodations/",
           this.getAuthHeaders()
         );
-        this.propiedadesPublicas = res.data;
+        // handle paginated or non-paginated responses
+        this.propiedadesPublicas = res.data.results ? res.data.results : res.data;
         console.log(
           "  Propiedades publicas cargadas:",
           this.propiedadesPublicas
@@ -192,6 +193,61 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         await this.fetchPropiedadesPublicas();
       }
       return this.propiedadesPublicas;
+    },
+
+    // ---------- New: Autocomplete and filtered fetch ----------
+    async autocompletePublicProperties(q, limit = 8) {
+      if (!q || q.trim().length < 2) return [];
+      try {
+        const res = await axios.get(
+          "http://127.0.0.1:8000/api/public/accommodations/autocomplete/",
+          { params: { q, limit }, ...this.getAuthHeaders() }
+        );
+        return res.data;
+      } catch (err) {
+        console.error("Error autocomplete:", err.response?.data || err.message);
+        return [];
+      }
+    },
+
+    async fetchPropiedadesFiltradas(params = {}) {
+      this.loading = true;
+      this.error = null;
+      try {
+        const res = await axios.get(
+          "http://127.0.0.1:8000/api/public/accommodations/filter/",
+          { params, ...this.getAuthHeaders() }
+        );
+        // support paginated responses
+        this.propiedadesPublicas = res.data.results ? res.data.results : res.data;
+        return this.propiedadesPublicas;
+      } catch (err) {
+        this.error = err.response?.data || err.message;
+        console.error("Error al obtener propiedades filtradas:", this.error);
+        return [];
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async fetchUniversities() {
+      try {
+        const res = await axios.get("http://127.0.0.1:8000/api/universities/");
+        return res.data.results ? res.data.results : res.data;
+      } catch (err) {
+        console.error("Error al obtener universidades:", err.response?.data || err.message);
+        return [];
+      }
+    },
+
+    async fetchPredefinedServices() {
+      try {
+        const res = await axios.get("http://127.0.0.1:8000/api/predefined-services/");
+        return res.data.results ? res.data.results : res.data;
+      } catch (err) {
+        console.error("Error al obtener servicios predefinidos:", err.response?.data || err.message);
+        return [];
+      }
     },
     async updateStatePropiedadesPublicas() {
       await this.fetchPropiedadesPublicas();

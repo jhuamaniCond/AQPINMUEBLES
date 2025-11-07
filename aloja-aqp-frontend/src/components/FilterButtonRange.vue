@@ -141,10 +141,12 @@ export default {
     },
     percentage(value) {
       return ((value - this.min) / (this.max - this.min)) * 100;
-    },applyFilter() {
+    },
+    applyFilter() {
+      // Emit a normalized payload { start, end } so consumers can rely on these keys
       this.$emit("rangeSelected", {
-        internalStart: this.internalStart,
-        internalEnd: this.internalEnd,
+        start: this.internalStart,
+        end: this.internalEnd,
       });
       this.toggleMenu();
     },
