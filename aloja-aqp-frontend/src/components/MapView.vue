@@ -20,11 +20,15 @@ export default {
   },
   emits: ["ruta-calculada"],
   setup(props, { emit }) {
-    const map = ref(null);
-    let markerLayer = null;
-    let houseMarker = null;
-    let uniMarker = null;
-    let routeLine = null;
+  const map = ref(null);
+  let markerLayer = null;
+  let houseMarker = null;
+  let uniMarker = null;
+  let routeLine = null;
+
+  const validNumber = (v) => typeof v === "number" && !isNaN(v);
+  const getHouseLatLng = () => (validNumber(props.latitudCasa) && validNumber(props.longitudCasa)) ? [props.latitudCasa, props.longitudCasa] : null;
+  const getUniLatLng = () => (validNumber(props.latitudUni) && validNumber(props.longitudUni)) ? [props.latitudUni, props.longitudUni] : null;
 
     const houseIcon = L.icon({
       iconUrl: houseIconUrl,
@@ -34,27 +38,30 @@ export default {
     });
 
     const fitToMarkers = () => {
-      if (map.value && houseMarker && uniMarker) {
-        const bounds = L.latLngBounds(
-          [props.latitudCasa, props.longitudCasa],
-          [props.latitudUni, props.longitudUni]
-        );
+      const houseLatLng = getHouseLatLng();
+      const uniLatLng = getUniLatLng();
+      if (map.value && houseLatLng && uniLatLng) {
+        const bounds = L.latLngBounds(houseLatLng, uniLatLng);
         map.value.fitBounds(bounds, { padding: [50, 50] });
       }
     };
 
     const drawRecorrido = () => {
+      const houseLatLng = getHouseLatLng();
+      const uniLatLng = getUniLatLng();
+      if (!houseLatLng || !uniLatLng) return; // nothing to draw
+
       const routing = L.Routing.osrmv1({
         serviceUrl: "https://router.project-osrm.org/route/v1/"
       });
 
       routing.route(
         [
-          { latLng: L.latLng(props.latitudCasa, props.longitudCasa) },
-          { latLng: L.latLng(props.latitudUni, props.longitudUni) }
+          { latLng: L.latLng(houseLatLng[0], houseLatLng[1]) },
+          { latLng: L.latLng(uniLatLng[0], uniLatLng[1]) }
         ],
         (err, routes) => {
-          if (!err && routes.length > 0) {
+          if (!err && routes && routes.length > 0) {
             const bestRoute = routes[0];
 
             // Si ya hay una ruta dibujada, eliminarla
@@ -101,12 +108,21 @@ export default {
     };
 
     const createUniIcon = (url) => {
-      const resolvedUrl = new URL(url, import.meta.url).href;
+      const safeUrl = url || '';
+      let src = '';
+      try {
+        // if absolute URL, use as-is; otherwise try to resolve relative
+        if (/^https?:\/\//.test(safeUrl)) src = safeUrl;
+        else if (safeUrl) src = new URL(safeUrl, import.meta.url).href;
+      } catch (err) {
+        console.warn('createUniIcon: unable to resolve url', url, err);
+        src = '';
+      }
       return L.divIcon({
         className: "custom-uni-icon",
         html: `
           <div class="uni-marker">
-            <img src="${resolvedUrl}" alt="uni" />
+            ${src ? `<img src="${src}" alt="uni" />` : '<div style="width:26px;height:26px;border-radius:50%;background:#ef4444"></div>'}
           </div>
         `,
         iconSize: [50, 50],
@@ -119,7 +135,12 @@ export default {
 
       await nextTick();
 
-      map.value = L.map("map").setView([props.latitudCasa, props.longitudCasa], 13);
+  // Pick a sensible initial center: house -> uni -> default (Arequipa)
+  const houseLatLng = getHouseLatLng();
+  const uniLatLng = getUniLatLng();
+  const defaultCenter = [-16.409047, -71.537451];
+  const initialCenter = houseLatLng || uniLatLng || defaultCenter;
+  map.value = L.map("map").setView(initialCenter, 13);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
@@ -127,12 +148,13 @@ export default {
 
       markerLayer = L.layerGroup().addTo(map.value);
 
-      houseMarker = L.marker([props.latitudCasa, props.longitudCasa], { icon: houseIcon }).addTo(markerLayer);
-
-      uniMarker = L.marker(
-        [props.latitudUni, props.longitudUni],
-        { icon: createUniIcon(props.UniImgUrl) }
-      ).addTo(markerLayer);
+      // Create markers only if coordinates are present
+      if (houseLatLng) {
+        houseMarker = L.marker(houseLatLng, { icon: houseIcon }).addTo(markerLayer);
+      }
+      if (uniLatLng) {
+        uniMarker = L.marker(uniLatLng, { icon: createUniIcon(props.UniImgUrl) }).addTo(markerLayer);
+      }
 
       
 
@@ -155,9 +177,12 @@ export default {
     watch(
       () => [props.latitudCasa, props.longitudCasa],
       ([newLat, newLng]) => {
-        if (map.value && houseMarker) {
-
-          houseMarker.setLatLng([newLat, newLng]);
+        const newHouse = (validNumber(newLat) && validNumber(newLng)) ? [newLat, newLng] : null;
+        if (map.value) {
+          if (newHouse) {
+            if (houseMarker) houseMarker.setLatLng(newHouse);
+            else houseMarker = L.marker(newHouse, { icon: houseIcon }).addTo(markerLayer);
+          }
           drawRecorrido();
           fitToMarkers();
         }
@@ -167,9 +192,12 @@ export default {
     watch(
       () => [props.latitudUni, props.longitudUni],
       ([newLat, newLng]) => {
-        if (map.value && uniMarker) {
-
-          uniMarker.setLatLng([newLat, newLng]);
+        const newUni = (validNumber(newLat) && validNumber(newLng)) ? [newLat, newLng] : null;
+        if (map.value) {
+          if (newUni) {
+            if (uniMarker) uniMarker.setLatLng(newUni);
+            else uniMarker = L.marker(newUni, { icon: createUniIcon(props.UniImgUrl) }).addTo(markerLayer);
+          }
           drawRecorrido();
           fitToMarkers();
         }

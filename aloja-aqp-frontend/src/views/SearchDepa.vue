@@ -282,15 +282,26 @@ const handleBedroomsSelected = (range) => {
 };
 
 const handleCardClicked = (index) => {
+  // Show preview in sidebar (desktop) or modal (mobile). Do NOT navigate away.
   selectedIndex.value = index;
   const prop = propertiesPublicas.value?.[index];
   if (!prop) return;
-  // On mobile show the modal, on desktop navigate to the public detail page
+
+  // Keep current selectedUniversity/selectedSede from the filters —
+  // the map will draw route only when selectedSede has coordinates.
+
   if (isCelular.value) {
     showModal.value = true;
   } else {
-    // navigate to property public view
-    router.push({ name: "VerDepa", params: { id: prop.id } });
+    // On desktop we simply ensure the right sidebar shows the selectedIndex.
+    // Optionally you could scroll to the sidebar or focus it here.
+    // No navigation.
+    // small UX improvement: ensure sidebar is visible (it's rendered for desktop by layout)
+    // we can force a tiny delay to let UI update
+    setTimeout(() => {
+      const el = document.querySelector('.sticky');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 50);
   }
 };
 
