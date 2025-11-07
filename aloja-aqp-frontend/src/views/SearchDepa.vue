@@ -77,10 +77,7 @@
                 </h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
 
-                  <!-- DEBUG: show selection state -->
-                  <div class="col-span-full text-sm text-gray-500 mb-2">
-                    Debug: selectedIndex={{ selectedIndex }} · results={{ propertiesPublicas.length }} · selectedProperty={{ selectedProperty ? selectedProperty.id : 'null' }}
-                  </div>
+                 
 
                   <PropertyCard v-for="(property, index) in propertiesPublicas" :key="property.id"
                     :title="property.title" :description="property.description" distance="222 km"
@@ -226,6 +223,8 @@ const selectedProperty = computed(() => {
 
 // Prevent infinite auto-fallback loops: attempt automatic "showAll" only once per applyFilters call
 const attemptedAutoFallback = ref(false);
+// request id to avoid race conditions from concurrent filter requests
+const currentFilterRequestId = ref(0);
 
 // search + suggestions state
 const searchQuery = ref("");
@@ -275,11 +274,27 @@ const initUniversitySelection = async () => {
     const svcArray = Array.isArray(fetchedSvcs) ? fetchedSvcs : [];
 
     // normalize to previous shape (sedes array with lat/lng)
+    const parseNum = (v) => {
+      if (v === null || v === undefined) return null;
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    };
+
     universities.value = uniArray.map((u) => ({
       id: u.id,
       name: u.name,
       imageUrl: u.logo || u.imageUrl || null,
-      sedes: (u.campuses || []).map((c) => ({ id: c.id, name: c.name, lat: c.latitude, lng: c.longitude })),
+      sedes: (u.campuses || []).map((c) => {
+        // accept several possible latitude/longitude field names
+        const latRaw = c.latitude ?? c.lat ?? c.latitud ?? (c.location && c.location.lat) ?? null;
+        const lngRaw = c.longitude ?? c.lng ?? c.longitud ?? (c.location && c.location.lng) ?? null;
+        return {
+          id: c.id,
+          name: c.name,
+          lat: parseNum(latRaw),
+          lng: parseNum(lngRaw),
+        };
+      }),
     }));
 
     services.value = svcArray;
@@ -330,14 +345,34 @@ const handleSedeSelected = (sedeName) => {
 };
 
 const handlePriceSelecter = (range) => {
-  priceStart.value = range.start;
-  priceEnd.value = range.end;
+  // Coerce and sanitize range values to numbers and ensure min<=max
+  const s = Number(range.start);
+  const e = Number(range.end);
+  if (isNaN(s) || isNaN(e)) {
+    // ignore invalid ranges
+    return;
+  }
+  if (s <= e) {
+    priceStart.value = s;
+    priceEnd.value = e;
+  } else {
+    priceStart.value = e;
+    priceEnd.value = s;
+  }
   applyFilters();
 };
 
 const handleBedroomsSelected = (range) => {
-  roomsStart.value = range.start;
-  roomsEnd.value = range.end;
+  const s = Number(range.start);
+  const e = Number(range.end);
+  if (isNaN(s) || isNaN(e)) return;
+  if (s <= e) {
+    roomsStart.value = s;
+    roomsEnd.value = e;
+  } else {
+    roomsStart.value = e;
+    roomsEnd.value = s;
+  }
   applyFilters();
 };
 
@@ -460,10 +495,10 @@ async function applyFilters() {
   if (searchQuery.value) params.q = searchQuery.value;
   if (selectedUniversity.value) params.university_id = selectedUniversity.value.id;
   if (selectedSede.value) params.campus_id = selectedSede.value.id;
-  if (priceStart.value != null) params.min_price = priceStart.value;
-  if (priceEnd.value != null) params.max_price = priceEnd.value;
-  if (roomsStart.value != null) params.min_rooms = roomsStart.value;
-  if (roomsEnd.value != null) params.max_rooms = roomsEnd.value;
+  if (priceStart.value != null) params.min_price = Number(priceStart.value);
+  if (priceEnd.value != null) params.max_price = Number(priceEnd.value);
+  if (roomsStart.value != null) params.min_rooms = Number(roomsStart.value);
+  if (roomsEnd.value != null) params.max_rooms = Number(roomsEnd.value);
   if (selectedServices.value.length) params.services = selectedServices.value.join(',');
 
   // If no filters provided, fetch all public properties (explore behavior)
@@ -478,28 +513,42 @@ async function applyFilters() {
     return;
   }
   console.log('applyFilters -> params', params);
-  const results = await storePropiedades.fetchPropiedadesFiltradas(params);
-  console.log('applyFilters -> results count', results?.length);
-  if (results && results.length) {
-    propertiesPublicas.value = results;
-    selectedIndex.value = 0;
-    // reset attempted fallback for future filter actions
-    attemptedAutoFallback.value = false;
-  } else {
-    console.log('applyFilters -> no results');
-    // If we haven't tried automatic fallback yet, call showAll() once and avoid loops.
-    if (!attemptedAutoFallback.value) {
-      attemptedAutoFallback.value = true;
-      console.log('applyFilters -> no results, performing automatic fallback: showAll()');
-      await showAll();
-      // after showAll we reset the attempted flag so future distinct filter attempts may fallback again
-      attemptedAutoFallback.value = false;
-      return; // return early because showAll has already updated propertiesPublicas/selectedIndex
-    }
 
-    // fallback already attempted or not desired: show empty state
-    propertiesPublicas.value = [];
+  // bump request id and capture locally
+  currentFilterRequestId.value += 1;
+  const myRequestId = currentFilterRequestId.value;
+  console.log('applyFilters -> requestId', myRequestId);
+
+  // clear current results immediately so UI doesn't show stale items while loading
+  propertiesPublicas.value = [];
+  selectedIndex.value = null;
+
+  const results = await storePropiedades.fetchPropiedadesFiltradas(params);
+  console.log('applyFilters -> received results for requestId', myRequestId, 'len=', results?.length);
+
+  // if a newer request started, ignore this (stale) response
+  if (myRequestId !== currentFilterRequestId.value) {
+    console.log('applyFilters -> stale response ignored for requestId', myRequestId);
+    return;
+  }
+  // if the request was cancelled by a newer request, the store returns null -> ignore
+  if (results === null) {
+    console.log('applyFilters -> request was cancelled, ignoring results for requestId', myRequestId);
+    return;
+  }
+  if (results === null) {
+    // request was cancelled by a newer one; ignore
+    return;
+  }
+
+  // Apply whatever the server returned (may be empty array)
+  propertiesPublicas.value = results || [];
+  if (propertiesPublicas.value && propertiesPublicas.value.length > 0) {
+    selectedIndex.value = 0;
+  } else {
+    // show empty state - do NOT auto restore all properties; let the user click "Mostrar todos" if desired
     selectedIndex.value = null;
+    console.log('applyFilters -> no results (server returned 0)');
   }
   console.log('applyFilters -> selectedIndex after results', selectedIndex.value, 'selectedProperty', selectedProperty.value);
 }

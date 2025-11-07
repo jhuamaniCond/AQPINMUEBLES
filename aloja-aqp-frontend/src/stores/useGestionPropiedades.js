@@ -1,6 +1,9 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
+// Controller to cancel in-flight filter requests
+let _lastFilterAbortController = null;
+
 export const useGestionPropiedades = defineStore("gestionPropiedades", {
   state: () => ({
     myPropiedades: null, // lista de alojamientos del usuario
@@ -214,14 +217,37 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
       this.loading = true;
       this.error = null;
       try {
+        console.log('fetchPropiedadesFiltradas -> params', params);
+
+        // cancel previous in-flight filter request (if any)
+        try {
+          if (_lastFilterAbortController) _lastFilterAbortController.abort();
+        } catch (e) {
+          /* ignore */
+        }
+        _lastFilterAbortController = new AbortController();
+        const signal = _lastFilterAbortController.signal;
+
         const res = await axios.get(
           "http://127.0.0.1:8000/api/public/accommodations/filter/",
-          { params, ...this.getAuthHeaders() }
+          { params, signal, ...this.getAuthHeaders() }
         );
+
+        console.log('fetchPropiedadesFiltradas -> status', res.status, 'data preview:', Array.isArray(res.data) ? res.data.slice(0,3) : res.data);
         // support paginated responses
         this.propiedadesPublicas = res.data.results ? res.data.results : res.data;
+        console.log('fetchPropiedadesFiltradas -> propiedadesPublicas set length', this.propiedadesPublicas?.length);
+
+        // clear controller only if it is the one we created
+        _lastFilterAbortController = null;
+
         return this.propiedadesPublicas;
       } catch (err) {
+        // treat cancellations specially so caller can ignore
+        if (err?.code === 'ERR_CANCELED' || err?.name === 'CanceledError' || String(err?.message).toLowerCase().includes('aborted')) {
+          console.log('fetchPropiedadesFiltradas -> request canceled');
+          return null;
+        }
         this.error = err.response?.data || err.message;
         console.error("Error al obtener propiedades filtradas:", this.error);
         return [];
