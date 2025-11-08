@@ -19,10 +19,8 @@
           </a>
 
           <nav class="hidden md:flex items-center gap-6">
-            <router-link to="/search" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
-              >Explorar Alojamientos</router-link to="/perfil">
-            <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
-              href="#">Help</a>
+            <router-link to="/search" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">Explorar alojamientos</router-link>
+            <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Ayuda</a>
           </nav>
         </div>
 

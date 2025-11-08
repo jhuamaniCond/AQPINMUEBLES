@@ -14,8 +14,8 @@
             <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between text-lg">
                     <span class="font-semibold text-gray-800 dark:text-gray-200">Precio:</span>
-                    <span class="text-primary font-bold">${{ precio }}<span
-                            class="text-sm font-medium text-gray-500 dark:text-gray-400">/mes</span></span>
+            <span class="text-primary font-bold">S/{{ precio }}<span
+                class="text-sm font-medium text-gray-500 dark:text-gray-400">/mes</span></span>
                 </div>
                 <div class="mt-3 flex items-center justify-between text-sm">
                     <span class="font-medium text-gray-600 dark:text-gray-300 flex items-center gap-2">

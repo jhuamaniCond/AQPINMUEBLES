@@ -34,7 +34,7 @@
                         <img v-if="s.thumbnail" :src="s.thumbnail" class="h-10 w-16 object-cover rounded" />
                         <div class="flex-1">
                           <div class="font-medium text-sm">{{ s.title }}</div>
-                          <div class="text-xs text-gray-500">{{ s.address }} · ${{ s.monthly_price }} · {{ s.rooms }} hab</div>
+                <div class="text-xs text-gray-500">{{ s.address }} · S/{{ s.monthly_price }} · {{ s.rooms }} hab</div>
                         </div>
                       </li>
                     </ul>
@@ -51,7 +51,7 @@
                     :opciones="selectedUniversity?.sedes?.map(s => s.name) || []"
                     @optionFiltroSelected="handleSedeSelected" :defaultOption="selectedSede?.name || ''" />
 
-                  <FilterButtonRange title="Precio" :min="0" :max="3000" :start="priceStart" :end="priceEnd" tipoDato="$"
+                  <FilterButtonRange title="Precio" :min="300" :max="3000" :start="priceStart" :end="priceEnd" tipoDato="S/"
                     @rangeSelected="handlePriceSelecter" />
 
                   <FilterButtonRange title="Habitaciones" :min="1" :max="10" :start="roomsStart" :end="roomsEnd"

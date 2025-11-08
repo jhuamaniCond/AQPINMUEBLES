@@ -26,26 +26,26 @@
                         exact-active-class="bg-primary/20 dark:bg-primary/30 text-primary"
                         >
                         <span class="material-symbols-outlined">apartment</span>
-                        <p class="text-sm font-medium">My Properties</p>
+                        <p class="text-sm font-medium">Mis propiedades</p>
                     </router-link>
                     <router-link class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-800 dark:text-gray-200 hover:bg-primary/20 dark:hover:bg-primary/30"
                         to="/mis-propiedades/agregar"
                         active-class="bg-primary/20 dark:bg-primary/30 text-primary"
                         >
                         <span class="material-symbols-outlined">add_circle_outline</span>
-                        <p class="text-sm font-medium">Add Property</p>
+                        <p class="text-sm font-medium">Agregar propiedad</p>
                     </router-link>
                     <router-link class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-800 dark:text-gray-200 hover:bg-primary/20 dark:hover:bg-primary/30"
                         to="/mis-propiedades/analytics"
                         exact-active-class="bg-primary/20 dark:bg-primary/30 text-primary"
                         >
                         <span class="material-symbols-outlined">analytics</span>
-                        <p class="text-sm font-medium">Analytics</p>
+                        <p class="text-sm font-medium">Analitica</p>
                     </router-link>
                     <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-800 dark:text-gray-200 hover:bg-primary/20 dark:hover:bg-primary/30"
                         href="#">
                         <span class="material-symbols-outlined">settings</span>
-                        <p class="text-sm font-medium">Settings</p>
+                        <p class="text-sm font-medium">Configuraciones</p>
                     </a>
                 </nav>
             </aside>
@@ -61,7 +61,7 @@
                             </div>
                             <input
                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-0 border-none bg-gray-100 dark:bg-gray-700 focus:border-none h-full placeholder:text-gray-500 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-                                placeholder="Search properties or messages" value="" />
+                                placeholder="Buscar propiedades" value="" />
                         </div>
                     </label>
                     <div class="flex items-center gap-4">

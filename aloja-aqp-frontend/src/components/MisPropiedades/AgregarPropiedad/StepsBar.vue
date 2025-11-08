@@ -45,11 +45,11 @@ const props = defineProps({
 });
 
 const steps = [
-  { number: 1, label: "Property Details" },
-  { number: 2, label: "Amenities" },
-  { number: 3, label: "Photos" },
-  { number: 4, label: "Pricing" },
-  { number: 5, label: "Review & Publish" },
+  { number: 1, label: "Detalles de la propiedad" },
+  { number: 2, label: "Amenidades" },
+  { number: 3, label: "Fotos" },
+  { number: 4, label: "Precio" },
+  { number: 5, label: "Revisar y Publicar" },
 ];
 
 // 🧮 Ajuste para que la línea llegue exactamente al centro del círculo actual

@@ -25,7 +25,7 @@
 
             <div class="bg-primary/10 dark:bg-primary/20 border border-primary/30 rounded-lg p-6 text-center mt-6">
                 <p class="text-lg text-primary font-medium mb-2">Recommended Monthly Rent</p>
-                <p class="text-primary text-4xl font-bold">$1,250</p>
+                <p class="text-primary text-4xl font-bold">$450</p>
                 <p class="text-primary/80 dark:text-primary/90 text-sm mt-2">
                     Based on property size and location data.
                 </p>

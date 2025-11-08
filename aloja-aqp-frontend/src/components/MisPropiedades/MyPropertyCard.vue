@@ -10,7 +10,7 @@
 
       <div class="flex items-center justify-between">
         <p class="text-primary text-lg font-bold">
-          ${{ props.precio }}/month
+          ${{ props.precio }}/mensual
         </p>
       </div>
 

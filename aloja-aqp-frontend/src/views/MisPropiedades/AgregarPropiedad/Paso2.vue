@@ -2,22 +2,22 @@
     <StepsBar :step="2" />
     <div class="flex-1 flex flex-col w-full max-w-4xl mx-auto py-8">
         <h3 class="text-gray-800 dark:text-white text-2xl font-bold mb-6 text-center">
-            Gamified Feature Selector: Add Amenities!
+            Selector de características: ¡Añade amenidades!
         </h3>
         <p class="text-gray-600 dark:text-gray-400 text-center mb-8">
-            Select amenities to add to your property. Collect more cards to unlock bonus tips!
+            Selecciona las amenidades que quieras añadir a tu propiedad. ¡Reúne más tarjetas para desbloquear consejos adicionales!
         </p>
 
         <!-- Contador de amenidades -->
         <div class="flex justify-between items-center mb-6 px-4">
             <h4 class="text-xl font-semibold text-gray-700 dark:text-gray-300">
-                Selected Amenities:
+                Amenidades seleccionadas:
                 <span class="text-primary font-bold">{{ selectedAmenities.length }}</span>
             </h4>
             <div class="flex items-center gap-2 text-primary">
                 <span class="material-symbols-outlined text-lg">lightbulb</span>
                 <p class="text-sm font-medium">
-                    Add {{ Math.max(0, 3 - selectedAmenities.length) }} more for a Pro Tip!
+                    Añade {{ Math.max(0, 3 - selectedAmenities.length) }} más para obtener un consejo profesional.
                 </p>
             </div>
         </div>
@@ -50,7 +50,7 @@
                     <span class="material-symbols-outlined text-base">
                         {{ selectedAmenities.includes(amenity.id) ? 'check' : 'add' }}
                     </span>
-                    {{ selectedAmenities.includes(amenity.id) ? 'Added' : 'Add' }}
+                    {{ selectedAmenities.includes(amenity.id) ? 'Agregado' : 'Agregar' }}
                 </button>
             </div>
         </div>
@@ -61,12 +61,12 @@
         <button @click="previousStep"
             class="flex min-w-[120px] max-w-[480px] items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white text-lg font-bold leading-normal tracking-[0.015em] transition-colors duration-200 ease-in-out hover:bg-gray-300 dark:hover:bg-gray-600">
             <span class="material-symbols-outlined mr-2">arrow_back</span>
-            <span class="truncate">Previous Step</span>
+            <span class="truncate">Paso anterior</span>
         </button>
 
         <button @click="nextStep"
             class="flex min-w-[120px] max-w-[480px] items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-lg font-bold leading-normal tracking-[0.015em] transition-colors duration-200 ease-in-out hover:bg-blue-600">
-            <span class="truncate">Next Step</span>
+            <span class="truncate">Siguiente paso</span>
             <span class="material-symbols-outlined ml-2">arrow_forward</span>
         </button>
     </div>

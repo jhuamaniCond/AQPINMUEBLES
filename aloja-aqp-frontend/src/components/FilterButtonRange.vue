@@ -89,11 +89,11 @@ export default {
   name: "RangeFilter",
   props: {
     title: { type: String, default: "Rango" },
-    min: { type: Number, default: 0 },
+    min: { type: Number, default: 300 },
     max: { type: Number, default: 2000 },
     start: { type: Number, default: 500 },
     end: { type: Number, default: 1500 },
-    tipoDato: { type: String, default: "" }, // "number" | "date"
+    tipoDato: { type: String, default: "S/" }, // "number" | "date"
   },
   data() {
     return {

@@ -17,14 +17,14 @@
         <button @click="publicarPropiedad"
             class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-16 bg-primary text-white text-xl font-bold leading-normal tracking-[0.015em] transition-colors duration-200 ease-in-out hover:bg-blue-600 mt-8">
             <span class="material-symbols-outlined mr-2">send</span>
-            <span class="truncate">Publish Property</span>
+            <span class="truncate">Publicar propiedad </span>
         </button>
     </div>
     <div class="mt-10 w-full flex justify-between">
         <button @click="previousStep"
             class="flex min-w-[120px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white text-lg font-bold leading-normal tracking-[0.015em] transition-colors duration-200 ease-in-out hover:bg-gray-300 dark:hover:bg-gray-600">
             <span class="material-symbols-outlined mr-2">arrow_back</span>
-            <span class="truncate">Previous Step</span>
+            <span class="truncate">Paso anterior</span>
         </button>
     </div>
     <Loader :show="loading" :message="loaderMessage"/>

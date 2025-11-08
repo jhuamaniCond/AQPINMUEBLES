@@ -122,7 +122,7 @@ const detallesPropiedad = computed(() => [
   { label: 'Habitaciones', value: store.rooms || 'No especificadas', completo: !!store.rooms },
   { label: 'Amenidades', value: amenidadesConIconos.value, completo: !!amenidadesConIconos.value.length },
   { label: 'Imágenes', value: store.imagenes.length ? `${store.imagenes.length} subidas` : 'No subidas', completo: !!store.imagenes.length },
-  { label: 'Precio', value: store.monthly_price ? `$${store.monthly_price}` : 'No definido', completo: !!store.monthly_price },
+  { label: 'Precio', value: store.monthly_price ? `S/${store.monthly_price}` : 'No definido', completo: !!store.monthly_price },
 ])
 </script>
 
