@@ -65,6 +65,11 @@
                       </button>
                     </template>
                   </div>
+                  <!-- Acciones: Buscar / Limpiar -->
+                  <div class="flex items-center gap-2 ml-2">
+                    <button @click="applyFilters()" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/90">Buscar</button>
+                    <button @click="clearFilters()" class="bg-white dark:!bg-background-dark border border-gray-300 dark:border-gray-700 text-sm px-3 py-2 rounded-lg">Limpiar</button>
+                  </div>
                 </div>
 
               </div>
@@ -129,7 +134,9 @@
                   :servicios="selectedProperty.services"
                   :latitudCasa="selectedProperty.latitude"
                   :longitudCasa="selectedProperty.longitude" :latitudUni="selectedSede?.lat"
-                  :longitudUni="selectedSede?.lng" :UniImgUrl="selectedUniversity?.imageUrl || ''" />
+                  :longitudUni="selectedSede?.lng" :UniImgUrl="selectedUniversity?.imageUrl || ''"
+                  v-bind="(function(){ const r = getRouteAndDistanceForProperty(selectedProperty); return { routeGeoJson: r.route, distanceDisplay: r.label }; })()"
+                />
               </template>
 
               <template v-else>
@@ -166,7 +173,8 @@
                       :servicios="selectedProperty.services"
                       :latitudCasa="selectedProperty.latitude"
                       :longitudCasa="selectedProperty.longitude" :latitudUni="selectedSede?.lat"
-                      :longitudUni="selectedSede?.lng" :UniImgUrl="selectedUniversity?.imageUrl || ''" />
+                      :longitudUni="selectedSede?.lng" :UniImgUrl="selectedUniversity?.imageUrl || ''"
+                      v-bind="(function(){ const r = getRouteAndDistanceForProperty(selectedProperty); return { routeGeoJson: r.route, distanceDisplay: r.label }; })()" />
                   </template>
                   <template v-else>
                     <div class="p-4 text-center">
@@ -328,20 +336,19 @@ const initUniversitySelection = async () => {
 
 // ===== Eventos =====
 const handleUniversitySelected = (universityName) => {
+  // Only update selection here. Do NOT auto-run applyFilters to avoid race conditions.
   selectedUniversity.value = universities.value.find((u) => u.name === universityName) || null;
   selectedSede.value = selectedUniversity.value?.sedes?.[0] || null;
   console.log('handleUniversitySelected ->', { universityName, selectedUniversity: selectedUniversity.value, selectedSede: selectedSede.value });
-  // reset selectedIndex to the first result so the details panel shows something valid
+  // reset selectedIndex so the details panel will reflect the first result after search
   selectedIndex.value = 0;
-  applyFilters();
 };
 
 const handleSedeSelected = (sedeName) => {
+  // Update selected campus; do not auto-apply filters.
   selectedSede.value = selectedUniversity.value?.sedes?.find((s) => s.name === sedeName) || null;
   console.log('handleSedeSelected ->', { sedeName, selectedSede: selectedSede.value });
-  // reset selectedIndex to the first result so the details panel shows something valid
   selectedIndex.value = 0;
-  applyFilters();
 };
 
 const handlePriceSelecter = (range) => {
@@ -359,7 +366,7 @@ const handlePriceSelecter = (range) => {
     priceStart.value = e;
     priceEnd.value = s;
   }
-  applyFilters();
+  // Do not auto-run applyFilters here; user must press 'Buscar'
 };
 
 const handleBedroomsSelected = (range) => {
@@ -373,7 +380,7 @@ const handleBedroomsSelected = (range) => {
     roomsStart.value = e;
     roomsEnd.value = s;
   }
-  applyFilters();
+  // Wait for explicit 'Buscar' click to apply
 };
 
 const handleCardClicked = (index) => {
@@ -397,6 +404,32 @@ const handleCardClicked = (index) => {
       const el = document.querySelector('.sticky');
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 50);
+  }
+};
+
+// Return route GeoJSON and distance label for a property corresponding to the currently selected university (if any)
+const getRouteAndDistanceForProperty = (property) => {
+  if (!property || !selectedUniversity.value || !Array.isArray(property.university_distances)) return { route: null, label: null };
+  try {
+    const match = property.university_distances.find((d) => {
+      if (d.campus_university_id != null) return Number(d.campus_university_id) === Number(selectedUniversity.value.id);
+      if (d.campus && typeof d.campus === 'string') return d.campus.toLowerCase().includes(String(selectedUniversity.value.name).toLowerCase());
+      return false;
+    });
+    if (!match) {
+      console.debug('getRouteAndDistanceForProperty -> no match found for property', { propertyId: property.id, selectedUniversityId: selectedUniversity.value?.id, university_distances: property.university_distances });
+      return { route: null, label: null };
+    }
+    // Debug: show matched university_distance record
+    console.log('getRouteAndDistanceForProperty -> matched university_distance', { propertyId: property.id, match });
+    // Build a human-friendly label from backend values (distance_km and walk_time_minutes)
+    const distanceKm = match.distance_km != null ? String(match.distance_km) : null;
+    const minutes = match.walk_time_minutes != null ? String(match.walk_time_minutes) : null;
+    const label = distanceKm ? (minutes ? `${distanceKm} km (${minutes} min)` : `${distanceKm} km`) : (minutes ? `${minutes} min` : null);
+    return { route: match.route || null, label };
+  } catch (e) {
+    console.warn('getRouteAndDistanceForProperty error', e);
+    return { route: null, label: null };
   }
 };
 
@@ -477,7 +510,21 @@ const toggleService = (id) => {
   const idx = selectedServices.value.indexOf(id);
   if (idx === -1) selectedServices.value.push(id);
   else selectedServices.value.splice(idx, 1);
-  applyFilters();
+  // Don't call applyFilters here; user will press 'Buscar'
+};
+
+// Clear all filters and restore all properties
+const clearFilters = async () => {
+  selectedUniversity.value = null;
+  selectedSede.value = null;
+  selectedServices.value = [];
+  priceStart.value = null;
+  priceEnd.value = null;
+  roomsStart.value = null;
+  roomsEnd.value = null;
+  searchQuery.value = "";
+  // restore full list
+  await showAll();
 };
 
 async function applyFilters() {

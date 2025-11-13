@@ -4,7 +4,7 @@
         <div class="relative">
             <div class="w-full aspect-[4/3] bg-gray-200 dark:bg-gray-800 rounded-xl overflow-hidden ">
                 <MapView :latitudCasa="latitudCasa" :longitudCasa="longitudCasa" :latitudUni="latitudUni"
-                    :longitudUni="longitudUni" :UniImgUrl="UniImgUrl" @ruta-calculada="onRutaCalculada" />
+                    :longitudUni="longitudUni" :UniImgUrl="UniImgUrl" :routeGeoJson="routeGeoJson" />
             </div>
         </div>
 
@@ -22,7 +22,7 @@
                         <span class="material-symbols-outlined text-base">directions_walk</span>
                         <span>Distancia a la universidad:</span>
                     </span>
-                    <span class="font-semibold text-gray-800 dark:text-white">{{ distacia }}</span>
+                        <span class="font-semibold text-gray-800 dark:text-white">{{ distanceDisplay || '-' }}</span>
                 </div>
                 <div class="mt-2 flex items-center justify-between text-sm">
                     <span class="font-medium text-gray-600 dark:text-gray-300 flex items-center gap-2">
@@ -63,6 +63,11 @@ import ServiceIcon from '/src/components/icons/ServiceIcon.vue'
 
 export default {
     name: "PropertyDetails",
+    components: {
+        MapView
+        , ServiceIcon
+    },
+    
     props: {
         id: Number,
         title: String,
@@ -78,23 +83,27 @@ export default {
         latitudUni: Number,
         longitudUni: Number,
         UniImgUrl: String,
-    },
-    components: {
-        MapView
-        , ServiceIcon
-    },
-    data() {
-        return {
-            distacia: null
-        };
-    },
-    methods: {
-        onRutaCalculada({ distancia, duracion }) {
-            // Convertir distancia a kilómetros y duración a minutos
-            const distanciaKm = (distancia / 1000).toFixed(2);
-            const duracionMin = Math.ceil(duracion / 60);
-            this.distacia = `${distanciaKm} km (${duracionMin} min)`;
+        routeGeoJson: {
+            type: Object,
+            default: null
+        },
+        // distanceDisplay: pre-formatted string from backend (e.g. "0.45 km (6 min)")
+        distanceDisplay: {
+            type: String,
+            default: null
         }
-    }
+    },
+    mounted() {
+        console.log('PropertyDetails mounted -> id, distanceDisplay, routeGeoJson', { id: this.id, distanceDisplay: this.distanceDisplay, hasRoute: !!this.routeGeoJson });
+    },
+    watch: {
+        routeGeoJson(newVal) {
+            console.log('PropertyDetails -> routeGeoJson changed', newVal);
+        },
+        distanceDisplay(newVal) {
+            console.log('PropertyDetails -> distanceDisplay changed', newVal);
+        }
+    },
+    methods: {},
 };
 </script>

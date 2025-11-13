@@ -234,6 +234,14 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         );
 
         console.log('fetchPropiedadesFiltradas -> status', res.status, 'data preview:', Array.isArray(res.data) ? res.data.slice(0,3) : res.data);
+        // Debug: print full response payload (may be large) and sample university_distances for first results
+        try {
+          console.log('fetchPropiedadesFiltradas -> full response data:', res.data);
+          const sample = (res.data.results ? res.data.results : (Array.isArray(res.data) ? res.data : [])).slice(0,3).map(p => ({ id: p.id, title: p.title, university_distances: p.university_distances ? p.university_distances.slice(0,3) : p.university_distances }));
+          console.log('fetchPropiedadesFiltradas -> sample properties with university_distances:', sample);
+        } catch (e) {
+          console.warn('fetchPropiedadesFiltradas -> debug logging failed', e);
+        }
         // support paginated responses
         this.propiedadesPublicas = res.data.results ? res.data.results : res.data;
         console.log('fetchPropiedadesFiltradas -> propiedadesPublicas set length', this.propiedadesPublicas?.length);
