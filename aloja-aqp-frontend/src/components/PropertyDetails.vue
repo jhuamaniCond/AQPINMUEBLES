@@ -118,6 +118,9 @@ export default {
         isFavorite() {
                 try {
                     const store = useGestionPropiedades();
+                    // Force dependency on favoritesMap content so computed updates
+                    const snapshot = store.favoritesMap ? JSON.stringify(store.favoritesMap) : '';
+                    void snapshot;
                     return !!(store.favoritesMap && store.favoritesMap[this.id]);
                 } catch (e) {
                     return false;

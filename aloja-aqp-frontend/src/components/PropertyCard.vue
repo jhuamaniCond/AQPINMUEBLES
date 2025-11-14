@@ -56,10 +56,25 @@ export default {
   data() {
     return {};
   },
+  async mounted() {
+    // Ensure favorites map is loaded for authenticated users so the heart reflects server state
+    try {
+      const store = useGestionPropiedades();
+      const auth = useAuthStore();
+      if (auth.user && (!store.favoritesMap || Object.keys(store.favoritesMap).length === 0)) {
+        await store.fetchFavorites();
+      }
+    } catch (e) {
+      console.warn('PropertyCard: could not fetch favorites on mount', e);
+    }
+  },
   computed: {
     isFavorite() {
       try {
         const store = useGestionPropiedades();
+        // read snapshot so Vue tracks changes to the favoritesMap object
+        const snapshot = store.favoritesMap ? JSON.stringify(store.favoritesMap) : '';
+        void snapshot;
         return !!(store.favoritesMap && store.favoritesMap[this.id]);
       } catch (e) {
         return false;

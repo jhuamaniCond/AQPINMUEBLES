@@ -435,6 +435,12 @@ onMounted(async () => {
     console.log("ID recibido desde la URL:", id.value);
     // load universities first so we have real ids and campus coords
     await loadUniversities();
+    // Ensure favoritesMap is populated for authenticated users so heart state is correct
+    try {
+        if (auth.user) await storePropiedades.fetchFavorites();
+    } catch (e) {
+        console.warn('Could not fetch favorites on mount', e);
+    }
     if (isPrivate) {
         console.log("propiedad privada");
         fetchMyPropertiePrivate(id.value);
@@ -480,6 +486,9 @@ const goBack = () => {
 const isFavorite = computed(() => {
     const id = propiedad.value?.id;
     if (!id) return false;
+    // Read a snapshot of favoritesMap so Vue tracks changes to it
+    const snapshot = storePropiedades.favoritesMap ? JSON.stringify(storePropiedades.favoritesMap) : '';
+    void snapshot;
     return !!(storePropiedades.favoritesMap && storePropiedades.favoritesMap[id]);
 });
 
