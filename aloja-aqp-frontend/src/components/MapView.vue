@@ -50,10 +50,16 @@ export default {
         console.log('MapView.drawRecorrido -> props.routeGeoJson', props.routeGeoJson);
       const houseLatLng = getHouseLatLng();
       const uniLatLng = getUniLatLng();
-      if (!houseLatLng || !uniLatLng) {
-        console.warn('drawRecorrido: coordenadas faltantes', { houseLatLng, uniLatLng });
-        return; // nothing to draw
-      }
+        // If coordinates are missing or route is absent, remove any previous route layer
+        if (routeLine && map.value) {
+          try { map.value.removeLayer(routeLine); } catch (e) { /* noop */ }
+          routeLine = null;
+        }
+
+        if (!houseLatLng || !uniLatLng) {
+          console.warn('drawRecorrido: coordenadas faltantes', { houseLatLng, uniLatLng });
+          return; // nothing to draw
+        }
 
       // Ensure numeric types
       const hLat = Number(houseLatLng[0]);
@@ -200,6 +206,12 @@ export default {
           if (newUni) {
             if (uniMarker) uniMarker.setLatLng(newUni);
             else uniMarker = L.marker(newUni, { icon: createUniIcon(props.UniImgUrl) }).addTo(markerLayer);
+          } else {
+            // remove existing uni marker when campus coords become absent
+            if (uniMarker) {
+              try { map.value.removeLayer(uniMarker); } catch (e) { /* noop */ }
+              uniMarker = null;
+            }
           }
           drawRecorrido();
           fitToMarkers();
@@ -210,8 +222,10 @@ export default {
     watch(
       () => props.UniImgUrl,
       (newUrl) => {
-        if (uniMarker && newUrl) {
-          uniMarker.setIcon(createUniIcon(newUrl));
+        // Always update the uni marker icon if the marker exists; createUniIcon will
+        // return a placeholder when newUrl is falsy.
+        if (uniMarker) {
+          try { uniMarker.setIcon(createUniIcon(newUrl)); } catch (e) { /* noop */ }
         }
       }
     );

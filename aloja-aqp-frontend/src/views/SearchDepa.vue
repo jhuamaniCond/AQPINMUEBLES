@@ -67,7 +67,6 @@
                   </div>
                   <!-- Acciones: Buscar / Limpiar -->
                   <div class="flex items-center gap-2 ml-2">
-                    <button @click="applyFilters()" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/90">Buscar</button>
                     <button @click="clearFilters()" class="bg-white dark:!bg-background-dark border border-gray-300 dark:border-gray-700 text-sm px-3 py-2 rounded-lg">Limpiar</button>
                   </div>
                 </div>
@@ -336,19 +335,21 @@ const initUniversitySelection = async () => {
 
 // ===== Eventos =====
 const handleUniversitySelected = (universityName) => {
-  // Only update selection here. Do NOT auto-run applyFilters to avoid race conditions.
+  // Update selection and auto-apply filters (race-condition protections remain in applyFilters)
   selectedUniversity.value = universities.value.find((u) => u.name === universityName) || null;
   selectedSede.value = selectedUniversity.value?.sedes?.[0] || null;
   console.log('handleUniversitySelected ->', { universityName, selectedUniversity: selectedUniversity.value, selectedSede: selectedSede.value });
   // reset selectedIndex so the details panel will reflect the first result after search
   selectedIndex.value = 0;
+  applyFilters();
 };
 
 const handleSedeSelected = (sedeName) => {
-  // Update selected campus; do not auto-apply filters.
+  // Update selected campus and auto-apply filters
   selectedSede.value = selectedUniversity.value?.sedes?.find((s) => s.name === sedeName) || null;
   console.log('handleSedeSelected ->', { sedeName, selectedSede: selectedSede.value });
   selectedIndex.value = 0;
+  applyFilters();
 };
 
 const handlePriceSelecter = (range) => {
@@ -366,7 +367,8 @@ const handlePriceSelecter = (range) => {
     priceStart.value = e;
     priceEnd.value = s;
   }
-  // Do not auto-run applyFilters here; user must press 'Buscar'
+  // Auto-apply filters after changing price
+  applyFilters();
 };
 
 const handleBedroomsSelected = (range) => {
@@ -380,7 +382,8 @@ const handleBedroomsSelected = (range) => {
     roomsStart.value = e;
     roomsEnd.value = s;
   }
-  // Wait for explicit 'Buscar' click to apply
+  // Auto-apply filters after changing bedroom range
+  applyFilters();
 };
 
 const handleCardClicked = (index) => {
@@ -510,7 +513,8 @@ const toggleService = (id) => {
   const idx = selectedServices.value.indexOf(id);
   if (idx === -1) selectedServices.value.push(id);
   else selectedServices.value.splice(idx, 1);
-  // Don't call applyFilters here; user will press 'Buscar'
+  // Auto-apply filters when services change
+  applyFilters();
 };
 
 // Clear all filters and restore all properties
