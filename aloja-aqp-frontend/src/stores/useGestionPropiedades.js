@@ -10,6 +10,8 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
     myPropiedadActual: null, // alojamiento seleccionado
     propiedadesPublicas: null,
       pagination: null,
+      // page size must match backend `PublicAccommodationViewSet.TenPerPagePagination.page_size`
+      pageSize: 6,
     propiedadPublicaActual: null,
     loading: false,
     error: null,
@@ -171,13 +173,15 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
     async updateStateMyPropiedadActual(id) {
       await this.fetchMyPropiedad(id);
     },
-    async fetchPropiedadesPublicas() {
+    async fetchPropiedadesPublicas(page = null) {
       this.loading = true;
       this.error = null;
       try {
+        const params = {};
+        if (page !== null && page !== undefined) params.page = page;
         const res = await axios.get(
           "http://127.0.0.1:8000/api/public/accommodations/",
-          this.getAuthHeaders()
+          { params, ...this.getAuthHeaders() }
         );
         // handle paginated or non-paginated responses
         this.propiedadesPublicas = res.data.results ? res.data.results : res.data;
@@ -195,12 +199,20 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           "  Propiedades publicas cargadas:",
           this.propiedadesPublicas
         );
+          // return the loaded page for caller convenience
+          return this.propiedadesPublicas;
       } catch (error) {
         this.error = error.response?.data || error.message;
         console.error("  Error al obtener Propiedades publicas:", this.error);
       } finally {
         this.loading = false;
       }
+    },
+
+    // Helper: compute total pages according to backend pageSize
+    getTotalPages() {
+      if (!this.pagination || !this.pagination.count) return null;
+      return Math.ceil(this.pagination.count / this.pageSize);
     },
     async getPropiedadesPublicas() {
       if (this.propiedadesPublicas === null) {

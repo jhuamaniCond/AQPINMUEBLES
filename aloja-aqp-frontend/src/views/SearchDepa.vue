@@ -91,15 +91,15 @@
                 </div>
                 <div class="mt-8 flex justify-center">
                   <nav class="flex items-center gap-2">
-                    <button :disabled="!storePropiedades.pagination || !storePropiedades.pagination.previous" @click.prevent="applyFilters(currentPage.value - 1)" class="flex items-center justify-center h-10 w-10 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50">
+                    <button :disabled="!storePropiedades.pagination || !storePropiedades.pagination.previous" @click.prevent="goToPrev()" class="flex items-center justify-center h-10 w-10 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50">
                       <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                         <path clip-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" fill-rule="evenodd"></path>
                       </svg>
                     </button>
 
-                    <div class="px-3 text-sm text-gray-700 dark:text-gray-300">Página {{ currentPage }} de {{ storePropiedades.pagination ? Math.max(1, Math.ceil(storePropiedades.pagination.count / 10)) : 1 }}</div>
+                    <div class="px-3 text-sm text-gray-700 dark:text-gray-300">Página {{ currentPage }} de {{ storePropiedades.pagination ? Math.max(1, Math.ceil(storePropiedades.pagination.count / storePropiedades.pageSize)) : 1 }}</div>
 
-                    <button :disabled="!storePropiedades.pagination || !storePropiedades.pagination.next" @click.prevent="applyFilters(currentPage.value + 1)" class="flex items-center justify-center h-10 w-10 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50">
+                    <button :disabled="!storePropiedades.pagination || !storePropiedades.pagination.next" @click.prevent="goToNext()" class="flex items-center justify-center h-10 w-10 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50">
                       <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                         <path clip-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" fill-rule="evenodd"></path>
                       </svg>
@@ -111,7 +111,7 @@
 
             <div v-if="!isCelular" class="hidden lg:block dark:!border-gray-800 border border-gray-200 p-6 rounded-xl">
               <template v-if="selectedProperty">
-                <PropertyDetails
+                  <PropertyDetails
                   :id="selectedProperty.id" :title="selectedProperty.title"
                   :direccion="selectedProperty.address"
                   :precio="Number(selectedProperty.monthly_price)"
@@ -504,6 +504,39 @@ const toggleService = (id) => {
   applyFilters();
 };
 
+// Pagination navigation helpers: prefer reading page number from backend `next`/`previous` URLs
+const goToNext = async () => {
+  let targetPage = null;
+  try {
+    const nextUrl = storePropiedades.pagination?.next;
+    if (nextUrl) {
+      const u = new URL(nextUrl);
+      const p = u.searchParams.get('page');
+      if (p) targetPage = Number(p);
+    }
+  } catch (e) {
+    console.warn('goToNext -> parse next url failed', e);
+  }
+  if (!targetPage) targetPage = currentPage.value + 1;
+  await applyFilters(targetPage);
+};
+
+const goToPrev = async () => {
+  let targetPage = null;
+  try {
+    const prevUrl = storePropiedades.pagination?.previous;
+    if (prevUrl) {
+      const u = new URL(prevUrl);
+      const p = u.searchParams.get('page');
+      if (p) targetPage = Number(p);
+    }
+  } catch (e) {
+    console.warn('goToPrev -> parse previous url failed', e);
+  }
+  if (!targetPage) targetPage = Math.max(1, currentPage.value - 1);
+  await applyFilters(targetPage);
+};
+
 // Clear all filters and restore all properties
 const clearFilters = async () => {
   selectedUniversity.value = null;
@@ -547,8 +580,9 @@ async function applyFilters() {
   if (Object.keys(params).length === 0) {
     // request all public properties (paginated)
     params.page = page;
-    await storePropiedades.fetchPropiedadesPublicas();
-    propertiesPublicas.value = await storePropiedades.getPropiedadesPublicas();
+    const pageResults = await storePropiedades.fetchPropiedadesPublicas(page);
+    console.log('applyFilters -> fetched public page', { page, pageResultsLength: pageResults?.length, pagination: storePropiedades.pagination });
+    propertiesPublicas.value = pageResults || [];
     console.log('applyFilters -> no-params results count', propertiesPublicas.value?.length);
     // ensure selectedIndex points to a valid result (or null)
     if (propertiesPublicas.value && propertiesPublicas.value.length > 0) selectedIndex.value = 0;
