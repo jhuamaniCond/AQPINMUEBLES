@@ -341,13 +341,14 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
     async updateStatePropiedadesPublicas() {
       await this.fetchPropiedadesPublicas();
     },
-    async fetchPropiedadPublica(id) {
+    async fetchPropiedadPublica(id, params = {}) {
       this.loading = true;
       this.error = null;
       try {
+        const options = { params, ...this.getAuthHeaders() };
         const res = await axios.get(
           `http://127.0.0.1:8000/api/public/accommodations/${id}/`,
-          this.getAuthHeaders()
+          options
         );
         this.propiedadPublicaActual = res.data;
         console.log("  Propiedad con id ", id, " obtenida :", res.data);
@@ -499,8 +500,8 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
       }
       return this.propiedadPublicaActual;
     },
-    async updateStatePropiedadPublicaActual(id) {
-      await this.fetchPropiedadPublica(id);
+    async updateStatePropiedadPublicaActual(id, params = {}) {
+      await this.fetchPropiedadPublica(id, params);
     },
 
     async crearServicios(arrBodyCrearServicios) {

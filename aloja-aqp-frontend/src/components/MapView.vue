@@ -257,6 +257,20 @@ export default {
       }
     );
 
+    // Redraw route when routeGeoJson prop changes
+    watch(
+      () => props.routeGeoJson,
+      (newRoute) => {
+        try {
+          if (map.value) {
+            drawRecorrido();
+          }
+        } catch (e) {
+          console.warn('watch routeGeoJson -> drawRecorrido error', e);
+        }
+      }
+    );
+
     return {
       drawRecorrido
     };

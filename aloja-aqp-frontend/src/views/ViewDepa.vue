@@ -69,25 +69,20 @@
                                         <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">
                                             {{ propiedad.address || "aca va la direccion" }}
                                         </p>
-                                        <div
-                                            class="mt-4 flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-                                            <div class="flex items-center gap-1">
-                                                <span class="material-symbols-outlined text-base">bed</span>
-                                                <span>1 Habitaion</span>
+                                        <div class="mt-4 flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="material-symbols-outlined text-base">bed</span>
+                                                    <span>{{ propiedad.rooms || '-' }} hab</span>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="material-symbols-outlined text-base">directions_walk</span>
+                                                    <span>{{ routeInfo.label || '—' }}</span>
+                                                </div>
+                                                <div v-if="routeInfo.durationText" class="flex items-center gap-2 text-sm text-gray-500">
+                                                    <span class="material-symbols-outlined text-sm">schedule</span>
+                                                    <span>{{ routeInfo.durationText }}</span>
+                                                </div>
                                             </div>
-                                            <div class="flex items-center gap-1">
-                                                <span class="material-symbols-outlined text-base">bathtub</span>
-                                                <span>1 Bañera</span>
-                                            </div>
-                                            <div class="flex items-center gap-1">
-                                                <span class="material-symbols-outlined text-base">square_foot</span>
-                                                <span>600 sqft</span>
-                                            </div>
-                                            <div class="flex items-center gap-1">
-                                                <span class="material-symbols-outlined text-base">directions_walk</span>
-                                                <span>0.8 km al campus</span>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div class="mt-4 md:mt-0">
                                         <div class="text-3xl font-bold text-primary">
@@ -131,22 +126,22 @@
                                         Ubicacion
                                     </h2>
                                     <div class="mt-4 flex flex-wrap gap-4">
-                                        <FilterButtonMultipleOptions :opciones="universities.map((u) => u.name)"
-                                            :defaultOption="selectedUniversity.name"
-                                            @optionFiltroSelected="handleUniversitySelected" />
+                                                            <FilterButtonMultipleOptions :opciones="universities.map((u) => u.name)"
+                                                                :defaultOption="selectedUniversity?.name || ''"
+                                                                @optionFiltroSelected="handleUniversitySelected" />
 
-                                        <FilterButtonMultipleOptions v-if="selectedUniversity"
-                                            :opciones="selectedUniversity.sedes.map((s) => s.name)"
-                                            :defaultOption="selectedSede.name"
-                                            @optionFiltroSelected="handleSedeSelected" />
+                                                            <FilterButtonMultipleOptions v-if="selectedUniversity"
+                                                                :opciones="selectedUniversity.sedes.map((s) => s.name)"
+                                                                :defaultOption="selectedSede?.name || ''"
+                                                                @optionFiltroSelected="handleSedeSelected" />
                                     </div>
 
-                                    <div
-                                        class="mt-4 aspect-video bg-gray-200 dark:bg-gray-800 rounded-xl overflow-hidden">
-                                        <MapView v-if="selectedSede && propiedad.latitude && propiedad.longitude"
+                                        <div
+                                            class="mt-4 aspect-video bg-gray-200 dark:bg-gray-800 rounded-xl overflow-hidden">
+                                        <MapView v-if="propiedad.latitude && propiedad.longitude"
                                             :latitudCasa="propiedad.latitude" :longitudCasa="propiedad.longitude"
-                                            :latitudUni="selectedSede.lat" :longitudUni="selectedSede.lng"
-                                            :UniImgUrl="selectedUniversity.imageUrl" />
+                                            :latitudUni="selectedSede?.lat" :longitudUni="selectedSede?.lng"
+                                            :UniImgUrl="selectedUniversity?.imageUrl || ''" :routeGeoJson="routeInfo.route" />
                                     </div>
                                 </div>
                                 <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
@@ -296,55 +291,43 @@ const onLoginSuccess = () => {
   showLogin.value = false;
 };
 
-// Datos base
-const dataHouse = ref({
-    lat: -16.409047,
-    lng: -71.537451,
-});
-
-const universities = ref([
-    {
-        name: "Universidad Nacional de San Agustin",
-        imageUrl: "../public/Escudo_UNSA.png",
-        sedes: [
-            { name: "Ingenieria", lat: -16.404684, lng: -71.524577 },
-            { name: "Biomedicas", lat: -16.41248, lng: -71.534752 },
-            { name: "Sociales", lat: -16.405969, lng: -71.520543 },
-        ],
-    },
-    {
-        name: "Universidad Catolica de Santa Maria",
-        imageUrl: "../public/Escudo_UCSM.png",
-        sedes: [
-            { name: "Campus Central Umacollo", lat: -16.40631, lng: -71.547563 },
-        ],
-    },
-    {
-        name: "Universidad Tecnologica del Peru",
-        imageUrl: "../public/Escudo_UTP.png",
-        sedes: [
-            { name: "Sede av. Tacna y arica", lat: -16.408627, lng: -71.541031 },
-            { name: "Sede av. Parra", lat: -16.408469, lng: -71.542242 },
-            { name: "Nueva Sede", lat: -16.409622, lng: -71.543182 },
-        ],
-    },
-    {
-        name: "Universidad Continental",
-        imageUrl: "../public/Escudo_Continental.jpg",
-        sedes: [{ name: "Campus Principal", lat: -16.412307, lng: -71.524355 }],
-    },
-    {
-        name: "Universidad de San Martin de Porres",
-        imageUrl: "../public/Escudo_USMP.png",
-        sedes: [
-            { name: "Campus Principal Arequipa", lat: -16.424397, lng: -71.521655 },
-        ],
-    },
-]);
-
 // Variables reactivas
-const selectedUniversity = ref(universities.value[0]);
-const selectedSede = ref(selectedUniversity.value.sedes[0]);
+const universities = ref([]);
+const selectedUniversity = ref(null);
+const selectedSede = ref(null);
+
+// Load universities from API and normalize shape (id, name, imageUrl, sedes with lat/lng)
+const loadUniversities = async () => {
+    try {
+        const fetched = await storePropiedades.fetchUniversities();
+        const uniArray = Array.isArray(fetched) ? fetched : [];
+        const parseNum = (v) => {
+            if (v === null || v === undefined) return null;
+            const n = Number(v);
+            return Number.isFinite(n) ? n : null;
+        };
+        universities.value = uniArray.map((u) => ({
+            id: u.id,
+            name: u.name,
+            imageUrl: u.logo || u.imageUrl || null,
+            sedes: (u.campuses || []).map((c) => ({
+                id: c.id,
+                name: c.name,
+                lat: parseNum(c.latitude ?? c.lat ?? c.latitud ?? (c.location && c.location.lat) ?? null),
+                lng: parseNum(c.longitude ?? c.lng ?? c.longitud ?? (c.location && c.location.lng) ?? null),
+            })),
+        }));
+
+        // default selection: first university + first campus if not already set
+        if (!selectedUniversity.value && universities.value.length) {
+            selectedUniversity.value = universities.value[0];
+            selectedSede.value = selectedUniversity.value.sedes?.[0] || null;
+        }
+    } catch (e) {
+        console.error('loadUniversities error', e);
+        universities.value = [];
+    }
+};
 const propiedad = ref({});
 
 const fetchMyPropertiePrivate = async (id) => {
@@ -359,7 +342,10 @@ const fetchMyPropertiePrivate = async (id) => {
 };
 const fetchMyPropertiePublic = async (id) => {
     try {
-        await storePropiedades.updateStatePropiedadPublicaActual(id);
+        // Pass selected university id so serializer can include route GeoJSON for that university
+        const params = {};
+        if (selectedUniversity.value && selectedUniversity.value.id) params.university_id = selectedUniversity.value.id;
+        await storePropiedades.updateStatePropiedadPublicaActual(id, params);
         propiedad.value = await storePropiedades.getPropiedadPublicaActual(id);
         nuevoComentarioAccomodationId.value = propiedad.value.id
         actualReviews.value = propiedad.value.reviews
@@ -369,6 +355,42 @@ const fetchMyPropertiePublic = async (id) => {
 };
 
 const defaultImage = "https://placehold.co/500x300?text=Sin+imagen";
+
+// Compute route/distance/duration info for the currently selected university/campus
+const routeInfo = computed(() => {
+    try {
+        if (!propiedad.value || !selectedUniversity.value || !Array.isArray(propiedad.value.university_distances)) {
+            return { route: null, label: null, durationText: null };
+        }
+
+        const match = propiedad.value.university_distances.find((d) => {
+            if (d.campus_university_id != null) return Number(d.campus_university_id) === Number(selectedUniversity.value.id);
+            if (d.campus && typeof d.campus === 'string') return d.campus.toLowerCase().includes(String(selectedUniversity.value.name).toLowerCase());
+            // fallback: if selectedSede coordinates are available, try match by coordinates
+            if (selectedSede.value && d.campus_lat != null && d.campus_lng != null) {
+                const a = Number(d.campus_lat);
+                const b = Number(d.campus_lng);
+                return Math.abs(a - selectedSede.value.lat) < 0.0005 && Math.abs(b - selectedSede.value.lng) < 0.0005;
+            }
+            return false;
+        });
+
+        if (!match) {
+            return { route: null, label: null, durationText: null };
+        }
+
+        // Build label and duration
+        const distanceKm = match.distance_km != null ? String(match.distance_km) : (match.distance_meters != null ? `${(Number(match.distance_meters)/1000).toFixed(2)}` : null);
+        const minutes = match.walk_time_minutes != null ? Number(match.walk_time_minutes) : (match.duration_seconds != null ? Math.round(Number(match.duration_seconds)/60) : null);
+        const label = distanceKm ? (minutes ? `${distanceKm} km` : `${distanceKm} km`) : (minutes ? `${minutes} min` : null);
+        const durationText = minutes ? `${minutes} min` : (match.duration_text || null);
+
+        return { route: match.route || null, label, durationText };
+    } catch (e) {
+        console.warn('routeInfo compute error', e);
+        return { route: null, label: null, durationText: null };
+    }
+});
 
 const mainPhoto = computed(
     () =>
@@ -393,27 +415,35 @@ const esAutor = (userId) => userId === propiedad.value.user.id
 
 
 // Inicialización
-onMounted(() => {
+onMounted(async () => {
     console.log("ID recibido desde la URL:", id.value);
+    // load universities first so we have real ids and campus coords
+    await loadUniversities();
     if (isPrivate) {
         console.log("propiedad privada");
         fetchMyPropertiePrivate(id.value);
     } else {
         console.log("propiedad publica");
-        fetchMyPropertiePublic(id.value);
+        await fetchMyPropertiePublic(id.value);
     }
 });
 
 // Métodos
 const handleUniversitySelected = (universityName) => {
-    selectedUniversity.value = universities.value.find(
-        (u) => u.name === universityName
-    );
+    // pick the university object from the normalized `universities` list
+    const found = universities.value.find((u) => u.name === universityName) || null;
+    selectedUniversity.value = found;
+    selectedSede.value = found ? (found.sedes?.[0] || null) : null;
     console.log("Universidad seleccionada:", selectedUniversity.value);
-    selectedSede.value = selectedUniversity.value.sedes[0];
+    // After user selects a different university, refetch the public property detail
+    // so backend can include route/distance for the newly selected university.
+    if (!isPrivate) {
+        fetchMyPropertiePublic(id.value);
+    }
 };
 
 const handleSedeSelected = (sedeName) => {
+    if (!selectedUniversity.value) return;
     selectedSede.value = selectedUniversity.value.sedes.find(
         (s) => s.name === sedeName
     );
