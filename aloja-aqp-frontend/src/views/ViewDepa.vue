@@ -223,6 +223,7 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                     </div>
 
                                     <div class="mt-6 space-y-4">
@@ -233,7 +234,8 @@
                                         </button>
 
                                         <button
-                                            class="w-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white px-6 py-3 rounded-lg text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-2">
+                                        @click="sendWhatsApp"    
+                                        class="w-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white px-6 py-3 rounded-lg text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-2">
                                             <span class="material-symbols-outlined">mail</span>
                                             <span>Consultar sobre la propiedad</span>
                                         </button>
@@ -480,6 +482,69 @@ const toStartCase = (text) => {
 
 const goBack = () => {
     router.back();
+};
+
+// WhatsApp helper: build an emoji-rich message and open WhatsApp Web/mobile
+const sendWhatsApp = () => {
+    try {
+        const ownerPhone = propiedad.value?.owner?.phone_number || propiedad.value?.user?.phone_number || '';
+        let rawPhone = String(ownerPhone || '').trim();
+        if (!rawPhone) {
+            alert('Número del anunciante no disponible');
+            return;
+        }
+
+        // Normalize phone: keep digits and plus sign, then remove leading + for wa.me
+        const cleaned = rawPhone.replace(/[^\d+]/g, '');
+        const waPhone = cleaned.replace(/^\+/, '');
+
+        // Prepare plain-text rules from stored HTML (convert <br> and <p> to newlines)
+        const rawRulesHtml = propiedad.value?.coexistence_rules || '';
+        let rulesText = 'No especificadas';
+        if (rawRulesHtml) {
+            const sanitized = DOMPurify.sanitize(rawRulesHtml, { ALLOWED_TAGS: ['br', 'p'] });
+            rulesText = String(sanitized).replace(/<br\s*\/?\s*>/gi, '\n').replace(/<\/p>\s*<p>/gi, '\n\n').replace(/<[^>]+>/g, '');
+            rulesText = rulesText.trim();
+        }
+
+        const title = propiedad.value?.title || 'Sin título';
+        const price = propiedad.value?.monthly_price ? `S/${propiedad.value.monthly_price}` : 'No especificado';
+        const address = propiedad.value?.address || 'No especificada';
+        const rooms = propiedad.value?.rooms != null ? propiedad.value.rooms : '—';
+        const link = window.location.href;
+
+        // Try to use authenticated user's name if available
+        const userName = auth.user ? `${auth.user.first_name || ''} ${auth.user.last_name || ''}`.trim() : '';
+        const greeting = userName ? `Hola, soy ${userName}.` : 'Hola';
+
+        const message = [
+            `${greeting} Vi tu publicación en AQPinMuebles y me interesa esta opción.`,
+            '',
+            `Título: ${title}`,
+            `Precio: ${price}`,
+            `Dirección: ${address}`,
+            `Habitaciones: ${rooms}`,
+            '',
+            `Reglas de convivencia:\n${rulesText}`,
+            '',
+            `Enlace: ${link}`,
+            '',
+            '¿Está disponible? ¿Podríamos coordinar una visita esta semana? Muchas gracias.'
+        ].join('\n');
+
+        const encoded = encodeURIComponent(message);
+
+        // Use wa.me link (works on web and mobile). If the phone seems too short, warn user.
+        if (waPhone.length < 7) {
+            if (!confirm('El número parece incompleto. ¿Deseas abrir WhatsApp de todos modos?')) return;
+        }
+
+        const url = `https://wa.me/${waPhone}?text=${encoded}`;
+        window.open(url, '_blank');
+    } catch (e) {
+        console.error('sendWhatsApp error', e);
+        alert('No se pudo abrir WhatsApp. Revisa la consola para más detalles.');
+    }
 };
 
 // Favorites helpers
