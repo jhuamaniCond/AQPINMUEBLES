@@ -42,9 +42,12 @@
                   <span v-else class="text-gray-400 text-sm">No agregadas</span>
                 </template>
 
-                <!-- Textos largos con break-words -->
+                <!-- Textos largos con break-words. Si el detalle es 'Reglas de convivencia', renderizamos HTML sanitizado -->
                 <template v-else>
-                  <span class="text-gray-600 dark:text-gray-400 break-words whitespace-normal line-clamp-3">
+                  <div v-if="detail.label === 'Reglas de convivencia'" class="prose text-sm text-gray-700 dark:text-gray-300">
+                    <div v-html="sanitize(detail.value)"></div>
+                  </div>
+                  <span v-else class="text-gray-600 dark:text-gray-400 break-words whitespace-normal line-clamp-3">
                     {{ detail.value }}
                   </span>
                 </template>
@@ -65,6 +68,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import DOMPurify from 'dompurify'
 //import ServiceIcon from '/src/components/icons/ServiceIcon.vue'
 import { useCreateProperty } from '/src/stores/useCreateProperty' // Ajusta la ruta según tu estructura
 import { webPageData } from '/src/stores/webPageData.js';
@@ -123,7 +127,19 @@ const detallesPropiedad = computed(() => [
   { label: 'Amenidades', value: amenidadesConIconos.value, completo: !!amenidadesConIconos.value.length },
   { label: 'Imágenes', value: store.imagenes.length ? `${store.imagenes.length} subidas` : 'No subidas', completo: !!store.imagenes.length },
   { label: 'Precio', value: store.monthly_price ? `S/${store.monthly_price}` : 'No definido', completo: !!store.monthly_price },
+  { label: 'Reglas de convivencia', value: store.coexistence_rules || 'No definidas', completo: !!store.coexistence_rules },
 ])
+
+// simple sanitizer wrapper for previewing owner-entered HTML/markdown
+const sanitize = (raw) => {
+  try {
+    if (!raw) return '';
+    return DOMPurify.sanitize(String(raw));
+  } catch (e) {
+    console.warn('sanitize preview failed', e);
+    return '';
+  }
+}
 </script>
 
 <style scoped>

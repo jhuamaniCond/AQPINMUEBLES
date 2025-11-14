@@ -637,6 +637,10 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
       }
     },
     crearBodyActualizarMyPropiedad(payload) {
+      // Convertir saltos de línea a <br> para preservar formato al renderizar
+      const rawRules = payload.coexistence_rules || "";
+      const normalizedRules = String(rawRules).replace(/\r\n/g, "\n").replace(/\n/g, "<br>");
+
       const filteredData = {
         title: payload.title,
         description: payload.description,
@@ -644,7 +648,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         latitude: payload.latitude,
         longitude: payload.longitude,
         monthly_price: payload.monthly_price,
-        coexistence_rules: payload.coexistence_rules,
+        coexistence_rules: normalizedRules,
         rooms: payload.rooms,
         accommodation_type: payload.accommodation_type,
       };

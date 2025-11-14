@@ -135,6 +135,16 @@
                                     class="form-textarea w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-700 text-[#333333] dark:text-white p-2 min-h-[100px]"
                                     placeholder="Enter a detailed description of the property."
                                     v-model="propiedadEditable.description"></textarea>
+
+                                <!-- Reglas de convivencia (editable) -->
+                                <div class="mt-4">
+                                    <label class="block text-sm font-medium text-[#333333] dark:text-white mb-2">Reglas de convivencia</label>
+                                    <textarea
+                                        class="form-textarea w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-700 text-[#333333] dark:text-white p-2 min-h-[120px]"
+                                        placeholder="Escribe las reglas de convivencia. Los saltos de línea se preservarán al guardar."
+                                        v-model="propiedadEditable.coexistence_rules"></textarea>
+                                    <p class="text-xs text-gray-500 mt-2">Se preservarán los saltos de línea; el contenido se sanitiza antes de guardarse.</p>
+                                </div>
                             </div>
                         </transition>
                     </div>
@@ -286,7 +296,16 @@ const fetchMyPropertiePrivate = async (id) => {
                 .map(photo => photo.image)
                 .filter(image => image !== undefined && image !== null),
             monthly_price: data.monthly_price || 0,
-            coexistence_rules: data.coexistence_rules || "",
+            // Convertir <br> y <p> a saltos de línea para mostrar en textarea al editar
+            coexistence_rules: (function () {
+                const raw = data.coexistence_rules || "";
+                // Reemplaza <br> por \n y separa párrafos <p>...</p> con doble salto
+                let text = String(raw).replace(/<br\s*\/?>/gi, '\n');
+                text = text.replace(/<\/p>\s*<p>/gi, '\n\n');
+                // Elimina etiquetas HTML restantes
+                text = text.replace(/<[^>]+>/g, '');
+                return text;
+            })(),
         };
 
 
@@ -315,8 +334,20 @@ const fetchAmenities = async () => {
 }
 
 function actualizarUbicacion({ latitud: lat, longitud: lng }) {
-    propiedadEditable.value.latitude = lat.toFixed(6);
-    propiedadEditable.value.longitude = lng.toFixed(6);
+    // Acepta lat/lng como number o string; normaliza a number antes de usar toFixed
+    const latNum = typeof lat === 'string' ? parseFloat(lat) : Number(lat);
+    const lngNum = typeof lng === 'string' ? parseFloat(lng) : Number(lng);
+
+    if (!Number.isFinite(latNum) || !Number.isFinite(lngNum)) {
+        console.warn('actualizarUbicacion: coordenadas no numéricas recibidas', lat, lng);
+        // Guarda los valores tal cual (evita romper), pero no aplicar toFixed
+        propiedadEditable.value.latitude = lat;
+        propiedadEditable.value.longitude = lng;
+        return;
+    }
+
+    propiedadEditable.value.latitude = latNum.toFixed(6);
+    propiedadEditable.value.longitude = lngNum.toFixed(6);
 }
 function triggerFileSelect() {
     fileInput.value?.click();

@@ -21,6 +21,10 @@ export const useCreateProperty = defineStore("propiedad", {
   actions: {
     // 🔹 Paso 1: Crear alojamiento
     async crearAlojamiento(token) {
+      // Convertir saltos de línea a <br> para preservar formato en el backend
+      const rawRules = this.coexistence_rules || "";
+      const coexistenceHtml = String(rawRules).replace(/\r\n/g, "\n").replace(/\n/g, "<br>");
+
       const data = {
         title: this.title,
         description: this.description,
@@ -29,7 +33,7 @@ export const useCreateProperty = defineStore("propiedad", {
         latitude: parseFloat(this.latitude),
         longitude: parseFloat(this.longitude),
         monthly_price: this.monthly_price,
-        coexistence_rules: this.coexistence_rules || "",
+        coexistence_rules: coexistenceHtml,
         rooms: this.rooms,
       };
 
@@ -114,13 +118,14 @@ export const useCreateProperty = defineStore("propiedad", {
 
     // Métodos para guardar datos paso a paso (como ya tenías)
     setDatosPaso1(data) {
-      this.title = data.titulo;
-      this.description = data.descripcion;
-      this.address = data.direccion;
-      this.accommodation_type = data.tipo;
-      this.rooms = data.rooms;
-      this.latitude = data.latitud;
-      this.longitude = data.longitud;
+      this.title = data.title || '';
+      this.description = data.description || '';
+      this.address = data.address || '';
+      this.accommodation_type = data.accommodation_type || null;
+      this.rooms = data.rooms || 0;
+      this.latitude = data.latitude || null;
+      this.longitude = data.longitude || null;
+      this.coexistence_rules = data.coexistence_rules || '';
     },
     setDatosPaso2(data) {
       this.amenidades = data.amenidades;

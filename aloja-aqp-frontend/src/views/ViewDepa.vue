@@ -99,6 +99,10 @@
                                     <p class="mt-4 text-gray-600 dark:text-gray-400 leading-relaxed">
                                         {{ propiedad.description || "aca va description" }}
                                     </p>
+                                    <div v-if="propiedad.coexistence_rules" class="mt-6">
+                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Reglas de convivencia</h3>
+                                        <div class="prose max-w-none text-gray-700 dark:text-gray-300" v-html="coexistenceHtml"></div>
+                                    </div>
                                 </div>
                                 <div v-if="propiedad?.services?.length"
                                     class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
@@ -251,6 +255,7 @@
 import LoginModal from "../components/authorization/LoginModal.vue";
 import ServiceIcon from '/src/components/icons/ServiceIcon.vue'
 import { ref, computed, onMounted } from "vue";
+import DOMPurify from 'dompurify';
 import { useRoute, useRouter } from "vue-router";
 import MapView from "../components/MapView.vue";
 import FilterButtonMultipleOptions from "../components/FilterButtonMultipleOptions.vue";
@@ -402,6 +407,17 @@ const mainPhoto = computed(
 const sidePhotos = computed(
     () => propiedad.value?.photos?.filter((p) => !p.is_main) || []
 );
+
+const coexistenceHtml = computed(() => {
+    try {
+        const raw = propiedad.value?.coexistence_rules || '';
+        // DOMPurify.sanitize returns a string safe for v-html
+        return DOMPurify.sanitize(raw);
+    } catch (e) {
+        console.warn('coexistenceHtml sanitize failed', e);
+        return '';
+    }
+});
 
 const calcularDiasAntiguedad = (fecha) => {
   const fechaReview = new Date(fecha)

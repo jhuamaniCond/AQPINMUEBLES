@@ -23,6 +23,16 @@
                 </div>
             </label>
 
+            <!-- Reglas de convivencia -->
+            <label class="flex flex-col gap-2">
+                <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Reglas de convivencia</span>
+                <textarea v-model="coexistence_rules"
+                    class="form-textarea w-full h-40 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base resize-vertical"
+                    placeholder="Escribe las normas de convivencia (saltos de línea y viñetas permitidas)">
+                </textarea>
+                <p class="text-sm text-gray-500">Puedes usar listas y saltos de línea. El contenido será sanitizado antes de almacenarse.</p>
+            </label>
+
             <div class="bg-primary/10 dark:bg-primary/20 border border-primary/30 rounded-lg p-6 text-center mt-6">
                 <p class="text-lg text-primary font-medium mb-2">Recommended Monthly Rent</p>
                 <p class="text-primary text-4xl font-bold">$450</p>
@@ -60,7 +70,7 @@ const propiedadStore = useCreateProperty()
 
 // Campo vinculado al store (se mantiene al cambiar de paso)
 
-const { monthly_price: precio } = storeToRefs(propiedadStore)
+const { monthly_price: precio, coexistence_rules } = storeToRefs(propiedadStore)
 
 function nextStep() {
 

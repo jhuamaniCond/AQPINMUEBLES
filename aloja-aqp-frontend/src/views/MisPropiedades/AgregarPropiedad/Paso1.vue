@@ -20,6 +20,12 @@
                         class="form-textarea w-full h-32 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base resize-none"
                         placeholder="Describe tu propiedad con detalle..."></textarea>
                 </label>
+                    <!-- Reglas de convivencia -->
+                    <label class="flex flex-col gap-2">
+                        <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Reglas de convivencia</span>
+                        <textarea v-model="coexistence_rules" class="form-textarea w-full h-32 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base resize-none" placeholder="Escribe las reglas de convivencia (saltos de línea y viñetas permitidos)"></textarea>
+                    </label>
+                    <p class="help">Se preservará el formato básico; el contenido se sanitiza antes de guardarse.</p>
 
                 <!-- Dirección -->
                 <label class="flex flex-col gap-2">
@@ -99,7 +105,7 @@ const store = useCreateProperty()
 const storeWebPageData = webPageData();
 
 
-const { title, description, address, accommodation_type, latitude, longitude, rooms } = storeToRefs(store)
+const { title, description, address, accommodation_type, latitude, longitude, rooms, coexistence_rules } = storeToRefs(store)
 
 const tiposPropiedad = ref([]);
 const campuses = ref([]);
