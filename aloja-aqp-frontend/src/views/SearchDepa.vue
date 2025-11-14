@@ -67,7 +67,7 @@
                   </div>
                   <!-- Acciones: Buscar / Limpiar -->
                   <div class="flex items-center gap-2 ml-2">
-                    <button @click="clearFilters()" class="bg-white dark:!bg-background-dark border border-gray-300 dark:border-gray-700 text-sm px-3 py-2 rounded-lg">Limpiar</button>
+                    <button @click="clearFilters()" class="text-white bg-white dark:!bg-background-dark border border-gray-300 dark:border-gray-700 text-sm px-3 py-2 rounded-lg">Limpiar</button>
                   </div>
                 </div>
 
@@ -91,33 +91,19 @@
                 </div>
                 <div class="mt-8 flex justify-center">
                   <nav class="flex items-center gap-2">
-                    <a class="flex items-center justify-center h-10 w-10 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                      href="#">
-                      <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path clip-rule="evenodd"
-                          d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                          fill-rule="evenodd"></path>
+                    <button :disabled="!storePropiedades.pagination || !storePropiedades.pagination.previous" @click.prevent="applyFilters(currentPage.value - 1)" class="flex items-center justify-center h-10 w-10 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50">
+                      <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path clip-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" fill-rule="evenodd"></path>
                       </svg>
-                    </a>
-                    <a class="flex items-center justify-center h-10 w-10 rounded-full bg-primary text-white font-bold text-sm"
-                      href="#">1</a>
-                    <a class="flex items-center justify-center h-10 w-10 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium text-sm transition-colors"
-                      href="#">2</a>
-                    <a class="flex items-center justify-center h-10 w-10 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium text-sm transition-colors"
-                      href="#">3</a>
-                    <span class="text-gray-500 dark:text-gray-400">...</span>
-                    <a class="flex items-center justify-center h-10 w-10 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium text-sm transition-colors"
-                      href="#">8</a>
-                    <a class="flex items-center justify-center h-10 w-10 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                      href="#">
-                      <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path clip-rule="evenodd"
-                          d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                          fill-rule="evenodd"></path>
+                    </button>
+
+                    <div class="px-3 text-sm text-gray-700 dark:text-gray-300">Página {{ currentPage }} de {{ storePropiedades.pagination ? Math.max(1, Math.ceil(storePropiedades.pagination.count / 10)) : 1 }}</div>
+
+                    <button :disabled="!storePropiedades.pagination || !storePropiedades.pagination.next" @click.prevent="applyFilters(currentPage.value + 1)" class="flex items-center justify-center h-10 w-10 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50">
+                      <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path clip-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" fill-rule="evenodd"></path>
                       </svg>
-                    </a>
+                    </button>
                   </nav>
                 </div>
               </div>
@@ -219,6 +205,7 @@ const selectedIndex = ref(0);
 const showModal = ref(false);
 const isCelular = ref(false);
 const propertiesPublicas = ref([])
+const currentPage = ref(1);
 
 // selectedProperty is a safe accessor for the currently selected property
 const selectedProperty = computed(() => {
@@ -532,6 +519,10 @@ const clearFilters = async () => {
 };
 
 async function applyFilters() {
+  let page = 1;
+  if (arguments && arguments.length && Number.isInteger(arguments[0])) {
+    page = arguments[0];
+  }
   console.log('applyFilters -> start', {
     selectedIndex: selectedIndex.value,
     selectedUniversity: selectedUniversity.value,
@@ -554,6 +545,8 @@ async function applyFilters() {
 
   // If no filters provided, fetch all public properties (explore behavior)
   if (Object.keys(params).length === 0) {
+    // request all public properties (paginated)
+    params.page = page;
     await storePropiedades.fetchPropiedadesPublicas();
     propertiesPublicas.value = await storePropiedades.getPropiedadesPublicas();
     console.log('applyFilters -> no-params results count', propertiesPublicas.value?.length);
@@ -561,6 +554,7 @@ async function applyFilters() {
     if (propertiesPublicas.value && propertiesPublicas.value.length > 0) selectedIndex.value = 0;
     else selectedIndex.value = null;
     console.log('applyFilters -> selectedIndex after no-params', selectedIndex.value, 'selectedProperty', selectedProperty.value);
+    currentPage.value = page;
     return;
   }
   console.log('applyFilters -> params', params);
@@ -574,6 +568,7 @@ async function applyFilters() {
   propertiesPublicas.value = [];
   selectedIndex.value = null;
 
+  params.page = page;
   const results = await storePropiedades.fetchPropiedadesFiltradas(params);
   console.log('applyFilters -> received results for requestId', myRequestId, 'len=', results?.length);
 
@@ -594,6 +589,7 @@ async function applyFilters() {
 
   // Apply whatever the server returned (may be empty array)
   propertiesPublicas.value = results || [];
+  currentPage.value = page;
   if (propertiesPublicas.value && propertiesPublicas.value.length > 0) {
     selectedIndex.value = 0;
   } else {

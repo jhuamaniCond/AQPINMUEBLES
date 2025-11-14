@@ -40,9 +40,36 @@ export default {
     const fitToMarkers = () => {
       const houseLatLng = getHouseLatLng();
       const uniLatLng = getUniLatLng();
-      if (map.value && houseLatLng && uniLatLng) {
-        const bounds = L.latLngBounds(houseLatLng, uniLatLng);
-        map.value.fitBounds(bounds, { padding: [50, 50] });
+      if (!map.value) return;
+
+      // If both markers present, fit bounds to include both
+      if (houseLatLng && uniLatLng) {
+        try {
+          const bounds = L.latLngBounds([houseLatLng, uniLatLng]);
+          map.value.fitBounds(bounds, { padding: [50, 50] });
+          return;
+        } catch (e) {
+          // fall through to setView
+        }
+      }
+
+      // If only house is present, center on the house with a sensible zoom
+      if (houseLatLng) {
+        try {
+          map.value.setView(houseLatLng, 15);
+          return;
+        } catch (e) {
+          // noop
+        }
+      }
+
+      // If only university is present, center on it
+      if (uniLatLng) {
+        try {
+          map.value.setView(uniLatLng, 14);
+        } catch (e) {
+          // noop
+        }
       }
     };
 

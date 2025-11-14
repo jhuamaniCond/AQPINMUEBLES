@@ -9,6 +9,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
     myPropiedades: null, // lista de alojamientos del usuario
     myPropiedadActual: null, // alojamiento seleccionado
     propiedadesPublicas: null,
+      pagination: null,
     propiedadPublicaActual: null,
     loading: false,
     error: null,
@@ -180,6 +181,16 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         );
         // handle paginated or non-paginated responses
         this.propiedadesPublicas = res.data.results ? res.data.results : res.data;
+        // store pagination metadata when present
+        if (res.data && res.data.results) {
+          this.pagination = {
+            count: res.data.count,
+            next: res.data.next,
+            previous: res.data.previous,
+          };
+        } else {
+          this.pagination = null;
+        }
         console.log(
           "  Propiedades publicas cargadas:",
           this.propiedadesPublicas
@@ -244,6 +255,16 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         }
         // support paginated responses
         this.propiedadesPublicas = res.data.results ? res.data.results : res.data;
+        // store pagination metadata when present
+        if (res.data && res.data.results) {
+          this.pagination = {
+            count: res.data.count,
+            next: res.data.next,
+            previous: res.data.previous,
+          };
+        } else {
+          this.pagination = null;
+        }
         console.log('fetchPropiedadesFiltradas -> propiedadesPublicas set length', this.propiedadesPublicas?.length);
 
         // clear controller only if it is the one we created

@@ -108,7 +108,12 @@ const selectedCampusCoords = ref(null);
 
 const fetchTiposPropiedad = async () => {
     try {
-        tiposPropiedad.value = await storeWebPageData.getTiposDePropiedad();
+        const data = await storeWebPageData.getTiposDePropiedad();
+        // normalize paginated or non-paginated responses
+        let arr = [];
+        if (Array.isArray(data)) arr = data;
+        else if (data && Array.isArray(data.results)) arr = data.results;
+        tiposPropiedad.value = arr.filter(Boolean);
     } catch (err) {
         console.error("Error al obtener tipos de propiedad:", err);
     }
@@ -116,7 +121,12 @@ const fetchTiposPropiedad = async () => {
 
 const fetchCampuses = async () => {
     try {
-        campuses.value = await storeWebPageData.getUniversityCampus();
+        const data = await storeWebPageData.getUniversityCampus();
+        // normalize paginated or non-paginated responses
+        let arr = [];
+        if (Array.isArray(data)) arr = data;
+        else if (data && Array.isArray(data.results)) arr = data.results;
+        campuses.value = arr.filter(Boolean);
     } catch (err) {
         console.error('Error al obtener campus:', err);
     }
