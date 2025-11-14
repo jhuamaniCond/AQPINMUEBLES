@@ -9,7 +9,15 @@
         </div>
 
         <div class="mt-6 bg-white dark:!bg-background-dark p-6 rounded-xl shadow-md">
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ title }}</h3>
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ title }}</h3>
+                <button @click="onToggleFavorite"
+                    :class="[ 'ml-3 rounded-full flex items-center justify-center transition-all', isFavorite ? 'bg-primary text-white p-2' : 'bg-white dark:bg-background-dark border-2 border-primary text-primary p-1' ]"
+                >
+                    <span v-if="isFavorite" class="material-symbols-outlined">favorite</span>
+                    <span v-else class="material-symbols-outlined">favorite_border</span>
+                </button>
+            </div>
             <p class="text-gray-600 dark:text-gray-400 mt-1">{{ direccion }}</p>
             <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between text-lg">
@@ -60,6 +68,7 @@
 <script>
 import MapView from "../components/MapView.vue";
 import ServiceIcon from '/src/components/icons/ServiceIcon.vue'
+import { useGestionPropiedades } from '/src/stores/useGestionPropiedades.js';
 
 export default {
     name: "PropertyDetails",
@@ -105,5 +114,30 @@ export default {
         }
     },
     methods: {},
+    computed: {
+        isFavorite() {
+                try {
+                    const store = useGestionPropiedades();
+                    return !!(store.favoritesMap && store.favoritesMap[this.id]);
+                } catch (e) {
+                    return false;
+                }
+        }
+    },
+    methods: {
+        async onToggleFavorite() {
+            const store = useGestionPropiedades();
+            if (!this.id) return;
+            try {
+                if (store.favoritesMap && store.favoritesMap[this.id]) {
+                    await store.removeFavoriteByAccommodation(this.id);
+                } else {
+                    await store.addFavorite(this.id);
+                }
+            } catch (err) {
+                console.error('PropertyDetails toggle favorite error', err);
+            }
+        }
+    },
 };
 </script>

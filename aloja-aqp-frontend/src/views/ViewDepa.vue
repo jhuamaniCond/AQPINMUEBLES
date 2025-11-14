@@ -55,9 +55,17 @@
                             <div class="mt-8">
                                 <div class="flex flex-col md:flex-row md:items-start md:justify-between">
                                     <div>
-                                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-                                            {{ propiedad.title || "aca va el titulo" }}
-                                        </h1>
+                                        <div class="flex items-center gap-3">
+                                            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+                                                {{ propiedad.title || "aca va el titulo" }}
+                                            </h1>
+                                            <button @click="toggleFavorite"
+                                                :class="[ 'rounded-full flex items-center justify-center transition-all', isFavorite ? 'bg-primary text-white p-2' : 'bg-white dark:bg-background-dark border-2 border-primary text-primary p-1' ]"
+                                            >
+                                                <span v-if="isFavorite" class="material-symbols-outlined">favorite</span>
+                                                <span v-else class="material-symbols-outlined">favorite_border</span>
+                                            </button>
+                                        </div>
                                         <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">
                                             {{ propiedad.address || "aca va la direccion" }}
                                         </p>
@@ -420,5 +428,30 @@ const toStartCase = (text) => {
 
 const goBack = () => {
     router.back();
+};
+
+// Favorites helpers
+const isFavorite = computed(() => {
+    const id = propiedad.value?.id;
+    if (!id) return false;
+    return !!(storePropiedades.favoritesMap && storePropiedades.favoritesMap[id]);
+});
+
+const toggleFavorite = async () => {
+    const id = propiedad.value?.id;
+    if (!id) return;
+    if (!auth.user) {
+        showLogin.value = true;
+        return;
+    }
+    try {
+        if (storePropiedades.favoritesMap && storePropiedades.favoritesMap[id]) {
+            await storePropiedades.removeFavoriteByAccommodation(id);
+        } else {
+            await storePropiedades.addFavorite(id);
+        }
+    } catch (err) {
+        console.error('toggleFavorite error', err);
+    }
 };
 </script>

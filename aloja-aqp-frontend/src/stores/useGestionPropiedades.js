@@ -12,6 +12,9 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
       pagination: null,
       // page size must match backend `PublicAccommodationViewSet.TenPerPagePagination.page_size`
       pageSize: 6,
+      // favorites: map of accommodationId -> favoriteId and cached favorite properties
+      favoritesMap: {},
+      favoriteProperties: [],
     propiedadPublicaActual: null,
     loading: false,
     error: null,
@@ -359,6 +362,135 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         );
       } finally {
         this.loading = false;
+      }
+    },
+    
+    // ------ Favorites handling ------
+    // map of accommodationId -> favoriteId for quick lookup
+    async fetchFavorites() {
+      try {
+        const res = await axios.get("http://127.0.0.1:8000/api/favorites/", this.getAuthHeaders());
+        // build map
+        const map = {};
+        if (Array.isArray(res.data)) {
+          for (const f of res.data) {
+            // f.accommodation may be an id or object; prefer id
+            const accId = f.accommodation && typeof f.accommodation === 'object' ? f.accommodation.id : f.accommodation;
+            if (accId) map[accId] = f.id;
+          }
+        }
+        this.favoritesMap = map;
+        return map;
+      } catch (err) {
+        console.error('fetchFavorites error', err.response?.data || err.message);
+        return {};
+      }
+    },
+
+    async fetchFavoriteProperties() {
+      try {
+        const res = await axios.get("http://127.0.0.1:8000/api/favorites/", this.getAuthHeaders());
+        const favs = Array.isArray(res.data) ? res.data : [];
+        const accIds = favs.map(f => (f.accommodation && typeof f.accommodation === 'object') ? f.accommodation.id : f.accommodation).filter(Boolean);
+        // fetch accommodations in parallel
+        const accPromises = accIds.map(id => axios.get(`http://127.0.0.1:8000/api/public/accommodations/${id}/`, this.getAuthHeaders()).then(r => r.data).catch(() => null));
+        const accommodations = (await Promise.all(accPromises)).filter(Boolean);
+        // update local map and list
+        const map = {};
+        for (const f of favs) {
+          const accId = f.accommodation && typeof f.accommodation === 'object' ? f.accommodation.id : f.accommodation;
+          if (accId) map[accId] = f.id;
+        }
+        this.favoritesMap = map;
+        this.favoriteProperties = accommodations;
+        return accommodations;
+      } catch (err) {
+        console.error('fetchFavoriteProperties error', err.response?.data || err.message);
+        return [];
+      }
+    },
+
+    async addFavorite(accommodationId) {
+      try {
+        const res = await axios.post("http://127.0.0.1:8000/api/favorites/", { accommodation: accommodationId }, this.getAuthHeaders());
+        const fav = res.data;
+        // update map
+        this.favoritesMap = { ...(this.favoritesMap || {}), [accommodationId]: fav.id };
+        // refresh favoriteProperties list so UI shows up-to-date list
+        try {
+          await this.fetchFavoriteProperties();
+        } catch (e) {
+          // ignore refresh errors
+        }
+        return fav;
+      } catch (err) {
+        // Handle case where backend raises IntegrityError for duplicate favorite (returns 500)
+        const status = err?.response?.status;
+        const dataText = typeof err?.response?.data === 'string' ? err.response.data : JSON.stringify(err?.response?.data || '');
+        console.warn('addFavorite error', status, dataText);
+        if (status === 500 && dataText && (dataText.includes('duplicate key') || dataText.toLowerCase().includes('already exists') || dataText.toLowerCase().includes('unique constraint'))) {
+          // The favorite already exists; refresh favorites map and return existing favorite id if found
+          try {
+            await this.fetchFavorites();
+            const existingFavId = this.favoritesMap && this.favoritesMap[accommodationId];
+            if (existingFavId) return { id: existingFavId, accommodation: accommodationId };
+          } catch (e) {
+            // ignore
+          }
+          // fallback: resolve gracefully
+          return null;
+        }
+        console.error('addFavorite unexpected error', err.response?.data || err.message);
+        throw err;
+      }
+    },
+
+    async removeFavoriteByAccommodation(accommodationId) {
+      try {
+        // ensure we have the latest favorites map before attempting delete
+        try {
+          await this.fetchFavorites();
+        } catch (e) {
+          // ignore fetch error, we'll proceed with whatever map we have
+        }
+        let favId = this.favoritesMap && this.favoritesMap[accommodationId];
+        if (!favId) return false;
+        try {
+          await axios.delete(`http://127.0.0.1:8000/api/favorites/${favId}/`, this.getAuthHeaders());
+        } catch (err) {
+          // If forbidden, try refreshing favorites in case the mapping changed and retry once
+          if (err?.response?.status === 403) {
+            try {
+              await this.fetchFavorites();
+              favId = this.favoritesMap && this.favoritesMap[accommodationId];
+              if (favId) {
+                await axios.delete(`http://127.0.0.1:8000/api/favorites/${favId}/`, this.getAuthHeaders());
+              } else {
+                // mapping not found after refresh — treat as already removed
+                return false;
+              }
+            } catch (e) {
+              console.error('removeFavoriteByAccommodation retry error', e.response?.data || e.message);
+              throw e;
+            }
+          } else {
+            throw err;
+          }
+        }
+
+        const newMap = { ...(this.favoritesMap || {}) };
+        delete newMap[accommodationId];
+        this.favoritesMap = newMap;
+        // refresh favoriteProperties list to keep UI in sync
+        try {
+          await this.fetchFavoriteProperties();
+        } catch (e) {
+          // ignore
+        }
+        return true;
+      } catch (err) {
+        console.error('removeFavoriteByAccommodation error', err.response?.data || err.message);
+        throw err;
       }
     },
     async getPropiedadPublicaActual(id) {

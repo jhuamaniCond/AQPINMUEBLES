@@ -84,7 +84,8 @@
                  
 
                   <PropertyCard v-for="(property, index) in propertiesPublicas" :key="property.id"
-                    :title="property.title" :description="property.description" distance="222 km"
+                    :id="property.id"
+                    :title="property.title" :description="property.description" :distance="getRouteAndDistanceForProperty(property).label || ''"
                     :image="property.photos && property.photos.length ? property.photos[0].image : 'https://placehold.co/500x300?text=Sin+imagen' " :isSelected="selectedIndex === index"
                     @card-clicked="handleCardClicked(index)" />
 

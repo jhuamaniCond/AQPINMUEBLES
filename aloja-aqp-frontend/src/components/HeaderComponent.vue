@@ -20,6 +20,7 @@
 
           <nav class="hidden md:flex items-center gap-6">
             <router-link to="/search" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">Explorar alojamientos</router-link>
+            <router-link to="/perfil/propiedades-guardadas" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">Mis favoritos</router-link>
             <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Ayuda</a>
           </nav>
         </div>
