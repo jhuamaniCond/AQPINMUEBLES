@@ -34,16 +34,20 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, computed } from 'vue';
 import { useGestionPropiedades } from '/src/stores/useGestionPropiedades.js';
 import PropertyCard from '/src/components/PropertyCard.vue';
+import { storeToRefs } from 'pinia';
 
 const store = useGestionPropiedades();
-const propertiesList = ref([]);
+const { favoriteProperties } = storeToRefs(store);
 const defaultImage = 'https://placehold.co/500x300?text=Sin+imagen';
 
+// Load favorites on mount. The template binds directly to the store ref
+// so changes to `favoriteProperties` will update the UI immediately.
 onMounted(async () => {
-  await store.fetchFavoriteProperties();
-  propertiesList.value = store.favoriteProperties || [];
+    await store.fetchFavoriteProperties();
 });
+
+const propertiesList = computed(() => favoriteProperties.value || []);
 </script>
