@@ -21,6 +21,7 @@ const propiedades = ref([]);
 const fetchMyProperties = async () => {
   try {
     propiedades.value = await storePropiedades.getMisPropiedades();
+    console.log("Propiedades obtenidas:", JSON.stringify(propiedades.value));
   } catch (err) {
     console.error("Error al obtener propiedades:", err);
   }

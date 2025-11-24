@@ -4,11 +4,28 @@
     <h2 class="text-gray-800 dark:text-white text-3xl font-bold leading-tight">
       Mis Propiedades
     </h2>
+    <div class="flex flex-wrap gap-3 mb-6">
+  <button
+    v-for="op in ['all','published','hidden','draft']"
+    :key="op"
+    @click="filtroEstado = op"
+    class="px-4 py-2 rounded-lg border transition font-medium"
+    :class="filtroEstado === op
+      ? 'bg-blue-600 text-white border-blue-600'
+      : 'bg-gray-200 text-gray-800 hover:bg-gray-300'"
+  >
+    {{ op === 'all' ? 'Todos' :
+       op === 'published' ? 'Publicados' :
+       op === 'hidden' ? 'Ocultos' :
+       'Borradores'
+    }}
+  </button>
+</div>
   </div>
 
   <!-- ImageGrid con animación -->
   <TransitionGroup name="fade" tag="div" class="grid grid-cols-[repeat(auto-fit,minmax(250px,350px))] gap-6">
-    <MyPropertyCard v-for="propiedad in propiedades" :key="propiedad.id" :id="propiedad.id" :titulo="propiedad.title"
+    <MyPropertyCard v-for="propiedad in propiedadesFiltradas" :key="propiedad.id" :id="propiedad.id" :titulo="propiedad.title"
       :precio="propiedad.monthly_price" :estado="propiedad.status" :imagen="propiedad.photos[0]?.image ? propiedad.photos[0].image : 'https://placehold.co/500x300?text=Sin+imagen'" 
       @editar="editarPropiedad" @ver="verPropiedad" @eliminar="confirmarEliminacion" @cambiar-estado="cambiarEstado" />
   </TransitionGroup>
@@ -40,7 +57,7 @@
 
 <script setup>
 import Loader from '../../../components/Loader.vue';
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useGestionPropiedades } from "/src/stores/useGestionPropiedades.js";
 import MyPropertyCard from "/src/components/MisPropiedades/MyPropertyCard.vue"
 import { useRouter } from 'vue-router';
@@ -57,6 +74,16 @@ const loaderMessage = ref('')
 const router = useRouter();
 const showEditarModal = ref(false);
 const selectedPropertyId = ref(null);
+const filtroEstado = ref("all");
+
+const propiedadesFiltradas = computed(() => {
+  if (filtroEstado.value === "all") return propiedades.value;
+
+  // Filtrar por estado
+  return propiedades.value.filter(
+    (p) => p.status === filtroEstado.value
+  );
+});
 
 const fetchMyProperties = async () => {
   try {
