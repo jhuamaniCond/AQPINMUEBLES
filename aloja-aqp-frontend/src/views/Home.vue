@@ -5,25 +5,27 @@
       <main class="flex-grow">
 
 
-        <section class="relative h-[60vh] md:h-[75vh] flex items-center justify-center text-white overflow-hidden">
-          <!-- Video de fondo -->
-          <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
-            <source src="../public/arequipa.mp4" type="video/mp4">
-          </video>
-
-          <!-- Sombra en la parte superior para mejor contraste con el header -->
-          <div class="overlay-top"></div>
-
-          <!-- Contenido encima -->
-          <div class="relative z-10 text-center px-4">
-            <h1 class="text-4xl md:text-6xl font-bold mb-4">Encuentra tu alojamiento estudiantil en Arequipa</h1>
-            <p class="text-lg md:text-xl max-w-3xl mx-auto mb-8">
+        <section class="relative min-h-[600px] flex items-center justify-center pt-16 overflow-hidden">
+          <!-- Imagen de fondo (reemplaza el video por la imagen de ejemplo, puedes volver a poner el video si lo prefieres) -->
+          <div class="absolute inset-0 z-0">
+            <video autoplay muted loop playsinline class="w-full h-full object-cover">
+              <source src="../public/arequipa.mp4" type="video/mp4">
+            </video>
+            <div class="absolute inset-0 bg-gradient-to-b from-surface-dark/80 via-surface-dark/50 to-background-dark"></div>
+          </div>
+          <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto mt-10 sm:mt-0">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-tight mb-6 drop-shadow-lg">
+              Encuentra tu alojamiento <br class="hidden sm:block"/> estudiantil en Arequipa
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-200 mb-10 max-w-2xl mx-auto drop-shadow-md font-medium">
               La forma más fácil de encontrar y reservar tu alojamiento cerca de las mejores universidades.
             </p>
-            <a href="#explore"
-              class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-lg transition-colors text-lg">
-              Empieza a explorar
-            </a>
+            <div class="flex justify-center">
+              <a href="#explore" class="bg-primary hover:bg-primary-hover text-white text-lg px-8 py-3.5 rounded-lg font-semibold shadow-xl shadow-blue-900/30 transition-all transform hover:-translate-y-1 hover:shadow-2xl flex items-center gap-2">
+                <span>Empieza a explorar</span>
+                <span class="material-icons text-sm">arrow_forward</span>
+              </a>
+            </div>
           </div>
         </section>
 
