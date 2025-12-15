@@ -8,10 +8,12 @@
     ]"
     @click="$emit('card-clicked')"
   >
-    <div
-      class="w-full h-40 bg-cover bg-center"
-      :style="{ backgroundImage: `url(${image})` }"
-    ></div>
+    <div class="w-full h-40 bg-cover bg-center relative" :style="{ backgroundImage: `url(${image})` }">
+      <!-- Price badge -->
+      <div v-if="price" class="absolute top-2 left-2 bg-primary text-white px-3 py-1 rounded-lg shadow text-sm font-bold z-10">
+        S/{{ price }}
+      </div>
+    </div>
     <div class="p-4">
       <div class="flex items-start">
         <h3 class="font-semibold text-lg text-gray-800 dark:text-white">{{ title }}</h3>
@@ -50,24 +52,22 @@ export default {
     image: String,
     isSelected: {
       type: Boolean,
-      default: false, // 👈 por defecto será falso
+      default: false,
+    },
+    price: {
+      type: [Number, String],
+      required: false,
+    },
+    services: {
+      type: Array,
+      required: false,
+      default: () => [],
     },
   },
   data() {
     return {};
   },
-  async mounted() {
-    // Ensure favorites map is loaded for authenticated users so the heart reflects server state
-    try {
-      const store = useGestionPropiedades();
-      const auth = useAuthStore();
-      if (auth.user && (!store.favoritesMap || Object.keys(store.favoritesMap).length === 0)) {
-        await store.fetchFavorites();
-      }
-    } catch (e) {
-      console.warn('PropertyCard: could not fetch favorites on mount', e);
-    }
-  },
+  
   computed: {
     isFavorite() {
       try {

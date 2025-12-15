@@ -85,8 +85,13 @@
 
                   <PropertyCard v-for="(property, index) in propertiesPublicas" :key="property.id"
                     :id="property.id"
-                    :title="property.title" :description="property.description" :distance="getRouteAndDistanceForProperty(property).label || ''"
-                    :image="property.photos && property.photos.length ? property.photos[0].image : 'https://placehold.co/500x300?text=Sin+imagen' " :isSelected="selectedIndex === index"
+                    :title="property.title"
+                    :description="property.description"
+                    :distance="getRouteAndDistanceForProperty(property).label || ''"
+                    :image="property.photos && property.photos.length ? property.photos[0].image : 'https://placehold.co/500x300?text=Sin+imagen' "
+                    :isSelected="selectedIndex === index"
+                    :price="property.monthly_price"
+                    :services="mapServices(property.services)"
                     @card-clicked="handleCardClicked(index)" />
 
                 </div>
@@ -186,6 +191,21 @@
   </div>
 </template>
 <script setup>
+// Mapea los servicios de la propiedad a objetos con nombre e icono (si existe)
+function mapServices(servicesArr) {
+  if (!Array.isArray(servicesArr)) return [];
+  return servicesArr.map(svc => {
+    if (typeof svc === 'object') {
+      return {
+        name: svc.name || svc.nombre || '',
+        icon: svc.icon || svc.icono || '',
+        short: svc.short || '',
+      };
+    }
+    // Si es string, solo nombre
+    return { name: String(svc), icon: '', short: '' };
+  });
+}
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 
 import PropertyCard from "../components/PropertyCard.vue";
