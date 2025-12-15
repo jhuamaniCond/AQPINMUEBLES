@@ -11,6 +11,7 @@
                     <input v-model="title"
             class="form-input w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base"
             placeholder="p.ej., Departamento amplio de 2 habitaciones" type="text" />
+                    <span v-if="showError.title" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
                 </label>
 
                 <!-- Descripción -->
@@ -19,13 +20,13 @@
                     <textarea v-model="description"
                         class="form-textarea w-full h-32 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base resize-none"
                         placeholder="Describe tu propiedad con detalle..."></textarea>
+                    <span v-if="showError.description" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
                 </label>
                     <!-- Reglas de convivencia -->
                     <label class="flex flex-col gap-2">
                         <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Reglas de convivencia</span>
                         <textarea v-model="coexistence_rules" class="form-textarea w-full h-32 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base resize-none" placeholder="Escribe las reglas de convivencia (saltos de línea y viñetas permitidos)"></textarea>
                     </label>
-                    <p class="help">Se preservará el formato básico; el contenido se sanitiza antes de guardarse.</p>
 
                 <!-- Dirección -->
                 <label class="flex flex-col gap-2">
@@ -33,6 +34,7 @@
                     <input v-model="address"
                         class="form-input w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base"
                         placeholder="Calle, distrito, ciudad" type="text" />
+                    <span v-if="showError.address" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
                 </label>
 
                 <!-- Tipo y habitaciones -->
@@ -44,10 +46,12 @@
 
                         <select v-model="accommodation_type"
                             class="form-select w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary text-base">
+                            <option value="">-- Selecciona un tipo --</option>
                             <option v-for="t in tiposPropiedad" :key="t.id" :value="t.id">
                                 {{ t.name }}
                             </option>
                         </select>
+                        <span v-if="showError.accommodation_type" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
                     </label>
 
                     <label class="flex flex-col gap-2">
@@ -55,6 +59,7 @@
                         <input v-model.number="rooms"
                             class="form-input w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base"
                             min="1" placeholder="1" type="number" @change="onRoomsChange" />
+                        <span v-if="showError.rooms" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
                     </label>
                 </div>
             </div>
@@ -70,6 +75,7 @@
                             <option value="">-- Selecciona un campus --</option>
                             <option v-for="c in campuses" :key="c.id" :value="c.id">{{ c.name }}</option>
                         </select>
+                        <span v-if="showError.selectedCampusId" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
                     </label>
                 </div>
 
@@ -91,6 +97,17 @@
 </template>
 
 <script setup>
+import { reactive } from 'vue'
+
+// Estado para mostrar errores temporales
+const showError = reactive({
+    title: false,
+    description: false,
+    address: false,
+    accommodation_type: false,
+    rooms: false,
+    selectedCampusId: false,
+});
 import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { useCreateProperty } from '../../../stores/useCreateProperty.js'
@@ -149,8 +166,44 @@ onMounted(async () => {
 // Guardar y avanzar al siguiente paso
 function nextStep() {
 
-    console.log("datos en pinia", JSON.stringify(store.$state))
-    router.push('/mis-propiedades/agregar/paso2') // siguiente paso
+        // Validar campos obligatorios
+        let valid = true;
+        if (!title.value || !title.value.trim()) {
+            showError.title = true;
+            valid = false;
+            setTimeout(() => (showError.title = false), 3000);
+        }
+        if (!description.value || !description.value.trim()) {
+            showError.description = true;
+            valid = false;
+            setTimeout(() => (showError.description = false), 2300);
+        }
+        if (!address.value || !address.value.trim()) {
+            showError.address = true;
+            valid = false;
+            setTimeout(() => (showError.address = false), 2300);
+        }
+        if (!accommodation_type.value) {
+            showError.accommodation_type = true;
+            valid = false;
+            setTimeout(() => (showError.accommodation_type = false), 2300);
+        }
+        if (!rooms.value || Number(rooms.value) < 1) {
+            showError.rooms = true;
+            valid = false;
+            setTimeout(() => (showError.rooms = false), 2300);
+        }
+        if (!selectedCampusId.value) {
+            showError.selectedCampusId = true;
+            valid = false;
+            setTimeout(() => (showError.selectedCampusId = false), 2300);
+        }
+        // coexistence_rules NO es obligatorio
+
+        if (!valid) return;
+
+        console.log("datos en pinia", JSON.stringify(store.$state))
+        router.push('/mis-propiedades/agregar/paso2') // siguiente paso
 }
 function actualizarUbicacion({ latitud: lat, longitud: lng, address: addr = null }) {
     // Guardar coordenadas internamente (aunque no mostramos los campos)
