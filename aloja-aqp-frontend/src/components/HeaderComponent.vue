@@ -20,7 +20,8 @@
 
           <nav class="hidden md:flex items-center gap-6">
             <router-link to="/search" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">Explorar alojamientos</router-link>
-            <router-link to="/perfil/propiedades-guardadas" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">Mis favoritos</router-link>
+            <router-link to="/universidades" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">Universidades</router-link>
+            <router-link v-if="auth.user" to="/perfil/propiedades-guardadas" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">Mis favoritos</router-link>
             <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Ayuda</a>
           </nav>
         </div>
@@ -28,23 +29,22 @@
         <!-- Toggle y usuario -->
         <div class="flex items-center gap-4">
           
-          <button @click="handlePublishClick"
-            class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors rounded-lg shadow-md hover:shadow-lg">
-            <span class="truncate">
-              {{ isOwner ? "Publica aquí" : "Publica tu alojamiento" }}
-            </span>
-          </button>
-          <!-- Si el usuario está logeado -->
-          <div v-if="auth.user" class="flex items-center gap-3">
+          <template v-if="auth.user">
+            <button @click="handlePublishClick"
+              class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors rounded-lg shadow-md hover:shadow-lg">
+              <span class="truncate">
+                {{ isOwner ? "Publica aquí" : "Publica tu alojamiento" }}
+              </span>
+            </button>
             <NotificacionButton />
             <ProfileButton />
-          </div>
-
-          <!-- Si no está logeado -->
-          <button v-else @click="showLogin = true"
-            class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/90 transition-colors">
-            Iniciar sesión
-          </button>
+          </template>
+          <template v-else>
+            <button @click="showLogin = true"
+              class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/90 transition-colors">
+              Iniciar sesión
+            </button>
+          </template>
 
 
         </div>

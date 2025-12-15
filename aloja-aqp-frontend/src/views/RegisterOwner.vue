@@ -2,34 +2,7 @@
   <div
     class="min-h-screen flex flex-col bg-background-light text-content-light font-display overflow-hidden"
   >
-    <!-- Header -->
-    <header
-      class="flex items-center justify-between border-b border-slate-200 px-10 py-4 bg-white shadow-sm animate-fade-down"
-    >
-      <div class="flex items-center gap-3 text-primary">
-        <svg
-          class="h-8 w-8"
-          fill="currentColor"
-          viewBox="0 0 48 48"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            clip-rule="evenodd"
-            d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475Z"
-            fill="currentColor"
-            fill-rule="evenodd"
-          />
-        </svg>
-        <h1 class="text-xl font-bold">AlojaAQP</h1>
-      </div>
-
-      <button
-        @click="goHome"
-        class="rounded-lg h-10 px-4 bg-primary/10 text-primary font-bold hover:bg-primary/20 transition-colors"
-      >
-        Volver
-      </button>
-    </header>
+    <HeaderComponent />
 
     <!-- Main -->
     <main
@@ -102,6 +75,7 @@
 </template>
 
 <script setup>
+import HeaderComponent from "../components/HeaderComponent.vue";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";

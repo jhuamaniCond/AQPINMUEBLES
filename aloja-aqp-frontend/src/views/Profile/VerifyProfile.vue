@@ -1,5 +1,7 @@
 <template>
+    <HeaderComponent />
     <main class="flex-1 p-6 sm:p-8 md:p-10">
+        import HeaderComponent from "../../components/HeaderComponent.vue";
         <div class="max-w-7xl mx-auto">
             <h2 class="text-2xl font-bold mb-1 text-black dark:!text-white">Verificar Perfil</h2>
             <p class="text-sm text-black/60 dark:text-white/60 mb-8">
