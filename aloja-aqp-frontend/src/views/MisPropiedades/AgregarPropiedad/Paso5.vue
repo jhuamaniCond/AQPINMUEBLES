@@ -1,32 +1,37 @@
 <template>
     <StepsBar :step="5" />
-    <div class="flex-1 flex flex-col w-full max-w-3xl mx-auto py-8">
+    <div class="flex-1 flex flex-col w-full max-w-3xl mx-auto py-6 sm:py-8 px-4 sm:px-6">
         <CardBeforePublish />
         <PropertyDetails />
 
-        <!--  Botón Guardar borrador -->
-    <button
-      @click="guardarBorrador"
-      class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-16 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white text-xl font-bold leading-normal tracking-[0.015em] transition-colors duration-200 ease-in-out hover:bg-gray-300 dark:hover:bg-gray-600 mt-6"
-    >
-      <span class="material-symbols-outlined mr-2">save</span>
-      <span class="truncate">Guardar borrador</span>
-    </button>
+        <button
+            @click="guardarBorrador"
+            class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 sm:h-14 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white text-lg sm:text-xl font-bold leading-normal tracking-[0.015em] transition-colors duration-200 ease-in-out hover:bg-gray-300 dark:hover:bg-gray-600 mt-6"
+            :disabled="loading"
+        >
+            <span class="material-symbols-outlined mr-2 text-xl sm:text-2xl">save</span>
+            <span class="truncate">Guardar borrador</span>
+        </button>
 
-    <!--  Botón Publicar propiedad -->
-        <button @click="publicarPropiedad"
-            class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-16 bg-primary text-white text-xl font-bold leading-normal tracking-[0.015em] transition-colors duration-200 ease-in-out hover:bg-blue-600 mt-8">
-            <span class="material-symbols-outlined mr-2">send</span>
+        <button 
+            @click="publicarPropiedad"
+            class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 sm:h-14 bg-primary text-white text-lg sm:text-xl font-bold leading-normal tracking-[0.015em] transition-colors duration-200 ease-in-out hover:bg-blue-600 mt-4 sm:mt-6"
+            :disabled="loading"
+        >
+            <span class="material-symbols-outlined mr-2 text-xl sm:text-2xl">send</span>
             <span class="truncate">Publicar propiedad </span>
         </button>
     </div>
-    <div class="mt-10 w-full flex justify-between">
+    
+    <div class="mt-8 w-full flex justify-start px-4 sm:px-6 max-w-3xl mx-auto">
         <button @click="previousStep"
-            class="flex min-w-[120px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white text-lg font-bold leading-normal tracking-[0.015em] transition-colors duration-200 ease-in-out hover:bg-gray-300 dark:hover:bg-gray-600">
-            <span class="material-symbols-outlined mr-2">arrow_back</span>
-            <span class="truncate">Paso anterior</span>
+            class="flex min-w-[100px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 sm:h-12 px-4 sm:px-6 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white text-base sm:text-lg font-bold leading-normal tracking-[0.015em] transition-colors duration-200 ease-in-out hover:bg-gray-300 dark:hover:bg-gray-600"
+            :disabled="loading">
+            <span class="material-symbols-outlined mr-2 text-xl">arrow_back</span>
+            <span class="truncate">Anterior</span>
         </button>
     </div>
+
     <Loader :show="loading" :message="loaderMessage"/>
 </template>
 
@@ -48,25 +53,31 @@ const loading = ref(false)
 const loaderMessage = ref('')
 
 function previousStep() {
+    // Deshabilitar la navegación si se está cargando
     if (!loading.value) {
-    router.push('/mis-propiedades/agregar/paso4')
-  }
+        router.push('/mis-propiedades/agregar/paso4')
+    }
 }
 
 async function publicarPropiedad() {
 
     try {
         loading.value = true
-        loaderMessage.value = 'Publishing property...'
-        //siempre se guarda como borrador
+        loaderMessage.value = 'Publicando propiedad...'
+        
+        // Siempre se guarda como borrador primero
         const idPropertyCreated = await store.publicarPropiedad();
-        //poner estado a publicado
+        
+        // Poner estado a publicado
         await storePropiedades.publicarPropiedad(idPropertyCreated);
-        // la funcion publicarPropiedad actualiza el estado de las propiedades asi que ya no es necesario actualizar
+        
         router.push('/mis-propiedades')
     } catch (err) {
-        console.error("  Error al publicar propiedad:", err.response?.data || err);
-    }finally{
+        console.error("Error al publicar propiedad:", err.response?.data || err);
+        loaderMessage.value = 'Error al publicar';
+    } finally {
+        // Un pequeño delay para que el mensaje de error o éxito se vea, si es necesario
+        // setTimeout(() => { loading.value = false; }, 500);
         loading.value = false
     }
 
@@ -76,14 +87,18 @@ async function guardarBorrador() {
     try {
         loading.value = true
         loaderMessage.value = 'Guardando borrador...'
-        //siempre se guarda como borrador
-        await store.publicarPropiedad();
+        
+        // Se guarda como borrador
+        await store.publicarPropiedad(); 
+        
+        // Actualizar la lista local de propiedades para reflejar el borrador guardado
         await storePropiedades.updateStateMisPropiedades();
         
         router.push('/mis-propiedades')
     } catch (err) {
-        console.error("  Error al guardar propiedad:", err.response?.data || err);
-    }finally{
+        console.error("Error al guardar propiedad:", err.response?.data || err);
+        loaderMessage.value = 'Error al guardar';
+    } finally {
         loading.value = false
     }
 
