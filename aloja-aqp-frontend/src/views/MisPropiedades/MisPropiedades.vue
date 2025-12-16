@@ -3,7 +3,7 @@
         <HeaderComponent />
         <div class="flex min-h-screen">
             <!-- SideNavBar -->
-            <aside class="w-64 bg-white dark:!bg-gray-800 shadow-md flex flex-col p-4">
+            <aside class="w-64 bg-background-light/80 dark:bg-background-dark/80 border-r border-gray-200 dark:border-gray-800 backdrop-blur-sm flex flex-col p-4">
                
                 <nav class="flex flex-col gap-2">
                     
@@ -35,8 +35,7 @@
                     </a>
                 </nav>
             </aside>
-            <div class="flex-1 flex flex-col">
-                
+            <div class="flex-1 flex flex-col bg-background-light/80 dark:bg-background-dark/80">
                 <!-- Main Content Area -->
                 <main class="flex-1 p-8">
                     <router-view />
