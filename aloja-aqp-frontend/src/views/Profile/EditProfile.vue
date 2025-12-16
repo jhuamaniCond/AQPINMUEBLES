@@ -193,7 +193,7 @@ const hasChanges = () => {
 
 const updateUser = async () => {
     if (!hasChanges()) {
-        console.log('⚠️ No se detectaron cambios. No se enviará actualización.');
+        //console.log('⚠️ No se detectaron cambios. No se enviará actualización.');
         router.push('/perfil/ver-perfil');
         return;
     }

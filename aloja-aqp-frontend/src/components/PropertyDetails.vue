@@ -103,14 +103,14 @@ export default {
         }
     },
     mounted() {
-        console.log('PropertyDetails mounted -> id, distanceDisplay, routeGeoJson', { id: this.id, distanceDisplay: this.distanceDisplay, hasRoute: !!this.routeGeoJson });
+        //console.log('PropertyDetails mounted -> id, distanceDisplay, routeGeoJson', { id: this.id, distanceDisplay: this.distanceDisplay, hasRoute: !!this.routeGeoJson });
     },
     watch: {
         routeGeoJson(newVal) {
-            console.log('PropertyDetails -> routeGeoJson changed', newVal);
+            //console.log('PropertyDetails -> routeGeoJson changed', newVal);
         },
         distanceDisplay(newVal) {
-            console.log('PropertyDetails -> distanceDisplay changed', newVal);
+            //console.log('PropertyDetails -> distanceDisplay changed', newVal);
         }
     },
     methods: {},

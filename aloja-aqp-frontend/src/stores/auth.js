@@ -10,7 +10,7 @@ export const useAuthStore = defineStore('auth', {
     // --- LOGIN NORMAL ---
     async login(email, password) {
       try {
-        console.log("Iniciando login para:", email);
+        //console.log("Iniciando login para:", email);
         const response = await fetch("http://127.0.0.1:8000/api/auth/login/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -77,7 +77,7 @@ export const useAuthStore = defineStore('auth', {
           })
 
           if (res.ok) {
-            console.log('  Logout exitoso en el backend')
+            //console.log('  Logout exitoso en el backend')
           } else {
             console.warn('⚠️ El backend respondió:', res.status, res.statusText)
           }
@@ -117,7 +117,7 @@ export const useAuthStore = defineStore('auth', {
         });
 
         const data = await res.json();
-        console.log("💡 Respuesta del backend:", data);
+        //console.log("💡 Respuesta del backend:", data);
 
         if (res.ok) {
           alert("  Perfil de propietario creado exitosamente.");
@@ -144,7 +144,7 @@ export const useAuthStore = defineStore('auth', {
         });
 
         const data = await res.json();
-        console.log("💡 Respuesta del backend:", data);
+        //console.log("💡 Respuesta del backend:", data);
 
         if (res.ok) {
           return { success: true, message: "Registro exitoso. Ahora puedes iniciar sesión." };
@@ -174,7 +174,7 @@ export const useAuthStore = defineStore('auth', {
         });
 
         const data = await res.json();
-        console.log("💡 Respuesta del backend (update):", data);
+        //console.log("💡 Respuesta del backend (update):", data);
 
         if (res.ok) {
           // 🔹 Actualiza datos locales

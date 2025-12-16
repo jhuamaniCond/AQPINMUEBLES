@@ -366,7 +366,7 @@ const maxRooms = computed(() => {
 const fetchPublicProperties = async () => {
   try {
     propertiesPublicas.value = await storePropiedades.getPropiedadesPublicas();
-    console.log(JSON.stringify(propertiesPublicas.value, null, 2))
+    //console.log(JSON.stringify(propertiesPublicas.value, null, 2))
   } catch (err) {
     console.error("Error al obtener propiedades publicas:", err);
   }
@@ -378,15 +378,15 @@ const fetchPublicProperties = async () => {
 // ===== Inicialización =====
 const initUniversitySelection = async () => {
   const uniParam = route.query.uni;
-  console.log("Parámetro recibido:->", uniParam);
+  //console.log("Parámetro recibido:->", uniParam);
 
   try {
     // fetch universities and services
     const fetchedUnis = await storePropiedades.fetchUniversities();
     const fetchedSvcs = await storePropiedades.fetchPredefinedServices();
 
-    console.log("fetchedUnis raw:", fetchedUnis);
-    console.log("fetchedSvcs raw:", fetchedSvcs);
+    //console.log("fetchedUnis raw:", fetchedUnis);
+    //console.log("fetchedSvcs raw:", fetchedSvcs);
 
     // guard against non-array responses
     const uniArray = Array.isArray(fetchedUnis) ? fetchedUnis : [];
@@ -418,8 +418,8 @@ const initUniversitySelection = async () => {
 
     services.value = svcArray;
 
-    console.log("universities normalized:", universities.value);
-    console.log("services normalized:", services.value);
+    //console.log("universities normalized:", universities.value);
+    //console.log("services normalized:", services.value);
 
     // Only auto-select a university if it was passed in the query params.
     if (uniParam && universities.value.length) {
@@ -436,7 +436,7 @@ const initUniversitySelection = async () => {
     try {
       await storePropiedades.fetchPropiedadesPublicas();
       propertiesPublicas.value = await storePropiedades.getPropiedadesPublicas();
-      console.log("propertiesPublicas count:", propertiesPublicas.value?.length);
+      //console.log("propertiesPublicas count:", propertiesPublicas.value?.length);
     } catch (errProps) {
       console.error("Error fetching public properties inside initUniversitySelection:", errProps);
     }
@@ -450,7 +450,7 @@ const handleUniversitySelected = (universityName) => {
   // Update selection and auto-apply filters (race-condition protections remain in applyFilters)
   selectedUniversity.value = universities.value.find((u) => u.name === universityName) || null;
   selectedSede.value = selectedUniversity.value?.sedes?.[0] || null;
-  console.log('handleUniversitySelected ->', { universityName, selectedUniversity: selectedUniversity.value, selectedSede: selectedSede.value });
+  //console.log('handleUniversitySelected ->', { universityName, selectedUniversity: selectedUniversity.value, selectedSede: selectedSede.value });
   // reset selectedIndex so the details panel will reflect the first result after search
   selectedIndex.value = 0;
   applyFilters();
@@ -459,7 +459,7 @@ const handleUniversitySelected = (universityName) => {
 const handleSedeSelected = (sedeName) => {
   // Update selected campus and auto-apply filters
   selectedSede.value = selectedUniversity.value?.sedes?.find((s) => s.name === sedeName) || null;
-  console.log('handleSedeSelected ->', { sedeName, selectedSede: selectedSede.value });
+  //console.log('handleSedeSelected ->', { sedeName, selectedSede: selectedSede.value });
   selectedIndex.value = 0;
   applyFilters();
 };
@@ -536,7 +536,7 @@ const getRouteAndDistanceForProperty = (property) => {
       return { route: null, label: null };
     }
     // Debug: show matched university_distance record
-    console.log('getRouteAndDistanceForProperty -> matched university_distance', { propertyId: property.id, match });
+    //console.log('getRouteAndDistanceForProperty -> matched university_distance', { propertyId: property.id, match });
     // Build a human-friendly label from backend values (distance_km and walk_time_minutes)
     const distanceKm = match.distance_km != null ? String(match.distance_km) : null;
     const minutes = match.walk_time_minutes != null ? String(match.walk_time_minutes) : null;
@@ -556,7 +556,7 @@ const showAll = async (hideModal = false) => {
     propertiesPublicas.value = res || [];
     selectedIndex.value = propertiesPublicas.value && propertiesPublicas.value.length ? 0 : null;
     if (hideModal) showModal.value = false;
-    console.log('showAll -> restored results count', propertiesPublicas.value?.length, 'selectedIndex', selectedIndex.value);
+    //console.log('showAll -> restored results count', propertiesPublicas.value?.length, 'selectedIndex', selectedIndex.value);
   } catch (err) {
     console.error('showAll error', err);
   }
@@ -685,7 +685,7 @@ async function applyFilters() {
   if (arguments && arguments.length && Number.isInteger(arguments[0])) {
     page = arguments[0];
   }
-  console.log('applyFilters -> start', {
+  //console.log('applyFilters -> start', {
     selectedIndex: selectedIndex.value,
     selectedUniversity: selectedUniversity.value,
     selectedSede: selectedSede.value,
@@ -711,22 +711,22 @@ async function applyFilters() {
     // request all public properties (paginated)
     params.page = page;
     const pageResults = await storePropiedades.fetchPropiedadesPublicas(page);
-    console.log('applyFilters -> fetched public page', { page, pageResultsLength: pageResults?.length, pagination: storePropiedades.pagination });
+    //console.log('applyFilters -> fetched public page', { page, pageResultsLength: pageResults?.length, pagination: storePropiedades.pagination });
     propertiesPublicas.value = pageResults || [];
-    console.log('applyFilters -> no-params results count', propertiesPublicas.value?.length);
+    //console.log('applyFilters -> no-params results count', propertiesPublicas.value?.length);
     // ensure selectedIndex points to a valid result (or null)
     if (propertiesPublicas.value && propertiesPublicas.value.length > 0) selectedIndex.value = 0;
     else selectedIndex.value = null;
-    console.log('applyFilters -> selectedIndex after no-params', selectedIndex.value, 'selectedProperty', selectedProperty.value);
+    //console.log('applyFilters -> selectedIndex after no-params', selectedIndex.value, 'selectedProperty', selectedProperty.value);
     currentPage.value = page;
     return;
   }
-  console.log('applyFilters -> params', params);
+  //console.log('applyFilters -> params', params);
 
   // bump request id and capture locally
   currentFilterRequestId.value += 1;
   const myRequestId = currentFilterRequestId.value;
-  console.log('applyFilters -> requestId', myRequestId);
+  //console.log('applyFilters -> requestId', myRequestId);
 
   // clear current results immediately so UI doesn't show stale items while loading
   propertiesPublicas.value = [];
@@ -734,16 +734,16 @@ async function applyFilters() {
 
   params.page = page;
   const results = await storePropiedades.fetchPropiedadesFiltradas(params);
-  console.log('applyFilters -> received results for requestId', myRequestId, 'len=', results?.length);
+  //console.log('applyFilters -> received results for requestId', myRequestId, 'len=', results?.length);
 
   // if a newer request started, ignore this (stale) response
   if (myRequestId !== currentFilterRequestId.value) {
-    console.log('applyFilters -> stale response ignored for requestId', myRequestId);
+    //console.log('applyFilters -> stale response ignored for requestId', myRequestId);
     return;
   }
   // if the request was cancelled by a newer request, the store returns null -> ignore
   if (results === null) {
-    console.log('applyFilters -> request was cancelled, ignoring results for requestId', myRequestId);
+    //console.log('applyFilters -> request was cancelled, ignoring results for requestId', myRequestId);
     return;
   }
   if (results === null) {
@@ -759,9 +759,9 @@ async function applyFilters() {
   } else {
     // show empty state - do NOT auto restore all properties; let the user click "Mostrar todos" if desired
     selectedIndex.value = null;
-    console.log('applyFilters -> no results (server returned 0)');
+    //console.log('applyFilters -> no results (server returned 0)');
   }
-  console.log('applyFilters -> selectedIndex after results', selectedIndex.value, 'selectedProperty', selectedProperty.value);
+  //console.log('applyFilters -> selectedIndex after results', selectedIndex.value, 'selectedProperty', selectedProperty.value);
 }
 </script>
 

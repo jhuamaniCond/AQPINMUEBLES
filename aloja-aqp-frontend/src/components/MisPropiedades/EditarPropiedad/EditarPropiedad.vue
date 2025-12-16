@@ -265,7 +265,7 @@ function toggleAmenity(id) {
         current.splice(index, 1);
     }
 
-    console.log("  Amenidades seleccionadas (nextServices):", JSON.stringify(current));
+    //console.log("  Amenidades seleccionadas (nextServices):", JSON.stringify(current));
 }
 
 
@@ -309,8 +309,8 @@ const fetchMyPropertiePrivate = async (id) => {
         };
 
 
-        console.log("🆕 nextServices cargadas:", JSON.stringify(propiedadEditable.value.nextServices));
-        console.log("🆕 nextPhotos cargadas:", JSON.stringify(propiedadEditable.value.nextPhotos));
+        //console.log("🆕 nextServices cargadas:", JSON.stringify(propiedadEditable.value.nextServices));
+        //console.log("🆕 nextPhotos cargadas:", JSON.stringify(propiedadEditable.value.nextPhotos));
 
     } catch (err) {
         console.error("Error al obtener propiedad id ", id, " :", err);
@@ -370,7 +370,7 @@ function processFiles(files) {
         const reader = new FileReader();
         reader.onload = (e) => {
             propiedadEditable.value.nextPhotos.push(e.target.result);
-            console.log("imagen agregada :", JSON.stringify(propiedadEditable.value.nextPhotos))
+            //console.log("imagen agregada :", JSON.stringify(propiedadEditable.value.nextPhotos))
         };
         reader.readAsDataURL(file);
     }
@@ -383,7 +383,7 @@ function processFiles(files) {
 
 function removeImage(index) {
     propiedadEditable.value.nextPhotos.splice(index, 1);
-    console.log("imagen eliminada :", JSON.stringify(propiedadEditable.value.nextPhotos))
+    //console.log("imagen eliminada :", JSON.stringify(propiedadEditable.value.nextPhotos))
 }
 const emit = defineEmits(["close"]);
 
@@ -398,7 +398,7 @@ async function saveChanges() {
     try {
         loading.value = true
         loaderMessage.value = 'Actualizando Propiedad...'
-        console.log("Formulario listo para enviar:", JSON.stringify(payload));
+        //console.log("Formulario listo para enviar:", JSON.stringify(payload));
 
         await storePropiedades.actualizarMyPropiedadAllProperties(payload)
         //volver a cargar mis propiedades

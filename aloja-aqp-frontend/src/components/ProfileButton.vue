@@ -54,7 +54,7 @@ const profileOpen = ref(false)
 const menu = ref(null)
 const auth = useAuthStore();
 
-console.log(JSON.stringify(auth.user, null, 2));
+//console.log(JSON.stringify(auth.user, null, 2));
 
 const toggleMenu = () => {
   profileOpen.value = !profileOpen.value

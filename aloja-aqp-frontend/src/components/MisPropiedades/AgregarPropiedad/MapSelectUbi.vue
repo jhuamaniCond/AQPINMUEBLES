@@ -51,7 +51,7 @@ export default {
 
             // Si se definió una ubicación preexistente, colocar el marcador
             if (props.predefinedUbication) {
-                console.log("ubicacion predefinida ",initialCoords)
+                //console.log("ubicacion predefinida ",initialCoords)
                 houseMarker = L.marker(initialCoords, { icon: houseIcon })
                     .addTo(markerLayer)
                     .bindPopup("Ubicación seleccionada")
