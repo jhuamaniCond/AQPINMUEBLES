@@ -21,10 +21,10 @@
               La forma más fácil de encontrar y reservar tu alojamiento cerca de las mejores universidades.
             </p>
             <div class="flex justify-center">
-              <a href="#explore" class="bg-primary hover:bg-primary-hover text-white text-lg px-8 py-3.5 rounded-lg font-semibold shadow-xl shadow-blue-900/30 transition-all transform hover:-translate-y-1 hover:shadow-2xl flex items-center gap-2">
+              <button @click="goToSearchAndFocus" class="bg-primary hover:bg-primary-hover text-white text-lg px-8 py-3.5 rounded-lg font-semibold shadow-xl shadow-blue-900/30 transition-all transform hover:-translate-y-1 hover:shadow-2xl flex items-center gap-2">
                 <span>Empieza a explorar</span>
                 <span class="material-icons text-sm">arrow_forward</span>
-              </a>
+              </button>
             </div>
           </div>
         </section>
@@ -86,9 +86,12 @@
                   class="material-symbols-outlined absolute left-4 top-7 -translate-y-1/2 text-slate-400 dark:text-slate-500">search</span>
                 <input
                   class="w-full h-14 pl-12 pr-32 bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500"
-                  placeholder="Busca por universidad o zona..." type="text" />
+                  placeholder="Busca por universidad o zona..." type="text"
+                  @focus="goToSearchAndFocus" @click="goToSearchAndFocus"
+                />
                 <button
-                  class="absolute right-4 top-7 -translate-y-1/2 bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                  class="absolute right-4 top-7 -translate-y-1/2 bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+                  @click="goToSearchAndFocus">
                   Buscar
                 </button>
               </div>
@@ -125,6 +128,11 @@ import UniversidadesSection from "../components/UniversidadesSection.vue";
 const router = useRouter();
 const isDark = ref(false);
 const showLogin = ref(false);
+
+// Redirige a /search y enfoca la barra de búsqueda
+const goToSearchAndFocus = () => {
+  router.push({ path: '/search', query: { focus: 'true' } });
+};
 
 const auth = useAuthStore();
 

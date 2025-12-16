@@ -19,6 +19,7 @@
                     </svg>
                   </div>
                   <input
+                    ref="searchInput"
                     v-model="searchQuery"
                     @input="onSearchInput"
                     @keydown.down.prevent="focusNextSuggestion"
@@ -206,7 +207,7 @@ function mapServices(servicesArr) {
     return { name: String(svc), icon: '', short: '' };
   });
 }
-import { ref, onMounted, onBeforeUnmount, computed } from "vue";
+ import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 
 import PropertyCard from "../components/PropertyCard.vue";
 import PropertyDetails from "../components/PropertyDetails.vue";
@@ -243,6 +244,12 @@ const currentFilterRequestId = ref(0);
 
 // search + suggestions state
 const searchQuery = ref("");
+const searchInput = ref(null);
+onMounted(() => {
+  if (route && route.query && route.query.focus === 'true' && searchInput.value) {
+    searchInput.value.focus();
+  }
+});
 const suggestions = ref([]);
 const showSuggestions = ref(false);
 const suggestionIndex = ref(-1);
