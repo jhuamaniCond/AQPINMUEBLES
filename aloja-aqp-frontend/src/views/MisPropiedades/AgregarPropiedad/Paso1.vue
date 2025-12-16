@@ -11,7 +11,9 @@
                     <input v-model="title"
             class="form-input w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base"
             placeholder="p.ej., Departamento amplio de 2 habitaciones" type="text" />
-                    <span v-if="showError.title" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
+                    <transition name="fade-slide">
+                      <span v-if="showError.title" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
+                    </transition>
                 </label>
 
                 <!-- Descripción -->
@@ -20,7 +22,9 @@
                     <textarea v-model="description"
                         class="form-textarea w-full h-32 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base resize-none"
                         placeholder="Describe tu propiedad con detalle..."></textarea>
-                    <span v-if="showError.description" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
+                    <transition name="fade-slide">
+                      <span v-if="showError.description" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
+                    </transition>
                 </label>
                     <!-- Reglas de convivencia -->
                     <label class="flex flex-col gap-2">
@@ -34,7 +38,9 @@
                     <input v-model="address"
                         class="form-input w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base"
                         placeholder="Calle, distrito, ciudad" type="text" />
-                    <span v-if="showError.address" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
+                    <transition name="fade-slide">
+                      <span v-if="showError.address" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
+                    </transition>
                 </label>
 
                 <!-- Tipo y habitaciones -->
@@ -51,7 +57,9 @@
                                 {{ t.name }}
                             </option>
                         </select>
-                        <span v-if="showError.accommodation_type" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
+                        <transition name="fade-slide">
+                          <span v-if="showError.accommodation_type" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
+                        </transition>
                     </label>
 
                     <label class="flex flex-col gap-2">
@@ -59,7 +67,9 @@
                         <input v-model.number="rooms"
                             class="form-input w-full h-12 rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary placeholder:text-gray-500 text-base"
                             min="1" placeholder="1" type="number" @change="onRoomsChange" />
-                        <span v-if="showError.rooms" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
+                        <transition name="fade-slide">
+                          <span v-if="showError.rooms" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
+                        </transition>
                     </label>
                 </div>
             </div>
@@ -75,7 +85,9 @@
                             <option value="">-- Selecciona un campus --</option>
                             <option v-for="c in campuses" :key="c.id" :value="c.id">{{ c.name }}</option>
                         </select>
-                        <span v-if="showError.selectedCampusId" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
+                        <transition name="fade-slide">
+                          <span v-if="showError.selectedCampusId" class="text-red-600 text-sm mt-1">Es necesario llenar este campo</span>
+                        </transition>
                     </label>
                 </div>
 
@@ -247,3 +259,17 @@ function onRoomsChange() {
     }
 }
 </script>
+
+<style>
+.fade-slide-enter-active, .fade-slide-leave-active {
+  transition: opacity 0.4s, transform 0.4s;
+}
+.fade-slide-enter-from, .fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-16px);
+}
+.fade-slide-enter-to, .fade-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
