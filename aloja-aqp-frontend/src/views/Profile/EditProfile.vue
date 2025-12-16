@@ -1,7 +1,6 @@
 <template>
     <HeaderComponent />
     <main class="flex-1 p-6 sm:p-8 md:p-10">
-        import HeaderComponent from "../../components/HeaderComponent.vue";
         <div class="max-w-4xl mx-auto">
             <button @click="updateUser"
                 class="w-full flex-shrink-0 bg-primary text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity mb-8">

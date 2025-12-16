@@ -1,7 +1,6 @@
 <template>
     <HeaderComponent />
     <main class="flex-1 p-6 sm:p-8 md:p-10">
-        import HeaderComponent from "../../components/HeaderComponent.vue";
         <div class="max-w-4xl mx-auto">
             <div
                 class="mb-10 bg-white/50 dark:bg-black/20 p-6 sm:p-8 rounded-xl border border-black/10 dark:border-white/10">
