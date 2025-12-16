@@ -20,7 +20,7 @@
 
           <nav class="hidden md:flex items-center gap-6">
             <router-link to="/search" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">Explorar alojamientos</router-link>
-            <router-link to="/universidades" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">Universidades</router-link>
+            <a href="#universidades" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" @click.prevent="scrollToUniversidades">Universidades</a>
             <router-link v-if="auth.user" to="/perfil/propiedades-guardadas" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">Mis favoritos</router-link>
             <a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Ayuda</a>
           </nav>
@@ -66,6 +66,21 @@ const router = useRouter();
 const auth = useAuthStore();
 const isDark = ref(false);
 const showLogin = ref(false);
+
+const scrollToUniversidades = () => {
+  const el = document.getElementById('universidades');
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' });
+  } else {
+    // fallback: ir a home y luego scroll
+    router.push('/').then(() => {
+      setTimeout(() => {
+        const el2 = document.getElementById('universidades');
+        if (el2) el2.scrollIntoView({ behavior: 'smooth' });
+      }, 400);
+    });
+  }
+};
 
 const isOwner = computed(() => {
   return auth.user?.roles?.includes("owner");
