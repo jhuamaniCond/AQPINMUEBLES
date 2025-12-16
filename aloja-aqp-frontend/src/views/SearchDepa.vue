@@ -295,6 +295,26 @@ const suggestions = ref([]);
 const showSuggestions = ref(false);
 const suggestionIndex = ref(-1);
 
+// Cierra la lista de sugerencias si el usuario hace clic fuera
+function handleClickOutside(event) {
+  const input = searchInput.value;
+  const suggestionsList = document.querySelector('.absolute.left-0.right-0.mt-1');
+  if (
+    input &&
+    !input.contains(event.target) &&
+    (!suggestionsList || !suggestionsList.contains(event.target))
+  ) {
+    showSuggestions.value = false;
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+
 // filters state
 const universities = ref([]);
 const services = ref([]);
