@@ -14,44 +14,40 @@
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div class="lg:col-span-2">
-                            <div v-if="propiedad?.photos?.length"
-                                class="grid grid-cols-4 gap-2 rounded-xl overflow-hidden h-[500px] items-stretch">
-                                <!-- Imagen principal -->
-                                <div class="col-span-3 h-[500px]">
-                                    <img :src="mainPhoto?.image" alt="Imagen principal"
-                                        class="w-full h-full object-cover" />
-                                </div>
-
-                                <!-- Otras imágenes -->
-                                <div class="col-span-1 grid grid-rows-4 gap-2 h-[500px]">
-                                    <template v-for="(photo, index) in (sidePhotos.length < 4
-                                        ? [
-                                            ...sidePhotos,
-                                            ...Array(4 - sidePhotos.length).fill({
-                                                image: defaultImage,
-                                            }),
-                                        ]
-                                        : sidePhotos
-                                    ).slice(0, 4)" :key="index">
-                                        <div class="relative h-full">
-                                            <img :src="photo.image || defaultImage" alt="Foto adicional"
-                                                class="w-full h-full object-cover" />
-
-                                            <!-- Si hay más de 5 fotos y esta es la última visible -->
-                                            <div v-if="index === 3 && propiedad?.photos?.length > 5"
-                                                class="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-xl font-semibold">
-                                                +{{ propiedad.photos.length - 5 }}
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-
-                            <!-- Si no hay fotos -->
-                            <div v-else
-                                class="h-[500px] bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center text-gray-500">
-                                Sin imágenes disponibles
-                            </div>
+                                                        <div>
+                                                            <div v-if="!propiedad?.photos?.length || propiedad.photos.length === 0"
+                                                                class="h-[500px] bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center text-gray-500">
+                                                                Sin imágenes disponibles
+                                                            </div>
+                                                            <div v-else class="grid grid-cols-4 gap-2 rounded-xl overflow-hidden h-[500px] items-stretch">
+                                                                <!-- Imagen principal -->
+                                                                <div class="col-span-3 h-[500px] cursor-pointer" @click="openImageModal(0)">
+                                                                    <img :src="mainPhoto?.image" alt="Imagen principal" class="w-full h-full object-cover" />
+                                                                </div>
+                                                                <!-- Otras imágenes -->
+                                                                <div class="col-span-1 grid grid-rows-4 gap-2 h-[500px]">
+                                                                    <template v-for="(photo, index) in sidePhotos.slice(0, 4)" :key="index">
+                                                                        <div class="relative h-full cursor-pointer" @click="openImageModal(index+1)">
+                                                                            <img :src="photo.image || defaultImage" alt="Foto adicional" class="w-full h-full object-cover" />
+                                                                        </div>
+                                                                    </template>
+                                                                    <div v-if="sidePhotos.length === 0" class="h-full flex items-center justify-center text-gray-400">Sin imágenes adicionales</div>
+                                                                </div>
+                                                                <!-- Modal para ver imagen completa -->
+                                                                <div v-if="showImageModal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80">
+                                                                    <div class="relative flex items-center">
+                                                                        <button @click="prevImage" class="absolute left-[-3rem] top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 font-bold rounded-full w-10 h-10 flex items-center justify-center shadow-md z-10">
+                                                                            <span class="material-symbols-outlined">chevron_left</span>
+                                                                        </button>
+                                                                        <img :src="currentImage" class="max-h-[80vh] max-w-[90vw] rounded-xl shadow-2xl border-4 border-white z-20" />
+                                                                        <button @click="nextImage" class="absolute right-[-3rem] top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 font-bold rounded-full w-10 h-10 flex items-center justify-center shadow-md z-10">
+                                                                            <span class="material-symbols-outlined">chevron_right</span>
+                                                                        </button>
+                                                                        <button @click="closeImageModal" class="absolute top-2 right-2 bg-white/80 hover:bg-white text-gray-700 font-bold rounded-full w-8 h-8 flex items-center justify-center shadow-md z-30">✕</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                             <div class="mt-8">
                                 <div class="flex flex-col md:flex-row md:items-start md:justify-between">
                                     <div>
@@ -249,6 +245,31 @@
 </template>
 
 <script setup>
+// Modal para ver imagen completa con navegación
+import { ref as vueRef } from 'vue';
+const showImageModal = vueRef(false);
+const currentImage = vueRef('');
+const currentImageIdx = vueRef(0);
+function openImageModal(idx) {
+    if (!propiedad.value?.photos?.length) return;
+    currentImageIdx.value = idx;
+    currentImage.value = propiedad.value.photos[idx]?.image || defaultImage;
+    showImageModal.value = true;
+}
+function closeImageModal() {
+    showImageModal.value = false;
+    currentImage.value = '';
+}
+function nextImage() {
+    if (!propiedad.value?.photos?.length) return;
+    currentImageIdx.value = (currentImageIdx.value + 1) % propiedad.value.photos.length;
+    currentImage.value = propiedad.value.photos[currentImageIdx.value]?.image || defaultImage;
+}
+function prevImage() {
+    if (!propiedad.value?.photos?.length) return;
+    currentImageIdx.value = (currentImageIdx.value - 1 + propiedad.value.photos.length) % propiedad.value.photos.length;
+    currentImage.value = propiedad.value.photos[currentImageIdx.value]?.image || defaultImage;
+}
 import LoginModal from "../components/authorization/LoginModal.vue";
 import ServiceIcon from '/src/components/icons/ServiceIcon.vue'
 import { ref, computed, onMounted } from "vue";
