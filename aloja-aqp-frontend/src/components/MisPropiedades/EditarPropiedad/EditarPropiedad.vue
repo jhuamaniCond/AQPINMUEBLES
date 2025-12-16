@@ -4,7 +4,7 @@
         <div
             class="bg-background-light dark:bg-background-dark rounded-xl shadow-2xl max-w-5xl w-full h-[90vh] flex flex-col p-6">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-[#333333] dark:text-white">Edit Property</h2>
+                <h2 class="text-2xl font-bold text-[#333333] dark:text-white">Editar Propiedad</h2>
                 <button class="text-[#888888] hover:text-primary" id="close-modal-button" @click="closeModal">
                     <span class="material-symbols-outlined">close</span>
                 </button>
@@ -18,17 +18,17 @@
                         <div v-if="openSection !== 'basic'"
                             class="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 text-white text-lg font-semibold"
                             style="z-index: 9999">
-                            Activa el mapa abriendo Basic Information
+                            Activa el mapa abriendo Información Básica
                         </div>
                     </div>
                     <div
                         class="flex flex-col gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
-                        <h3 class="text-lg font-semibold text-[#333333] dark:text-white">Property Images</h3>
+                        <h3 class="text-lg font-semibold text-[#333333] dark:text-white">Imágenes de la Propiedad</h3>
                         <div class="grid grid-cols-3 gap-3 max-h-[100px] overflow-y-auto ">
                             <!-- Imágenes existentes -->
                             <div v-for="(photo, index) in propiedadEditable.nextPhotos" :key="index"
                                 class="relative w-full h-24 bg-gray-300 dark:bg-gray-700 rounded-lg overflow-hidden flex items-center justify-center text-gray-500">
-                                <img :alt="`Property Image ${index + 1}`" class="w-full h-full object-cover"
+                                <img :alt="`Imagen de la Propiedad ${index + 1}`" class="w-full h-full object-cover"
                                     :src="photo" />
                                 <button @click="removeImage(index)"
                                     class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs hover:bg-red-600">
@@ -39,12 +39,12 @@
                                 @drop.prevent="handleDrop"
                                 class="w-full h-24 bg-gray-100 dark:bg-gray-700 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 text-[#888888] dark:text-gray-400 transition">
                                 <span class="material-symbols-outlined text-2xl">add_a_photo</span>
-                                <p class="text-xs mt-1">Add Image</p>
+                                <p class="text-xs mt-1">Agregar Imagen</p>
                             </div>
                         </div>
                         <button @click="triggerFileSelect"
                             class="flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90">
-                            Upload New Image
+                            Subir Nueva Imagen
                         </button>
                         <input ref="fileInput" type="file" multiple accept="image/*" class="hidden"
                             @change="handleFiles" />
@@ -55,7 +55,7 @@
                     <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
                         <div class="flex justify-between items-center cursor-pointer text-lg font-semibold text-[#333333] dark:text-white"
                             @click="toggleSection('basic')">
-                            Basic Information
+                            Información Básica
                             <span class="material-symbols-outlined">
                                 {{ openSection === 'basic' ? 'expand_less' : 'expand_more' }}
                             </span>
@@ -65,14 +65,14 @@
                             <div v-if="openSection === 'basic'" class="mt-4">
                                 <div class="mb-4">
                                     <label class="block text-sm font-medium text-[#333333] dark:text-white mb-2"
-                                        for="property-title">Property Title</label>
+                                        for="property-title">Título de la Propiedad</label>
                                     <input
                                         class="form-input w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-700 text-[#333333] dark:text-white p-2"
                                         id="property-title" type="text" v-model="propiedadEditable.title" />
                                 </div>
                                 <div class="mb-4">
                                     <label class="block text-sm font-medium text-[#333333] dark:text-white mb-2"
-                                        for="property-address">Address</label>
+                                        for="property-address">Dirección</label>
                                     <input
                                         class="form-input w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-700 text-[#333333] dark:text-white p-2"
                                         id="property-address" type="text" v-model="propiedadEditable.address" />
@@ -80,14 +80,14 @@
                                 <div class="flex gap-4 mb-4">
                                     <div class="flex-1">
                                         <label class="block text-sm font-medium text-[#333333] dark:text-white mb-2"
-                                            for="latitude">Latitude</label>
+                                            for="latitude">Latitud</label>
                                         <input
                                             class="form-input w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-700 text-[#333333] dark:text-white p-2"
                                             id="latitude" type="text" v-model="propiedadEditable.latitude" disabled />
                                     </div>
                                     <div class="flex-1">
                                         <label class="block text-sm font-medium text-[#333333] dark:text-white mb-2"
-                                            for="longitude">Longitude</label>
+                                            for="longitude">Longitud</label>
                                         <input
                                             class="form-input w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-700 text-[#333333] dark:text-white p-2"
                                             id="longitude" type="text" v-model="propiedadEditable.longitude" disabled />
@@ -98,7 +98,7 @@
                                 <div class="flex gap-4">
                                     <div class="flex-1">
                                         <label class="block text-sm font-medium text-[#333333] dark:text-white mb-2"
-                                            for="accommodation_typ">Property Type</label>
+                                            for="accommodation_typ">Tipo de Propiedad</label>
                                         <select id="accommodation_typ"
                                             class="form-select w-full rounded-lg text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary text-base"
                                             v-model="propiedadEditable.accommodation_type">
@@ -109,7 +109,7 @@
                                     </div>
                                     <div class="flex-1">
                                         <label class="block text-sm font-medium text-[#333333] dark:text-white mb-2"
-                                            for="bedrooms">Bedrooms</label>
+                                            for="bedrooms">Habitaciones</label>
                                         <input id="bedrooms"
                                             class="form-input w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-700 text-[#333333] dark:text-white p-2"
                                             type="text" v-model="propiedadEditable.rooms" />
@@ -123,7 +123,7 @@
                     <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
                         <div class="flex justify-between items-center cursor-pointer text-lg font-semibold text-[#333333] dark:text-white"
                             @click="toggleSection('description')">
-                            Description
+                            Descripción
                             <span class="material-symbols-outlined">
                                 {{ openSection === 'description' ? 'expand_less' : 'expand_more' }}
                             </span>
@@ -133,7 +133,7 @@
                             <div v-if="openSection === 'description'" class="mt-4">
                                 <textarea
                                     class="form-textarea w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-700 text-[#333333] dark:text-white p-2 min-h-[100px]"
-                                    placeholder="Enter a detailed description of the property."
+                                    placeholder="Ingresa una descripción detallada de la propiedad."
                                     v-model="propiedadEditable.description"></textarea>
 
                                 <!-- Reglas de convivencia (editable) -->
@@ -143,16 +143,15 @@
                                         class="form-textarea w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-700 text-[#333333] dark:text-white p-2 min-h-[120px]"
                                         placeholder="Escribe las reglas de convivencia. Los saltos de línea se preservarán al guardar."
                                         v-model="propiedadEditable.coexistence_rules"></textarea>
-                                    <p class="text-xs text-gray-500 mt-2">Se preservarán los saltos de línea; el contenido se sanitiza antes de guardarse.</p>
                                 </div>
                             </div>
                         </transition>
                     </div>
                     <!-- 🔹 Amenities -->
                     <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
-                        <div class="flex justify-between items-center cursor-pointer text-lg font-semibold text-[#333333] dark:text-white"
+                        <div class="flex justify-between items-center select-none cursor-pointer text-lg font-semibold text-[#333333] dark:text-white"
                             @click="toggleSection('amenities')">
-                            Amenities
+                            Servicios
                             <span class="material-symbols-outlined">
                                 {{ openSection === 'amenities' ? 'expand_less' : 'expand_more' }}
                             </span>
@@ -169,7 +168,7 @@
                                                 ? 'bg-blue-500 text-white border-blue-600'
                                                 : 'bg-white dark:!bg-gray-700 border-gray-300 dark:!border-gray-600 text-gray-700 dark:!text-white hover:bg-gray-100 dark:hover:!bg-gray-600',
                                         ]">
-                                        <span class="material-symbols-outlined">{{ item.icon_class }}</span>
+                                        <ServiceIcon :name="item.icon_name || item.icon_class" :url="item.image_url" :size="24" :class="propiedadEditable.nextServices.includes(item.id) ? 'text-white' : 'text-gray-700 dark:text-white'" />
                                         <span>{{ item.name }}</span>
                                     </button>
                                 </div>
@@ -181,7 +180,7 @@
                     <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
                         <div class="flex justify-between items-center cursor-pointer text-lg font-semibold text-[#333333] dark:text-white"
                             @click="toggleSection('price')">
-                            Price
+                            Precio
                             <span class="material-symbols-outlined">
                                 {{ openSection === 'price' ? 'expand_less' : 'expand_more' }}
                             </span>
@@ -205,11 +204,11 @@
             <div class="flex justify-end gap-3 mt-6">
                 <button @click="closeModal"
                     class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 border border-gray-300 dark:border-gray-600 text-[#333333] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <span class="truncate">Cancel</span>
+                    <span class="truncate">Cancelar</span>
                 </button>
                 <button @click="saveChanges"
                     class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90">
-                    <span class="truncate">Save Changes</span>
+                    <span class="truncate">Guardar Cambios</span>
                 </button>
             </div>
         </div>
@@ -218,6 +217,7 @@
 </template>
 
 <script setup>
+import ServiceIcon from '/src/components/icons/ServiceIcon.vue';
 import { ref, watch, onMounted } from "vue";
 import { useGestionPropiedades } from "/src/stores/useGestionPropiedades.js";
 import { webPageData } from '/src/stores/webPageData.js';

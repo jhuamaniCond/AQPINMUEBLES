@@ -5,11 +5,11 @@
         <div class="max-w-4xl mx-auto">
             <button @click="updateUser"
                 class="w-full flex-shrink-0 bg-primary text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity mb-8">
-                Save Changes
+                Guardar Cambios
             </button>
             <div
                 class="mb-10 bg-white/50 dark:bg-black/20 p-6 sm:p-8 rounded-xl border border-black/10 dark:border-white/10">
-                <h2 class="text-2xl font-bold mb-6 text-black dark:!text-white ">Profile</h2>
+                <h2 class="text-2xl font-bold mb-6 text-black dark:!text-white ">Perfil</h2>
                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
                     <div class="relative inline-block">
                         <!-- Imagen de perfil -->
@@ -32,7 +32,7 @@
                             <span
                                 class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary dark:bg-primary/20">
                                 <span class="material-symbols-outlined text-sm">verified</span>
-                                Verified
+                                Verificado
                             </span>
                         </div>
                         <p class="text-sm text-black/60 dark:!text-white/60">{{ auth.user.email }}</p>
@@ -41,21 +41,21 @@
             </div>
             <div class="space-y-10">
                 <div>
-                    <h2 class="text-2xl font-bold mb-1 text-black dark:!text-white">About</h2>
-                    <p class="text-sm text-black/60 dark:!text-white/60 mb-6">Your personal information and bio.</p>
+                    <h2 class="text-2xl font-bold mb-1 text-black dark:!text-white">Acerca de ti</h2>
+                    <p class="text-sm text-black/60 dark:!text-white/60 mb-6">Tu información personal y biografía.</p>
                     <div
                         class="grid grid-cols-1 md:grid-cols-2 gap-4 divide-y md:divide-y-0 divide-black/10 dark:divide-white/10">
                         <div class="col-span-full grid grid-cols-1 sm:grid-cols-2 gap-4 pb-4">
                             <div class="flex flex-col">
                                 <label class="font-medium text-black/60 dark:!text-white/60 text-sm mb-1"
-                                    for="first-name">First Name</label>
+                                    for="first-name">Nombre</label>
                                 <input v-model="form.first_name"
                                     class="w-full px-4 py-2 text-black dark:!text-white bg-transparent border border-black/20 dark:border-white/20 focus:border-primary focus:ring-primary rounded-lg transition-all"
                                     id="first-name" type="text" />
                             </div>
                             <div class="flex flex-col">
                                 <label class="font-medium text-black/60 dark:!text-white/60 text-sm mb-1"
-                                    for="last-name">Last Name</label>
+                                    for="last-name">Apellido</label>
                                 <input v-model="form.last_name"
                                     class="w-full px-4 py-2 text-black dark:!text-white bg-transparent border border-black/20 dark:border-white/20 focus:border-primary focus:ring-primary rounded-lg transition-all"
                                     id="last-name" type="text" />
@@ -115,7 +115,7 @@
             </div>
             <button @click="updateUser"
                 class="w-full flex-shrink-0 bg-primary text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity mt-8">
-                Save Changes
+                Guardar Cambios
             </button>
         </div>
     </main>
