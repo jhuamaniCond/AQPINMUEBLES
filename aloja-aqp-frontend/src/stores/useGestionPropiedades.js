@@ -51,7 +51,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           this.getAuthHeaders()
         );
         this.myPropiedades = res.data;
-        //console.log("  Propiedades cargadas:", this.myPropiedades);
+        console.log("  Propiedades cargadas:", this.myPropiedades);
       } catch (error) {
         this.error = error.response?.data || error.message;
         console.error("  Error al obtener mys Propiedades:", this.error);
@@ -76,7 +76,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           {},
           this.getAuthHeaders()
         );
-        //console.log("  Propiedad eliminada lógicamente:", res.data);
+        console.log("  Propiedad eliminada lógicamente:", res.data);
         await this.fetchMisPropiedades();
         return this.myPropiedades;
       } catch (error) {
@@ -97,7 +97,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           this.getAuthHeaders()
         );
 
-        //console.log("  Propiedad publicada:", res.data);
+        console.log("  Propiedad publicada:", res.data);
 
         await this.fetchMisPropiedades();
         return this.myPropiedades;
@@ -118,7 +118,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           {},
           this.getAuthHeaders()
         );
-        //console.log("  Propiedad ocultada:", res.data);
+        console.log("  Propiedad ocultada:", res.data);
 
         await this.fetchMisPropiedades();
 
@@ -142,7 +142,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           this.getAuthHeaders()
         );
         this.myPropiedadActual = res.data;
-        //console.log("  Propiedad con id ", id, " obtenida :", res.data);
+        console.log("  Propiedad con id ", id, " obtenida :", res.data);
         return res.data;
       } catch (error) {
         this.error = error.response?.data || error.message;
@@ -165,11 +165,11 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
 
         if (propiedad) {
           this.myPropiedadActual = propiedad;
-          //console.log("Propiedad encontrada localmente:", propiedad);
+          console.log("Propiedad encontrada localmente:", propiedad);
           return propiedad;
         }
       }
-      //console.log("Propiedad no encontrada localmente:");
+      console.log("Propiedad no encontrada localmente:");
       await this.fetchMyPropiedad(id);
       return this.myPropiedadActual;
     },
@@ -198,7 +198,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         } else {
           this.pagination = null;
         }
-        //console.log(
+        console.log(
           "  Propiedades publicas cargadas:",
           this.propiedadesPublicas
         );
@@ -243,7 +243,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
       this.loading = true;
       this.error = null;
       try {
-        //console.log('fetchPropiedadesFiltradas -> params', params);
+        console.log('fetchPropiedadesFiltradas -> params', params);
 
         // cancel previous in-flight filter request (if any)
         try {
@@ -272,12 +272,12 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           this.globalMaxRooms = null;
         }
 
-        //console.log('fetchPropiedadesFiltradas -> status', res.status, 'data preview:', Array.isArray(res.data) ? res.data.slice(0,3) : res.data);
+        console.log('fetchPropiedadesFiltradas -> status', res.status, 'data preview:', Array.isArray(res.data) ? res.data.slice(0,3) : res.data);
         // Debug: print full response payload (may be large) and sample university_distances for first results
         try {
-          //console.log('fetchPropiedadesFiltradas -> full response data:', res.data);
+          console.log('fetchPropiedadesFiltradas -> full response data:', res.data);
           const sample = (res.data.results ? res.data.results : (Array.isArray(res.data) ? res.data : [])).slice(0,3).map(p => ({ id: p.id, title: p.title, university_distances: p.university_distances ? p.university_distances.slice(0,3) : p.university_distances }));
-          //console.log('fetchPropiedadesFiltradas -> sample properties with university_distances:', sample);
+          console.log('fetchPropiedadesFiltradas -> sample properties with university_distances:', sample);
         } catch (e) {
           console.warn('fetchPropiedadesFiltradas -> debug logging failed', e);
         }
@@ -293,7 +293,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         } else {
           this.pagination = null;
         }
-        //console.log('fetchPropiedadesFiltradas -> propiedadesPublicas set length', this.propiedadesPublicas?.length);
+        console.log('fetchPropiedadesFiltradas -> propiedadesPublicas set length', this.propiedadesPublicas?.length);
 
         // clear controller only if it is the one we created
         _lastFilterAbortController = null;
@@ -302,7 +302,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
       } catch (err) {
         // treat cancellations specially so caller can ignore
         if (err?.code === 'ERR_CANCELED' || err?.name === 'CanceledError' || String(err?.message).toLowerCase().includes('aborted')) {
-          //console.log('fetchPropiedadesFiltradas -> request canceled');
+          console.log('fetchPropiedadesFiltradas -> request canceled');
           return null;
         }
         this.error = err.response?.data || err.message;
@@ -380,7 +380,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           options
         );
         this.propiedadPublicaActual = res.data;
-        //console.log("  Propiedad con id ", id, " obtenida :", res.data);
+        console.log("  Propiedad con id ", id, " obtenida :", res.data);
         return res.data;
       } catch (error) {
         this.error = error.response?.data || error.message;
@@ -541,15 +541,15 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           bodyCrearServicio,
           this.getAuthHeaders()
         );
-        //console.log(`  creado servicio:`, res.data);
+        console.log(`  creado servicio:`, res.data);
       }
     },
     async borrarServicios(arrBodyDeleteServicios) {
       // amenidades es un array de IDs o de objetos
       for (const bodyDeleteServicio of arrBodyDeleteServicios) {
-        //console.log("bodyDeleteServicio", JSON.stringify(bodyDeleteServicio));
+        console.log("bodyDeleteServicio", JSON.stringify(bodyDeleteServicio));
         const authHeaders = this.getAuthHeaders();
-        //console.log("🔑 Cabeceras:", authHeaders);
+        console.log("🔑 Cabeceras:", authHeaders);
 
         if (!authHeaders.headers.Authorization) {
           console.error("  No se encontró token de autenticación.");
@@ -559,15 +559,15 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           `http://127.0.0.1:8000/api/accommodation-services/${bodyDeleteServicio.id}/`,
           authHeaders
         );
-        //console.log(`  servicio borrado:`, res.data);
+        console.log(`  servicio borrado:`, res.data);
       }
     },
     async borrarFotos(arrBodyDeletePhotos) {
       // amenidades es un array de IDs o de objetos
       for (const bodyDeletePhoto of arrBodyDeletePhotos) {
-        //console.log("bodyDeletePhoto", JSON.stringify(bodyDeletePhoto));
+        console.log("bodyDeletePhoto", JSON.stringify(bodyDeletePhoto));
         const authHeaders = this.getAuthHeaders();
-        //console.log("🔑 Cabeceras:", authHeaders);
+        console.log("🔑 Cabeceras:", authHeaders);
 
         if (!authHeaders.headers.Authorization) {
           console.error("  No se encontró token de autenticación.");
@@ -577,7 +577,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           `http://127.0.0.1:8000/api/accommodation-photos/${bodyDeletePhoto.id}/`,
           authHeaders
         );
-        //console.log(`  photo borrado:`, res.data);
+        console.log(`  photo borrado:`, res.data);
       }
     },
     // 🔹 Paso 3: Subir fotos
@@ -614,7 +614,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           formData,
           this.getAuthHeaders()
         );
-        //console.log(`  creado foto:`, res.data);
+        console.log(`  creado foto:`, res.data);
       }
     },
 
@@ -629,7 +629,7 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         // Actualiza en el array local
         const index = this.myPropiedades.findIndex((p) => p.id === id);
         if (index !== -1) this.myPropiedades[index] = res.data;
-        //console.log("  Propiedad actualizada:", res.data);
+        console.log("  Propiedad actualizada:", res.data);
         return res.data;
       } catch (error) {
         console.error(

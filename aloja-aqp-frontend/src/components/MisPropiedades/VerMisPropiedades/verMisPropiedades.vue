@@ -94,14 +94,14 @@ const fetchMyProperties = async () => {
 };
 
 const editarPropiedad = (id) => {
-  //console.log("Editar propiedad con ID:", id);
+  console.log("Editar propiedad con ID:", id);
   selectedPropertyId.value = id
   showEditarModal.value = true;
 
 };
 
 const verPropiedad = ({ id, estado }) => {
-  //console.log("Ver propiedad con ID:", id , " y estado :",estado);
+  console.log("Ver propiedad con ID:", id , " y estado :",estado);
 
   let isPrivate=true
 
@@ -116,13 +116,13 @@ const verPropiedad = ({ id, estado }) => {
 };
 
 const confirmarEliminacion = (id) => {
-  //console.log("Confirmar eliminacion con :", id);
+  console.log("Confirmar eliminacion con :", id);
   confirmId.value = id;
   showConfirm.value = true;
 };
 
 const cambiarEstado = async ({ id, estado }) => {
-  //console.log("Cambiar esteado con ID:", id, "estado", estado);
+  console.log("Cambiar esteado con ID:", id, "estado", estado);
   try {
     loading.value = true
     
@@ -136,9 +136,9 @@ const cambiarEstado = async ({ id, estado }) => {
 
     } else if (estado == "draft") {
       loaderMessage.value = 'Cambiando estado a borrador...'
-      //console.log("cambiando estado a borrador")
+      console.log("cambiando estado a borrador")
     } else {
-      //console.log("estado invalido")
+      console.log("estado invalido")
     }
 
   } catch (err) {

@@ -74,7 +74,7 @@ export default {
     };
 
       const drawRecorrido = async () => {
-        //console.log('MapView.drawRecorrido -> props.routeGeoJson', props.routeGeoJson);
+        console.log('MapView.drawRecorrido -> props.routeGeoJson', props.routeGeoJson);
       const houseLatLng = getHouseLatLng();
       const uniLatLng = getUniLatLng();
         // If coordinates are missing or route is absent, remove any previous route layer
@@ -98,7 +98,7 @@ export default {
         return;
       }
 
-      //console.log('drawRecorrido -> from (lat,lng)', [hLat, hLng], 'to', [uLat, uLng]);
+      console.log('drawRecorrido -> from (lat,lng)', [hLat, hLng], 'to', [uLat, uLng]);
 
       // Remove previous route if present
       if (routeLine && map.value) {
@@ -114,7 +114,7 @@ export default {
               return { color: '#2563eb', weight: 4, opacity: 0.9 };
             }
           }).addTo(map.value);
-          //console.log('MapView.drawRecorrido -> route drawn, bounds:', routeLine.getBounds ? routeLine.getBounds() : null);
+          console.log('MapView.drawRecorrido -> route drawn, bounds:', routeLine.getBounds ? routeLine.getBounds() : null);
           // fit bounds to route if possible
           try {
             const bounds = routeLine.getBounds();

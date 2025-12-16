@@ -24,7 +24,7 @@ export const useGestionComments = defineStore("gestionComentarios", {
           this.getAuthHeaders()
         );
         this.comentarios = res.data;
-        //console.log("  comentarios cargadas:", this.comentarios);
+        console.log("  comentarios cargadas:", this.comentarios);
       } catch (error) {
         this.error = error.response?.data || error.message;
         console.error("  Error al obtener comentarios:", this.error);
@@ -47,13 +47,13 @@ export const useGestionComments = defineStore("gestionComentarios", {
         comment: this.nuevoComentarioComment,
         accommodation: this.nuevoComentarioAccomodationId,
       };
-      //console.log("la data a enviar al post comentario es",JSON.stringify(data))
+      console.log("la data a enviar al post comentario es",JSON.stringify(data))
       const res = await axios.post(
         "http://127.0.0.1:8000/api/reviews/",
         data,
         this.getAuthHeaders()
       );
-      //console.log(`  creado comentario:`, res.data);
+      console.log(`  creado comentario:`, res.data);
       return res.data; // devuelve el alojamiento creado (con id)
     },
   },

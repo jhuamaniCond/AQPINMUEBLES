@@ -284,7 +284,7 @@ import { useGestionComments } from "/src/stores/useGestionComments.js";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "../stores/auth";
 const auth = useAuthStore();
-//console.log("usuario en view depa", JSON.stringify(auth.user, null, 2));
+console.log("usuario en view depa", JSON.stringify(auth.user, null, 2));
 const showLogin = ref(false);
 
 // Accedemos al parámetro "id" desde la URL
@@ -310,7 +310,7 @@ const publicarComentario = async () => {
 };
 
 const onLoginSuccess = () => {
-    //console.log('Evento login-success recibido');
+    console.log('Evento login-success recibido');
   showLogin.value = false;
 };
 
@@ -450,7 +450,7 @@ const esAutor = (userId) => userId === propiedad.value.user.id
 
 // Inicialización
 onMounted(async () => {
-    //console.log("ID recibido desde la URL:", id.value);
+    console.log("ID recibido desde la URL:", id.value);
     // load universities first so we have real ids and campus coords
     await loadUniversities();
     // Ensure favoritesMap is populated for authenticated users so heart state is correct
@@ -460,10 +460,10 @@ onMounted(async () => {
         console.warn('Could not fetch favorites on mount', e);
     }
     if (isPrivate) {
-        //console.log("propiedad privada");
+        console.log("propiedad privada");
         fetchMyPropertiePrivate(id.value);
     } else {
-        //console.log("propiedad publica");
+        console.log("propiedad publica");
         await fetchMyPropertiePublic(id.value);
     }
 });
@@ -474,7 +474,7 @@ const handleUniversitySelected = (universityName) => {
     const found = universities.value.find((u) => u.name === universityName) || null;
     selectedUniversity.value = found;
     selectedSede.value = found ? (found.sedes?.[0] || null) : null;
-    //console.log("Universidad seleccionada:", selectedUniversity.value);
+    console.log("Universidad seleccionada:", selectedUniversity.value);
     // After user selects a different university, refetch the public property detail
     // so backend can include route/distance for the newly selected university.
     if (!isPrivate) {
@@ -487,7 +487,7 @@ const handleSedeSelected = (sedeName) => {
     selectedSede.value = selectedUniversity.value.sedes.find(
         (s) => s.name === sedeName
     );
-    //console.log("Sede seleccionada:", selectedSede.value);
+    console.log("Sede seleccionada:", selectedSede.value);
 };
 const toStartCase = (text) => {
     if (!text) return ''; // si es null, undefined o vacío → devuelve cadena vacía

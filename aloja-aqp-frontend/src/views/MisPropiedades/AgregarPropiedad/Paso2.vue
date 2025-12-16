@@ -117,7 +117,7 @@ function toggleAmenity(id) {
 
 // Navegación
 function nextStep() {
-  //console.log("datos en pinia", JSON.stringify(store.$state))
+  console.log("datos en pinia", JSON.stringify(store.$state))
   router.push('/mis-propiedades/agregar/paso3')
 }
 

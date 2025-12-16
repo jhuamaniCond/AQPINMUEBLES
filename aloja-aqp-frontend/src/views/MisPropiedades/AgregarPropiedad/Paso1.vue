@@ -214,7 +214,7 @@ function nextStep() {
 
         if (!valid) return;
 
-        //console.log("datos en pinia", JSON.stringify(store.$state))
+        console.log("datos en pinia", JSON.stringify(store.$state))
         router.push('/mis-propiedades/agregar/paso2') // siguiente paso
 }
 function actualizarUbicacion({ latitud: lat, longitud: lng, address: addr = null }) {

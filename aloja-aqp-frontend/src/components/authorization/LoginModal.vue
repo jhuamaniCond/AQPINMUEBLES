@@ -93,7 +93,7 @@ const googleButton = ref(null);
 
 // --- LOGIN NORMAL ---
 const loginUser = async () => {
-  //console.log("Intentando login con:", email.value, password.value);
+  console.log("Intentando login con:", email.value, password.value);
   const result = await auth.login(email.value, password.value);
 
   if (result.success) {
@@ -134,7 +134,7 @@ function renderGoogleButton() {
   if (!googleButton.value) return;
   ensureGoogleLoaded(() => {
     if (!window.googleInitialized) {
-      //console.log(          import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      console.log(          import.meta.env.VITE_GOOGLE_CLIENT_ID,
 )
       window.google.accounts.id.initialize({
         client_id:

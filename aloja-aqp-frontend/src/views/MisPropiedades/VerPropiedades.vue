@@ -21,14 +21,14 @@ const propiedades = ref([]);
 const fetchMyProperties = async () => {
   try {
     propiedades.value = await storePropiedades.getMisPropiedades();
-    //console.log("Propiedades obtenidas:", JSON.stringify(propiedades.value));
+    console.log("Propiedades obtenidas:", JSON.stringify(propiedades.value));
   } catch (err) {
     console.error("Error al obtener propiedades:", err);
   }
 };
 
 const handleSinPropiedades = () => {
-  //console.log("No hay más propiedades, cambiar vista o mostrar mensaje");
+  console.log("No hay más propiedades, cambiar vista o mostrar mensaje");
   fetchMyProperties()
 };
 

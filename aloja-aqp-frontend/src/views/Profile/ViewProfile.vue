@@ -93,7 +93,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const auth = useAuthStore();
-//console.log("User Data:", JSON.stringify(auth.user));
+console.log("User Data:", JSON.stringify(auth.user));
 
 const genders = [
     { value: 'F', label: 'Female' },
