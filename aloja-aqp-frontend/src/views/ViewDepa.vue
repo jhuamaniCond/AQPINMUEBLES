@@ -228,17 +228,12 @@
 
                                     <div class="mt-6 space-y-4">
                                         <button
+                                            @click="sendWhatsApp"
                                             class="w-full bg-primary text-white px-6 py-3 rounded-lg text-sm font-bold hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
-                                            <span class="material-symbols-outlined">calendar_month</span>
-                                            <span>Programar una visita</span>
-                                        </button>
-
-                                        <button
-                                        @click="sendWhatsApp"    
-                                        class="w-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white px-6 py-3 rounded-lg text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-2">
-                                            <span class="material-symbols-outlined">mail</span>
+                                            <span class="material-symbols-outlined">phone</span>
                                             <span>Consultar sobre la propiedad</span>
                                         </button>
+
                                     </div>
                                 </div>
                             </div>
