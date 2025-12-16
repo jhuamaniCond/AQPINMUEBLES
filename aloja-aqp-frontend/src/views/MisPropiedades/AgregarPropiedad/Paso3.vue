@@ -1,4 +1,10 @@
 <template>
+    <!-- Mensaje temporal de error -->
+    <transition name="fade-slide">
+      <div v-if="showError" class="fixed top-6 right-6 z-50 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg">
+        {{ errorMsg }}
+      </div>
+    </transition>
     <StepsBar :step="3" />
 
     <div class="flex-1 flex flex-col w-full max-w-4xl mx-auto py-8">
@@ -69,6 +75,7 @@
 </template>
 
 <script setup>
+// import { ref } from 'vue' (eliminada porque ya existe)
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCreateProperty } from '../../../stores/useCreateProperty.js'
@@ -78,6 +85,20 @@ import { storeToRefs } from 'pinia'
 const router = useRouter()
 const store = useCreateProperty()
 const fileInput = ref(null)
+
+// Estado para mensaje temporal
+const showError = ref(false)
+const errorMsg = ref("")
+let errorTimeout = null
+function showTempError(msg) {
+    errorMsg.value = msg
+    showError.value = true
+    if (errorTimeout) clearTimeout(errorTimeout)
+    errorTimeout = setTimeout(() => {
+        showError.value = false
+        errorMsg.value = ""
+    }, 2300)
+}
 
 // Recuperar imágenes del store (persistentes entre pasos)
 const { imagenes, main_image_index } = storeToRefs(store)
@@ -105,7 +126,7 @@ function processFiles(files) {
     // Determine how many images we can still accept
     const capacity = maxImages - imagenes.value.length
     if (capacity <= 0) {
-        alert(`Has alcanzado el máximo de ${maxImages} imágenes.`)
+        showTempError(`Has alcanzado el máximo de ${maxImages} imágenes.`)
         return
     }
 
@@ -123,14 +144,14 @@ function processFiles(files) {
         accepted++
     }
     if (accepted < files.length) {
-        alert(`Solo se aceptaron ${accepted} archivos. Límite máximo ${maxImages}.`)
+        showTempError(`Solo se aceptaron ${accepted} archivos. Límite máximo ${maxImages}.`)
     }
 }
 
 // Eliminar imagen
 function removeImage(index) {
     if (imagenes.value.length <= minImages) {
-        alert(`Se requieren al menos ${minImages} imágenes.`)
+        showTempError(`Se requieren al menos ${minImages} imágenes.`)
         return
     }
     const wasMain = Number(mainImageIndex.value) === index
@@ -150,7 +171,7 @@ function setMain(idx) {
 // Guardar en store y avanzar
 function nextStep() {
     if (imagenes.value.length < minImages) {
-        alert(`Debes subir al menos ${minImages} imágenes antes de continuar.`)
+        showTempError(`Debes subir al menos ${minImages} imágenes antes de continuar.`)
         return
     }
     router.push('/mis-propiedades/agregar/paso4')
@@ -161,3 +182,18 @@ function previousStep() {
     router.push('/mis-propiedades/agregar/paso2')
 }
 </script>
+
+<style>
+/* Transición suave para el mensaje de error */
+.fade-slide-enter-active, .fade-slide-leave-active {
+  transition: opacity 0.4s, transform 0.4s;
+}
+.fade-slide-enter-from, .fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-16px);
+}
+.fade-slide-enter-to, .fade-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>

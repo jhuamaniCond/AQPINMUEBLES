@@ -2,22 +2,22 @@
     <StepsBar :step="2" />
     <div class="flex-1 flex flex-col w-full max-w-4xl mx-auto py-8">
         <h3 class="text-gray-800 dark:text-white text-2xl font-bold mb-6 text-center">
-            Selector de características: ¡Añade amenidades!
+            Selector de características: ¡Añade Servicios!
         </h3>
         <p class="text-gray-600 dark:text-gray-400 text-center mb-8">
-            Selecciona las amenidades que quieras añadir a tu propiedad. ¡Reúne más tarjetas para desbloquear consejos adicionales!
+            Selecciona los servicios que el inquilino podrá disfrutar en tu propiedad, pero que están incluidos en el precio final.
         </p>
 
         <!-- Contador de amenidades -->
         <div class="flex justify-between items-center mb-6 px-4">
             <h4 class="text-xl font-semibold text-gray-700 dark:text-gray-300">
-                Amenidades seleccionadas:
+                Servicios seleccionados:
                 <span class="text-primary font-bold">{{ selectedAmenities.length }}</span>
             </h4>
             <div class="flex items-center gap-2 text-primary">
                 <span class="material-symbols-outlined text-lg">lightbulb</span>
                 <p class="text-sm font-medium">
-                    Añade {{ Math.max(0, 3 - selectedAmenities.length) }} más para obtener un consejo profesional.
+                    Añade {{ Math.max(0, 3 - selectedAmenities.length) }} más para que tu propiedad conecte con más estudiantes .
                 </p>
             </div>
         </div>
