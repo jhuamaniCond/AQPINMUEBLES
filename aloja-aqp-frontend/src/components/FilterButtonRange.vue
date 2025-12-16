@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="relative" ref="rootEl">
     <!-- Botón -->
     <button
       @click="toggleMenu"
@@ -123,6 +123,13 @@ export default {
     toggleMenu() {
       this.isOpen = !this.isOpen;
     },
+    handleClickOutside(event) {
+      if (!this.isOpen) return;
+      const root = this.$refs.rootEl;
+      if (root && !root.contains(event.target)) {
+        this.isOpen = false;
+      }
+    },
     startDrag(which, event) {
       this.dragging = which;
       document.addEventListener("mousemove", this.onDrag);
@@ -171,6 +178,12 @@ export default {
       });
       this.toggleMenu();
     },
+  },
+  mounted() {
+    document.addEventListener('click', this.handleClickOutside);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside);
   },
 };
 </script>

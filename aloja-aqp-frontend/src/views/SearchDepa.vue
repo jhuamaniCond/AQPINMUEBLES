@@ -91,7 +91,12 @@
                   </div>
                   <!-- Acciones: Buscar / Limpiar -->
                   <div class="flex items-center gap-2 ml-2">
-                    <button @click="clearFilters()" class="text-white bg-white dark:!bg-background-dark border border-gray-300 dark:border-gray-700 text-sm px-3 py-2 rounded-lg">Limpiar</button>
+                    <button
+                      @click="clearFilters()"
+                      class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-md hover:shadow-lg"
+                    >
+                      Limpiar
+                    </button>
                   </div>
                 </div>
 

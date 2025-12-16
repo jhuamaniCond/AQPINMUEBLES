@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="relative" ref="rootEl">
     <!-- Botón -->
     <button
         @click="toggleMenu"
@@ -86,7 +86,12 @@ export default {
     } else {
       this.selectedOption = `-- ${this.titulo} --`;
     }
-  },watch: {
+    document.addEventListener('click', this.handleClickOutside);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside);
+  },
+  watch: {
     opciones(newVal, oldVal) {
       if (JSON.stringify(newVal) !== JSON.stringify(oldVal) && newVal && newVal.length > 0) {
         // If current selectedOption is not present in the new options, default to the first
@@ -105,6 +110,13 @@ export default {
       this.selectedOption = opcion;
       this.isOpen = false; // cerrar después de seleccionar
       this.$emit("optionFiltroSelected", opcion); // emitir evento con la opción seleccionada
+    },
+    handleClickOutside(event) {
+      if (!this.isOpen) return;
+      const root = this.$refs.rootEl;
+      if (root && !root.contains(event.target)) {
+        this.isOpen = false;
+      }
     },
   },
 };

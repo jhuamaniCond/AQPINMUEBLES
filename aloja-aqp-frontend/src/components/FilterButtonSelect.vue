@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="relative" ref="rootEl">
     <button
       @click="toggleMenu"
       :class="isOpen
@@ -56,6 +56,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'select']);
 
 const isOpen = ref(false);
+const rootEl = ref(null);
 const selected = ref(props.modelValue);
 
 const selectedLabel = computed(() => {
@@ -88,6 +89,22 @@ function isSelected(option) {
 function toggleMenu() {
   isOpen.value = !isOpen.value;
 }
+
+function handleClickOutside(event) {
+  if (!isOpen.value) return;
+  const root = rootEl.value;
+  if (root && !root.contains(event.target)) {
+    isOpen.value = false;
+  }
+}
+
+import { onMounted, onBeforeUnmount } from 'vue';
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 function selectOption(option) {
   selected.value = option;
   isOpen.value = false;
