@@ -259,6 +259,15 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           { params, signal, ...this.getAuthHeaders() }
         );
 
+        // Guardar los valores globales de precio mínimo y máximo si existen en la respuesta
+        if (res.data && (res.data.global_min_price !== undefined || res.data.global_max_price !== undefined)) {
+          this.globalMinPrice = res.data.global_min_price !== undefined ? Number(res.data.global_min_price) : null;
+          this.globalMaxPrice = res.data.global_max_price !== undefined ? Number(res.data.global_max_price) : null;
+        } else {
+          this.globalMinPrice = null;
+          this.globalMaxPrice = null;
+        }
+
         console.log('fetchPropiedadesFiltradas -> status', res.status, 'data preview:', Array.isArray(res.data) ? res.data.slice(0,3) : res.data);
         // Debug: print full response payload (may be large) and sample university_distances for first results
         try {
@@ -299,6 +308,20 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
         this.loading = false;
       }
     },
+  state: () => ({
+    myPropiedades: null,
+    myPropiedadActual: null,
+    propiedadesPublicas: null,
+    pagination: null,
+    pageSize: 6,
+    favoritesMap: {},
+    favoriteProperties: [],
+    propiedadPublicaActual: null,
+    loading: false,
+    error: null,
+    globalMinPrice: null, // Nuevo: precio mínimo global
+    globalMaxPrice: null, // Nuevo: precio máximo global
+  }),
 
     async fetchUniversities() {
       try {

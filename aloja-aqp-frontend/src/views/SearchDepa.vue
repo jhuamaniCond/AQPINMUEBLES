@@ -52,8 +52,15 @@
                     :opciones="selectedUniversity?.sedes?.map(s => s.name) || []"
                     @optionFiltroSelected="handleSedeSelected" :defaultOption="selectedSede?.name || ''" />
 
-                  <FilterButtonRange title="Precio" :min="300" :max="3000" :start="priceStart" :end="priceEnd" tipoDato="S/"
-                    @rangeSelected="handlePriceSelecter" />
+                  <FilterButtonRange
+                    title="Precio"
+                    :min="minPrice"
+                    :max="maxPrice"
+                    :start="priceStart !== null ? priceStart : minPrice"
+                    :end="priceEnd !== null ? priceEnd : maxPrice"
+                    tipoDato="S/"
+                    @rangeSelected="handlePriceSelecter"
+                  />
 
                   <FilterButtonRange title="Habitaciones" :min="1" :max="10" :start="roomsStart" :end="roomsEnd"
                     @rangeSelected="handleBedroomsSelected" />
@@ -263,6 +270,18 @@ const selectedServices = ref([]);
 // Keep these null initially so we don't apply unintended filters on load
 const priceStart = ref(null);
 const priceEnd = ref(null);
+
+// Dynamic min/max price for filter (usando valores globales del store)
+const minPrice = computed(() => {
+  return storePropiedades.globalMinPrice !== null && storePropiedades.globalMinPrice !== undefined
+    ? storePropiedades.globalMinPrice
+    : 300;
+});
+const maxPrice = computed(() => {
+  return storePropiedades.globalMaxPrice !== null && storePropiedades.globalMaxPrice !== undefined
+    ? storePropiedades.globalMaxPrice
+    : 3000;
+});
 const roomsStart = ref(null);
 const roomsEnd = ref(null);
 
@@ -466,7 +485,9 @@ const showAll = async (hideModal = false) => {
 };
 
 // ===== Ciclo de vida =====
-onMounted(() => {
+onMounted(async () => {
+  // Cargar valores globales de precio min/max al inicio
+  await storePropiedades.fetchPropiedadesFiltradas({});
   initUniversitySelection();
   // fetch public properties initially is handled inside initUniversitySelection via applyFilters
   isCelular.value = window.innerWidth < 1024;

@@ -103,6 +103,22 @@ export default {
       dragging: null, // "start" | "end" | null
     };
   },
+  watch: {
+    min(newVal) {
+      if (this.internalStart < newVal) this.internalStart = newVal;
+      if (this.internalEnd < newVal) this.internalEnd = newVal;
+    },
+    max(newVal) {
+      if (this.internalEnd > newVal) this.internalEnd = newVal;
+      if (this.internalStart > newVal) this.internalStart = newVal;
+    },
+    start(newVal) {
+      this.internalStart = newVal;
+    },
+    end(newVal) {
+      this.internalEnd = newVal;
+    }
+  },
   methods: {
     toggleMenu() {
       this.isOpen = !this.isOpen;
@@ -140,7 +156,12 @@ export default {
       document.removeEventListener("mouseup", this.stopDrag);
     },
     percentage(value) {
-      return ((value - this.min) / (this.max - this.min)) * 100;
+      // Prevent division by zero and clamp value
+      const min = Number(this.min);
+      const max = Number(this.max);
+      if (max === min) return 0;
+      const v = Math.max(min, Math.min(value, max));
+      return ((v - min) / (max - min)) * 100;
     },
     applyFilter() {
       // Emit a normalized payload { start, end } so consumers can rely on these keys
