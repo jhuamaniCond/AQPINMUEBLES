@@ -52,6 +52,15 @@
                     :opciones="selectedUniversity?.sedes?.map(s => s.name) || []"
                     @optionFiltroSelected="handleSedeSelected" :defaultOption="selectedSede?.name || ''" />
 
+                  <!-- Nuevo filtro: Tipo de alojamiento -->
+                  <FilterButtonMultipleOptions
+                    titulo="Tipo de alojamiento"
+                    v-if="propertyTypes && propertyTypes.length"
+                    :opciones="propertyTypes.map(t => t.name)"
+                    @optionFiltroSelected="handlePropertyTypeSelected"
+                    :defaultOption="selectedPropertyType?.name || ''"
+                  />
+
                   <FilterButtonRange
                     title="Precio"
                     :min="minPrice"
@@ -148,7 +157,6 @@
               <template v-else>
                 <div class="p-6 text-center">
                   <p class="text-gray-600 dark:text-gray-400">No hay alojamientos para los filtros seleccionados.</p>
-                  <p class="text-sm text-gray-500 mt-2">Prueba quitar el filtro de universidad/sede o haz clic en "Mostrar todos" para volver a ver todas las propiedades.</p>
                   <button @click="showAll()"
                     class="mt-4 inline-block bg-primary text-white px-4 py-2 rounded-lg text-sm">Mostrar todos</button>
                 </div>
@@ -230,7 +238,25 @@ import FooterComponent from "../components/FooterComponent.vue";
 import FilterButtonMultipleOptions from "../components/FilterButtonMultipleOptions.vue";
 import FilterButtonRange from "../components/FilterButtonRange.vue";
 import { useRoute, useRouter } from "vue-router";
+
+import { webPageData } from "/src/stores/webPageData.js";
 import { useGestionPropiedades } from "/src/stores/useGestionPropiedades.js";
+// Property type filter state
+const propertyTypes = ref([]);
+const selectedPropertyType = ref(null);
+
+// Fetch property types for filter
+async function fetchPropertyTypes() {
+  try {
+    const data = await webPageData().getTiposDePropiedad();
+    let arr = [];
+    if (Array.isArray(data)) arr = data;
+    else if (data && Array.isArray(data.results)) arr = data.results;
+    propertyTypes.value = arr.filter(Boolean);
+  } catch (err) {
+    console.error("Error al obtener tipos de propiedad:", err);
+  }
+}
 
 
 const storePropiedades = useGestionPropiedades();
@@ -259,10 +285,11 @@ const currentFilterRequestId = ref(0);
 // search + suggestions state
 const searchQuery = ref("");
 const searchInput = ref(null);
-onMounted(() => {
+onMounted(async () => {
   if (route && route.query && route.query.focus === 'true' && searchInput.value) {
     searchInput.value.focus();
   }
+  await fetchPropertyTypes();
 });
 const suggestions = ref([]);
 const showSuggestions = ref(false);
@@ -277,6 +304,14 @@ const selectedServices = ref([]);
 // Keep these null initially so we don't apply unintended filters on load
 const priceStart = ref(null);
 const priceEnd = ref(null);
+
+// Maneja la selección del tipo de alojamiento
+function handlePropertyTypeSelected(nombreTipo) {
+  // Busca el objeto completo en propertyTypes por nombre
+  const tipo = propertyTypes.value.find(t => t.name === nombreTipo);
+  selectedPropertyType.value = tipo || null;
+  applyFilters();
+}
 
 // Dynamic min/max price for filter (usando valores globales del store)
 const minPrice = computed(() => {
@@ -506,6 +541,7 @@ const showAll = async (hideModal = false) => {
 onMounted(async () => {
   // Cargar valores globales de precio min/max al inicio
   await storePropiedades.fetchPropiedadesFiltradas({});
+  await fetchPropertyTypes();
   initUniversitySelection();
   // fetch public properties initially is handled inside initUniversitySelection via applyFilters
   isCelular.value = window.innerWidth < 1024;
@@ -613,6 +649,7 @@ const clearFilters = async () => {
   priceEnd.value = null;
   roomsStart.value = null;
   roomsEnd.value = null;
+  selectedPropertyType.value = null;
   searchQuery.value = "";
   // restore full list
   await showAll();
@@ -637,6 +674,7 @@ async function applyFilters() {
   if (searchQuery.value) params.q = searchQuery.value;
   if (selectedUniversity.value) params.university_id = selectedUniversity.value.id;
   if (selectedSede.value) params.campus_id = selectedSede.value.id;
+  if (selectedPropertyType.value) params.accommodation_type = selectedPropertyType.value.id;
   if (priceStart.value != null) params.min_price = Number(priceStart.value);
   if (priceEnd.value != null) params.max_price = Number(priceEnd.value);
   if (roomsStart.value != null) params.min_rooms = Number(roomsStart.value);
