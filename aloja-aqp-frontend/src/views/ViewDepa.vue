@@ -14,59 +14,61 @@
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div class="lg:col-span-2">
-                                                        <div>
-                                                            <div v-if="!propiedad?.photos?.length || propiedad.photos.length === 0"
-                                                                class="h-[500px] bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center text-gray-500">
-                                                                Sin imágenes disponibles
-                                                            </div>
-                                                            <div v-else class="grid grid-cols-4 gap-2 rounded-xl overflow-hidden h-[500px] items-stretch">
-                                                                <!-- Imagen principal -->
-                                                                <div class="col-span-3 h-[500px] cursor-pointer" @click="openImageModal(0)">
-                                                                    <img :src="mainPhoto?.image" alt="Imagen principal" class="w-full h-full object-cover" />
-                                                                </div>
-                                                                <!-- Otras imágenes -->
-                                                                <div class="col-span-1 grid grid-rows-4 gap-2 h-[500px]">
-                                                                    <template v-for="(photo, index) in sidePhotos.slice(0, 4)" :key="index">
-                                                                        <div class="relative h-full cursor-pointer" @click="openImageModal(index+1)">
-                                                                            <img :src="photo.image || defaultImage" alt="Foto adicional" class="w-full h-full object-cover" />
-                                                                        </div>
-                                                                    </template>
-                                                                    <div v-if="sidePhotos.length === 0" class="h-full flex items-center justify-center text-gray-400">Sin imágenes adicionales</div>
-                                                                </div>
-                                                                <!-- Modal para ver imagen completa -->
-                                                                <div v-if="showImageModal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80">
-                                                                    <div class="relative flex items-center">
-                                                                        <button @click="prevImage" class="absolute left-[-3rem] top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 font-bold rounded-full w-10 h-10 flex items-center justify-center shadow-md z-10">
-                                                                            <span class="material-symbols-outlined">chevron_left</span>
-                                                                        </button>
-                                                                        <img :src="currentImage" class="max-h-[80vh] max-w-[90vw] rounded-xl shadow-2xl border-4 border-white z-20" />
-                                                                        <button @click="nextImage" class="absolute right-[-3rem] top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 font-bold rounded-full w-10 h-10 flex items-center justify-center shadow-md z-10">
-                                                                            <span class="material-symbols-outlined">chevron_right</span>
-                                                                        </button>
-                                                                        <button @click="closeImageModal" class="absolute top-2 right-2 bg-white/80 hover:bg-white text-gray-700 font-bold rounded-full w-8 h-8 flex items-center justify-center shadow-md z-30">✕</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                            <div>
+                                <div v-if="!propiedad?.photos?.length || propiedad.photos.length === 0"
+                                    class="h-[500px] bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center text-gray-500">
+                                    Sin imágenes disponibles
+                                </div>
+                                <template v-else>
+                                    <div class="grid grid-cols-1 md:grid-cols-4 gap-2 rounded-xl overflow-hidden md:h-[500px] items-stretch">
+                                        <div class="col-span-1 md:col-span-3 h-auto md:h-full aspect-[4/3] md:aspect-auto cursor-pointer" @click="openImageModal(0)">
+                                            <img :src="mainPhoto?.image" alt="Imagen principal" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div class="hidden md:grid col-span-1 grid-rows-4 gap-2 h-full">
+                                            <template v-for="(photo, index) in sidePhotos.slice(0, 4)" :key="index">
+                                                <div class="relative h-full cursor-pointer" @click="openImageModal(index+1)">
+                                                    <img :src="photo.image || defaultImage" alt="Foto adicional" class="w-full h-full object-cover" />
+                                                </div>
+                                            </template>
+                                            <div v-if="sidePhotos.length === 0" class="h-full flex items-center justify-center text-gray-400">Sin imágenes adicionales</div>
+                                        </div>
+                                    </div>
+                                    <div v-if="propiedad.photos.length > 1" class="grid grid-cols-4 gap-2 md:hidden mt-2">
+                                        <div v-for="(photo, index) in propiedad.photos.slice(1, 5)" :key="index"
+                                            class="aspect-square cursor-pointer" @click="openImageModal(index+1)">
+                                            <img :src="photo.image || defaultImage" alt="Foto adicional" class="w-full h-full object-cover rounded-md" />
+                                        </div>
+                                    </div>
+                                    <div v-if="showImageModal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80">
+                                        <div class="relative flex items-center">
+                                            <button @click="prevImage" class="absolute left-[-3rem] top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 font-bold rounded-full w-10 h-10 flex items-center justify-center shadow-md z-10">
+                                                <span class="material-symbols-outlined">chevron_left</span>
+                                            </button>
+                                            <img :src="currentImage" class="max-h-[80vh] max-w-[90vw] rounded-xl shadow-2xl border-4 border-white z-20" />
+                                            <button @click="nextImage" class="absolute right-[-3rem] top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 font-bold rounded-full w-10 h-10 flex items-center justify-center shadow-md z-10">
+                                                <span class="material-symbols-outlined">chevron_right</span>
+                                            </button>
+                                            <button @click="closeImageModal" class="absolute top-2 right-2 bg-white/80 hover:bg-white text-gray-700 font-bold rounded-full w-8 h-8 flex items-center justify-center shadow-md z-30">✕</button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+
                             <div class="mt-8">
                                 <div class="flex flex-col md:flex-row md:items-start md:justify-between">
                                     <div>
-                                        <div class="flex items-center gap-3">
-                                            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-                                                {{ propiedad.title || "aca va el titulo" }}
+                                        <div class="flex flex-wrap items-center gap-3"> <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white"> {{ propiedad.title || "aca va el titulo" }}
                                             </h1>
                                             <button @click="toggleFavorite"
-                                                :class="[ 'rounded-full flex items-center justify-center transition-all', isFavorite ? 'bg-primary text-white p-2' : 'bg-white dark:bg-background-dark border-2 border-primary text-primary p-1' ]"
+                                                :class="[ 'rounded-full flex items-center justify-center transition-all flex-shrink-0', isFavorite ? 'bg-primary text-white p-2' : 'bg-white dark:bg-background-dark border-2 border-primary text-primary p-1' ]"
                                             >
                                                 <span v-if="isFavorite" class="material-symbols-outlined">favorite</span>
                                                 <span v-else class="material-symbols-outlined">favorite_border</span>
                                             </button>
                                         </div>
-                                        <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">
-                                            {{ propiedad.address || "aca va la direccion" }}
+                                        <p class="mt-2 text-base sm:text-lg text-gray-600 dark:text-gray-400"> {{ propiedad.address || "aca va la direccion" }}
                                         </p>
-                                        <div class="mt-4 flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
-                                                <div class="flex items-center gap-2">
+                                        <div class="mt-4 flex flex-wrap gap-4 sm:gap-6 text-sm text-gray-600 dark:text-gray-400"> <div class="flex items-center gap-2">
                                                     <span class="material-symbols-outlined text-base">bed</span>
                                                     <span>{{ propiedad.rooms || '-' }} hab</span>
                                                 </div>
@@ -80,49 +82,46 @@
                                                 </div>
                                             </div>
                                     </div>
-                                    <div class="mt-4 md:mt-0">
-                                        <div class="text-3xl font-bold text-primary">
-                                            {{ propiedad.monthly_price || "aca va monthly_price"
+                                    <div class="mt-4 md:mt-0 flex-shrink-0"> <div class="text-2xl sm:text-3xl font-bold text-primary"> {{ propiedad.monthly_price || "aca va monthly_price"
                                             }}<span
                                                 class="text-lg font-medium text-gray-500 dark:text-gray-400">/mes</span>
                                         </div>
                                     </div>
                                 </div>
+                                
                                 <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
-                                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                                         Acerca de esta propiedad
                                     </h2>
-                                    <p class="mt-4 text-gray-600 dark:text-gray-400 leading-relaxed">
+                                    <p class="mt-4 text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
                                         {{ propiedad.description || "aca va description" }}
                                     </p>
                                     <div v-if="propiedad.coexistence_rules" class="mt-6">
-                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Reglas de convivencia</h3>
+                                        <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">Reglas de convivencia</h3>
                                         <div class="prose max-w-none text-gray-700 dark:text-gray-300" v-html="coexistenceHtml"></div>
                                     </div>
                                 </div>
                                 <div v-if="propiedad?.services?.length"
                                     class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
-                                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                                         Servicios
                                     </h2>
 
                                     <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                                         <div v-for="(item, index) in propiedad.services" :key="item.id || index"
-                                                class="flex items-center gap-2">
-                                                <ServiceIcon :name="item.service.icon_name || item.service.icon_class" :url="item.service.image_url" class="text-primary" :size="20" />
+                                                class="flex items-center gap-2 text-sm sm:text-base"> <ServiceIcon :name="item.service.icon_name || item.service.icon_class" :url="item.service.image_url" class="text-primary" :size="20" />
                                                 <span>{{ item.service.name }}</span>
                                             </div>
                                     </div>
                                 </div>
 
-                                <!-- Opcional: mensaje si no hay servicios -->
                                 <div v-else class="mt-8 text-gray-500 dark:text-gray-400">
                                     No hay servicios disponibles
                                 </div>
 
 
                                 <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
-                                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                                         Ubicacion
                                     </h2>
                                     <div class="mt-4 flex flex-wrap gap-4">
@@ -145,7 +144,7 @@
                                     </div>
                                 </div>
                                 <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
-                                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                                         Comentarios
                                     </h2>
                                     <div class="mt-6 space-y-6">
@@ -158,11 +157,11 @@
 
 
                                         <div class="mt-8">
-                                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                                            <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">
                                                 Deja un comentario
                                             </h3>
                                             <div class="flex items-start gap-4">
-                                                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+                                                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 flex-shrink-0"
                                                     :style="{
                                                         backgroundImage: `url(${auth.user?.avatar || '/src/public/default_avatar.png'
                                                             })`,
@@ -182,6 +181,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="hidden lg:block relative">
                             <div class="sticky top-24">
                                 <div
@@ -191,7 +191,7 @@
                                     </h3>
 
                                     <div class="mt-4 flex items-center gap-4">
-                                        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-14"
+                                        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-14 flex-shrink-0"
                                             :style="{
                                                 backgroundImage: `url(${propiedad.user?.avatar || '/src/public/default_avatar.png'
                                                     })`,
@@ -206,7 +206,6 @@
                                                 Agente de Rentas
                                             </p>
 
-                                            <!-- NUEVO: teléfono y correo -->
                                             <div class="mt-2 space-y-1 text-sm text-gray-600 dark:text-gray-300">
                                                 <div class="flex items-center gap-2">
                                                     <span class="material-symbols-outlined text-base">call</span>
@@ -233,18 +232,35 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </main>
         </div>
+        
+        <div class="fixed bottom-0 left-0 right-0 lg:hidden p-4 bg-white dark:bg-background-dark shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+            <div class="flex items-center justify-between">
+                <div class="text-xl font-bold text-primary">
+                    {{ propiedad.monthly_price || "aca va monthly_price" }}
+                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">/mes</span>
+                </div>
+                <button
+                    @click="sendWhatsApp"
+                    class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-base">phone</span>
+                    <span>Contactar</span>
+                </button>
+            </div>
+        </div>
+
     </div>
     <LoginModal :show="showLogin" @close="showLogin = false" @login-success="onLoginSuccess" />
     
 </template>
 
 <script setup>
+// ... (El script permanece sin cambios)
+
 // Modal para ver imagen completa con navegación
 import { ref as vueRef } from 'vue';
 const showImageModal = vueRef(false);
