@@ -259,13 +259,17 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
           { params, signal, ...this.getAuthHeaders() }
         );
 
-        // Guardar los valores globales de precio mínimo y máximo si existen en la respuesta
-        if (res.data && (res.data.global_min_price !== undefined || res.data.global_max_price !== undefined)) {
+        // Guardar los valores globales de precio y habitaciones mínimo y máximo si existen en la respuesta
+        if (res.data) {
           this.globalMinPrice = res.data.global_min_price !== undefined ? Number(res.data.global_min_price) : null;
           this.globalMaxPrice = res.data.global_max_price !== undefined ? Number(res.data.global_max_price) : null;
+          this.globalMinRooms = res.data.global_min_rooms !== undefined ? Number(res.data.global_min_rooms) : null;
+          this.globalMaxRooms = res.data.global_max_rooms !== undefined ? Number(res.data.global_max_rooms) : null;
         } else {
           this.globalMinPrice = null;
           this.globalMaxPrice = null;
+          this.globalMinRooms = null;
+          this.globalMaxRooms = null;
         }
 
         console.log('fetchPropiedadesFiltradas -> status', res.status, 'data preview:', Array.isArray(res.data) ? res.data.slice(0,3) : res.data);
@@ -321,6 +325,8 @@ export const useGestionPropiedades = defineStore("gestionPropiedades", {
     error: null,
     globalMinPrice: null, // Nuevo: precio mínimo global
     globalMaxPrice: null, // Nuevo: precio máximo global
+    globalMinRooms: null, // Nuevo: habitaciones mínimas global
+    globalMaxRooms: null, // Nuevo: habitaciones máximas global
   }),
 
     async fetchUniversities() {

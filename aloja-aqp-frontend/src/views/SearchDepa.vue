@@ -62,8 +62,15 @@
                     @rangeSelected="handlePriceSelecter"
                   />
 
-                  <FilterButtonRange title="Habitaciones" :min="1" :max="10" :start="roomsStart" :end="roomsEnd"
-                    @rangeSelected="handleBedroomsSelected" />
+                  <FilterButtonRange
+                    title="Habitaciones"
+                    :min="minRooms"
+                    :max="maxRooms"
+                    :start="roomsStart !== null ? roomsStart : minRooms"
+                    :end="roomsEnd !== null ? roomsEnd : maxRooms"
+                    tipoDato=""
+                    @rangeSelected="handleBedroomsSelected"
+                  />
 
                   <!-- Services quick-toggle chips -->
                   <div class="flex gap-2 items-center">
@@ -284,6 +291,17 @@ const maxPrice = computed(() => {
 });
 const roomsStart = ref(null);
 const roomsEnd = ref(null);
+// Dynamic min/max rooms for filter (usando valores globales del store)
+const minRooms = computed(() => {
+  return storePropiedades.globalMinRooms !== null && storePropiedades.globalMinRooms !== undefined
+    ? storePropiedades.globalMinRooms
+    : 1;
+});
+const maxRooms = computed(() => {
+  return storePropiedades.globalMaxRooms !== null && storePropiedades.globalMaxRooms !== undefined
+    ? storePropiedades.globalMaxRooms
+    : 10;
+});
 
 const fetchPublicProperties = async () => {
   try {
